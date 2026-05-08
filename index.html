@@ -590,9 +590,10 @@
         function updateGlobalScale() {
             const viewportWidth = Math.max(1, window.innerWidth || document.documentElement.clientWidth || 1);
             const shrinkStartWidth = 600;
-            const scale = viewportWidth >= shrinkStartWidth
-                ? 1
-                : Math.max(0.7, viewportWidth / shrinkStartWidth);
+            const blendFactor = 0.2;
+            const normalizedWidth = Math.min(1, viewportWidth / shrinkStartWidth);
+            const blendedProgress = normalizedWidth + blendFactor * normalizedWidth * (1 - normalizedWidth);
+            const scale = viewportWidth >= shrinkStartWidth ? 1 : blendedProgress;
             const scaleStr = scale.toFixed(3);
             document.documentElement.style.setProperty('--global-scale', scaleStr);
             document.documentElement.style.setProperty('--space-scale', scaleStr);
