@@ -591,9 +591,7 @@
         };
         function updateGlobalScale() {
             const baseWidth = 600;
-            const rawScale = Math.min(1, window.innerWidth / baseWidth);
-            const shrinkExponent = 0.85;
-            const scale = Math.pow(rawScale, shrinkExponent);
+            const scale = Math.min(1, window.innerWidth / baseWidth);
             const scaleStr = scale.toFixed(3);
             document.documentElement.style.setProperty('--global-scale', scaleStr);
             document.documentElement.style.setProperty('--space-scale', scaleStr);
