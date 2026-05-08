@@ -591,7 +591,9 @@
         };
         function updateGlobalScale() {
             const baseWidth = 600;
-            const scale = Math.min(1, window.innerWidth / baseWidth);
+            const viewportWidth = Math.max(1, window.innerWidth || document.documentElement.clientWidth || 1);
+            const ratio = Math.min(1, viewportWidth / baseWidth);
+            const scale = ratio < 1 ? ratio * ratio : ratio;
             const scaleStr = scale.toFixed(3);
             document.documentElement.style.setProperty('--global-scale', scaleStr);
             document.documentElement.style.setProperty('--space-scale', scaleStr);
