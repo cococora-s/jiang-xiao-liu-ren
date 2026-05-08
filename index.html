@@ -588,10 +588,11 @@
             "水": "#1565c0"
         };
         function updateGlobalScale() {
-            const baseWidth = 600;
             const viewportWidth = Math.max(1, window.innerWidth || document.documentElement.clientWidth || 1);
-            const ratio = Math.min(1, viewportWidth / baseWidth);
-            const scale = ratio < 1 ? ratio * ratio : ratio;
+            const shrinkStartWidth = 600;
+            const scale = viewportWidth >= shrinkStartWidth
+                ? 1
+                : Math.max(0.1, viewportWidth / shrinkStartWidth);
             const scaleStr = scale.toFixed(3);
             document.documentElement.style.setProperty('--global-scale', scaleStr);
             document.documentElement.style.setProperty('--space-scale', scaleStr);
