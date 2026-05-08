@@ -592,7 +592,7 @@
             const shrinkStartWidth = 600;
             const scale = viewportWidth >= shrinkStartWidth
                 ? 1
-                : Math.max(0.4, viewportWidth / shrinkStartWidth);
+                : Math.max(0.7, viewportWidth / shrinkStartWidth);
             const scaleStr = scale.toFixed(3);
             document.documentElement.style.setProperty('--global-scale', scaleStr);
             document.documentElement.style.setProperty('--space-scale', scaleStr);
