@@ -24,16 +24,14 @@
             font-family: 'STZHONGS', serif;
             background: #f5e8cf;
             min-height: 100vh;
+            margin: 0;
             color: #4b3521;
             overflow-x: hidden;
-            zoom: var(--global-scale, 1);
-        }
-        @supports not (zoom: 1) {
-            body {
-                transform: scale(var(--global-scale, 1));
-                transform-origin: top center;
-                width: calc(100% / var(--global-scale, 1));
-            }
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%) scale(var(--global-scale, 1));
+            transform-origin: top center;
+            width: calc(100% / var(--global-scale, 1));
         }
         body, body * {
             color: #4b3521 !important;
