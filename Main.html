@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>江氏小六壬排盘器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入农历核心库 -->
+    <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/zh.js"></script>
+    <style>
+        @font-face {
+            font-family: 'STZHONGS';
+            src: url('./STZHONGS.TTF') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        body {
+            font-family: 'STZHONGS', serif;
+            background: #f5e8cf;
+            min-height: 100vh;
+            color: #4b3521;
+        }
+        body, body * {
+            color: #4b3521 !important;
+            font-family: 'STZHONGS', serif !important;
+        }
+        .font-mono-custom { font-family: 'STZHONGS', serif !important; }
+        .glass {
+            background: #fff8ea;
+            border: 1px solid #d6bc8b;
+            border-radius: 10px;
+        }
+        .main-panel {
+            background: #fff8ea;
+            border: none;
+        }
+        .hex-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        .palace-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            aspect-ratio: 1/1;
+            border-width: 2px !important;
+            border-color: #6c5347 !important;
+        }
+        .palace-slot {
+            position: absolute;
+            line-height: 1;
+            white-space: nowrap;
+        }
+        .slot-wuxing {
+            top: 16px;
+            left: 14px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .wuxing-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 8px;
+            border: 1.5px solid #4b3521;
+            border-radius: 6px;
+            line-height: 1.1;
+            background: rgba(255, 248, 234, 0.9);
+        }
+        .liushen-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 8px;
+            border: 1.5px solid #4b3521;
+            border-radius: 6px;
+            line-height: 1.1;
+            background: rgba(255, 248, 234, 0.9);
+        }
+        .liuqin-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 8px;
+            border: 1.5px solid #4b3521;
+            border-radius: 6px;
+            line-height: 1.1;
+            background: transparent;
+        }
+        .slot-liushen {
+            top: 16px;
+            right: 14px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .slot-zhi {
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 25px;
+            font-weight: 700;
+        }
+        .slot-liuqin {
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .slot-daytime {
+            left: 16px;
+            bottom: 16px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .slot-body {
+            left: calc(50% - 14px);
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .circled-char {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.5em;
+            height: 1.5em;
+            border: 1.5px solid #4b3521;
+            border-radius: 9999px;
+            line-height: 1;
+        }
+        .slot-daytime,
+        .slot-body {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .slot-palace-name {
+            right: 14px;
+            bottom: 9px;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-decoration: none;
+            display: inline-block;
+            padding-bottom: 10px;
+            background-image: linear-gradient(var(--palace-underline-color, #4b3521), var(--palace-underline-color, #4b3521));
+            background-repeat: no-repeat;
+            background-size: 0 2px;
+            background-position: -3px calc(100% - 4px);
+            transition: background-size 0.25s ease;
+        }
+        .slot-palace-name.show-underline {
+            background-size: calc(100% + 0px) 2px;
+        }
+        .active-palace {
+            background: #f3d8a6 !important;
+            border-color: transparent !important;
+            z-index: 10;
+        }
+        /* 调小 flatpickr 顶部月份/年份字号 */
+        .flatpickr-current-month,
+        .flatpickr-current-month input.cur-year,
+        .flatpickr-calendar .flatpickr-current-month .fp-custom-select-trigger {
+            font-size: 14px !important;
+            font-weight: 700 !important;
+        }
+        .flatpickr-calendar.with-year-select .flatpickr-current-month input.cur-year,
+        .flatpickr-calendar.with-year-select .flatpickr-current-month .flatpickr-monthDropdown-months {
+            display: none !important;
+        }
+        .flatpickr-calendar.with-year-select .flatpickr-current-month {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            transform: translateX(37px);
+            overflow: visible !important;
+            z-index: 6;
+            pointer-events: auto;
+        }
+        .flatpickr-calendar.with-year-select .flatpickr-month {
+            overflow: visible !important;
+        }
+        .flatpickr-calendar .flatpickr-current-month .fp-custom-select {
+            position: relative;
+        }
+        .flatpickr-calendar .flatpickr-current-month .fp-custom-select-trigger {
+            margin-left: 0;
+            border: none;
+            border-radius: 8px;
+            background: #fff8ea;
+            color: #4b3521;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 0 26px 0 8px;
+            height: 26px;
+            line-height: 26px;
+            outline: none;
+            cursor: pointer;
+            white-space: nowrap;
+            background-image:
+                linear-gradient(45deg, transparent 50%, #4b3521 50%),
+                linear-gradient(135deg, #4b3521 50%, transparent 50%);
+            background-position:
+                calc(100% - 13px) 11px,
+                calc(100% - 8px) 11px;
+            background-size: 5px 5px, 5px 5px;
+            background-repeat: no-repeat;
+        }
+        .flatpickr-calendar .flatpickr-current-month .fp-custom-select.is-open .fp-custom-select-trigger {
+            background-color: #fae2ad;
+        }
+        .flatpickr-calendar .flatpickr-current-month .fp-custom-select-list {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            z-index: 30;
+            min-width: 100%;
+            max-height: 190px;
+            overflow-y: auto;
+            border: 2px solid #4b3521;
+            border-radius: 10px;
+            background: #fff8ea;
+            box-shadow: none;
+            padding: 4px;
+            box-sizing: border-box;
+        }
+        .flatpickr-calendar .flatpickr-current-month .fp-custom-select-list.is-hidden {
+            display: none;
+        }
+        .flatpickr-calendar .flatpickr-current-month .fp-custom-select-option {
+            display: block;
+            width: 100%;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: #4b3521;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 24px;
+            padding: 0 8px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .flatpickr-calendar .flatpickr-current-month .fp-custom-select-option:hover,
+        .flatpickr-calendar .flatpickr-current-month .fp-custom-select-option:focus-visible {
+            background: #fae2ad;
+            outline: none;
+        }
+        .flatpickr-calendar .flatpickr-current-month .fp-custom-select-option.is-selected {
+            background: #f3d8a6;
+        }
+        .flatpickr-calendar .flatpickr-current-month .fp-custom-select-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        .flatpickr-calendar .flatpickr-current-month .fp-custom-select-list::-webkit-scrollbar-thumb {
+            background: #d2b37f;
+            border-radius: 999px;
+        }
+        /* 日历主题与主容器配色一致 */
+        .flatpickr-calendar {
+            background: #fff8ea !important;
+            border: 2px solid #4b3521 !important;
+            border-radius: 14px !important;
+            box-shadow: none !important;
+            overflow: hidden;
+        }
+        .flatpickr-months,
+        .flatpickr-weekdays,
+        .flatpickr-weekdaycontainer,
+        .flatpickr-rContainer,
+        .flatpickr-days,
+        .dayContainer,
+        .flatpickr-time {
+            background: #fff8ea !important;
+        }
+        .flatpickr-innerContainer,
+        .flatpickr-rContainer,
+        .flatpickr-days,
+        .dayContainer,
+        .flatpickr-time {
+            border-radius: 12px;
+        }
+        .flatpickr-weekday,
+        .flatpickr-current-month .flatpickr-monthDropdown-months,
+        .flatpickr-current-month input.cur-year,
+        .flatpickr-time input,
+        .flatpickr-time .flatpickr-time-separator,
+        .flatpickr-time .flatpickr-am-pm {
+            color: #4b3521 !important;
+        }
+        /* 星期与日期排列：两侧留白 + 七等分对齐 */
+        .flatpickr-weekdays {
+            height: 22px !important;
+        }
+        .flatpickr-days {
+            margin-top: 0 !important;
+        }
+        .flatpickr-weekdaycontainer,
+        .dayContainer {
+            padding-left: 30px !important;
+            padding-right: 30px !important;
+            box-sizing: border-box;
+        }
+        .flatpickr-weekdaycontainer {
+            display: grid !important;
+            grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+        }
+        .flatpickr-weekday {
+            width: 100% !important;
+            line-height: 22px !important;
+            box-sizing: border-box;
+        }
+        .flatpickr-day {
+            width: calc(100% / 7) !important;
+            max-width: calc(100% / 7) !important;
+            box-sizing: border-box;
+            color: #4b3521 !important;
+            height: 30px !important;
+            line-height: 30px !important;
+            border-radius: 4px;
+        }
+        /* 仅显示当月日期：隐藏前后月份日期，但保留占位以保证星期对齐 */
+        .flatpickr-day.prevMonthDay,
+        .flatpickr-day.nextMonthDay {
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
+        /* 允许日期区域按当月实际行数自适应高度 */
+        .flatpickr-days,
+        .dayContainer {
+            height: auto !important;
+            min-height: 0 !important;
+        }
+        .flatpickr-day:hover {
+            background: #fae2ad !important;
+            border-color: transparent !important;
+            border-radius: 9999px !important;
+            box-shadow: none !important;
+        }
+        .flatpickr-day:focus {
+            border-radius: 9999px !important;
+        }
+        .flatpickr-day.today:not(.selected) {
+            border-color: transparent !important;
+            box-shadow: none !important;
+        }
+        .flatpickr-day.selected,
+        .flatpickr-day.startRange,
+        .flatpickr-day.endRange {
+            background: #fae2ad !important;
+            border-color: transparent !important;
+            box-shadow: none !important;
+            color: #4b3521 !important;
+            border-radius: 9999px !important;
+        }
+        .flatpickr-time input:hover,
+        .flatpickr-time .flatpickr-am-pm:hover,
+        .numInputWrapper:hover {
+            background: #fae2ad !important;
+        }
+        .flatpickr-time .numInputWrapper:focus-within,
+        .flatpickr-time input:focus {
+            background: #fae2ad !important;
+        }
+        .flatpickr-time input,
+        .flatpickr-time .flatpickr-time-separator,
+        .flatpickr-time .flatpickr-am-pm {
+            font-size: 14px !important;
+            font-weight: 700 !important;
+        }
+        .flatpickr-time input {
+            caret-color: #4b3521 !important;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-start p-4">
+
+    <h1 class="text-3xl md:text-4xl font-bold text-center mt-10 mb-10 tracking-[0.2em]" style="color: #5a381f;">
+        江氏小六壬排盘器
+    </h1>
+
+    <!-- 动态时间显示面板 -->
+    <div class="glass p-6 w-full max-w-xl mb-6 text-center border-amber-500/20">
+        <div id="solarClock" class="font-mono-custom text-2xl tracking-[0.05em] text-amber-500/90">
+            0000年0月0日 00:00:00
+        </div>
+        <div id="lunarClock" class="text-xl text-amber-900/70 mt-2 tracking-[0.2em] text-center whitespace-nowrap">
+            获取农历中...
+        </div>
+    </div>
+
+    <!-- 主容器 -->
+    <div class="glass main-panel px-8 pb-8 pt-6 w-full max-w-xl relative overflow-hidden mb-12">
+        <!-- 输入区域 -->
+        <div class="space-y-4 mb-8">
+            <div class="flex flex-col items-center">
+                <label class="text-[18px] uppercase tracking-widest text-amber-500/70 mb-2 font-bold text-center">起卦时间</label>
+                <div class="grid w-full grid-cols-[1fr_auto_1fr] items-center">
+                    <div id="dateTimePickerWrap" class="relative col-start-2 justify-self-center">
+                        <div class="inline-flex bg-white border-[1.5px] border-[#4b3521] rounded-lg py-2.5 pl-4 pr-3 text-base text-amber-900 font-mono-custom font-bold items-center gap-3 focus-within:border-[#4b3521] transition">
+                            <input
+                                type="text"
+                                id="dateTimeManualInput"
+                                placeholder="yyyy/mm/dd HH:mm"
+                                inputmode="numeric"
+                                maxlength="16"
+                                pattern="\d{4}/\d{2}/\d{2} \d{2}:\d{2}"
+                                class="w-[15ch] bg-transparent outline-none text-amber-900 font-mono-custom font-bold"
+                            >
+                            <button
+                                type="button"
+                                id="dateTimePickerButton"
+                                aria-label="打开中文日历选择起卦时间"
+                                class="relative shrink-0 w-6 h-6 inline-flex items-center justify-center rounded text-[#4b3521] hover:bg-amber-100 transition overflow-hidden"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                            </button>
+                        </div>
+                        <input type="hidden" id="dateTime">
+                        <input type="text" id="dateTimeCalendarInput" class="hidden" tabindex="-1" aria-hidden="true">
+                    </div>
+                    <button
+                        type="button"
+                        id="dateTimeNowButton"
+                        class="col-start-3 justify-self-start ml-2 shrink-0 rounded-lg bg-[#5a381f] px-3 py-2 text-sm font-bold text-white hover:bg-[#4b3521] transition"
+                        style="color: #fff8ea !important;"
+                    >
+                        当前时间
+                    </button>
+                </div>
+                <div id="selectedDateLunarInfo" class="mt-2 text-base text-amber-900/70 font-mono-custom whitespace-nowrap text-center"></div>
+            </div>
+            <button onclick="startCalculation()" class="w-full bg-[#5a381f] hover:bg-[#4b3521] text-[#fff8ea] font-bold py-4 rounded-xl transition-all active:scale-95 tracking-[0.5em] text-2xl border border-[#5a381f]/40" style="margin-top: 24px !important; color: #fff8ea !important;">
+                开始排盘
+            </button>
+        </div>
+
+        <!-- 六壬掌中盘 -->
+        <div id="palaceGrid" class="hex-grid mb-8">
+            <!-- 宫位会自动渲染 -->
+        </div>
+
+    </div>
+
+    <script>
+        const palaces = [
+            { name: "大安", nature: "吉", desc: "大安事事昌，求财在坤方，失物去不远，宅舍保安康。" },
+            { name: "留连", nature: "凶", desc: "留连事难成，求谋日未明，官事只宜缓，去者未回程。" },
+            { name: "速喜", nature: "吉", desc: "速喜喜临门，求财向南行，失物申未午，逢人路上寻。" },
+            { name: "赤口", nature: "凶", desc: "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌。" },
+            { name: "小吉", nature: "吉", desc: "小吉最吉祥，路上好商量，阴人来报喜，失物在坤方。" },
+            { name: "空亡", nature: "凶", desc: "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃。" }
+        ];
+        const zhiOrder = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"];
+        const palaceWuxingMap = ["木", "水", "火", "金", "木", "土"];
+        const zhiWuxingMap = {
+            "寅": "木", "卯": "木",
+            "巳": "火", "午": "火",
+            "丑": "土", "辰": "土", "未": "土", "戌": "土",
+            "申": "金", "酉": "金",
+            "亥": "水", "子": "水"
+        };
+        const wuxingShengMap = { "木": "火", "火": "土", "土": "金", "金": "水", "水": "木" };
+        const wuxingKeMap = { "金": "木", "木": "土", "土": "水", "水": "火", "火": "金" };
+        const wuXingBadgeColorMap = {
+            "木星": "#2e7d32",
+            "火星": "#c62828",
+            "土星": "#7a5230",
+            "金星": "#b8860b",
+            "水星": "#1565c0",
+            "天空": "#000000"
+        };
+        const liuShenBadgeColorMap = {
+            "青龙": "#2e7d32",
+            "朱雀": "#c62828",
+            "勾陈": "#7a5230",
+            "白虎": "#b8860b",
+            "腾蛇": "#7a5230",
+            "玄武": "#1565c0"
+        };
+        const wuxingColorMap = {
+            "甲": "#2e7d32", "乙": "#2e7d32", "寅": "#2e7d32", "卯": "#2e7d32",
+            "丙": "#c62828", "丁": "#c62828", "巳": "#c62828", "午": "#c62828",
+            "戊": "#7a5230", "己": "#7a5230", "丑": "#7a5230", "辰": "#7a5230", "未": "#7a5230", "戌": "#7a5230",
+            "庚": "#b8860b", "辛": "#b8860b", "申": "#b8860b", "酉": "#b8860b",
+            "壬": "#1565c0", "癸": "#1565c0", "亥": "#1565c0", "子": "#1565c0"
+        };
+        const wuxingElementColorMap = {
+            "木": "#2e7d32",
+            "火": "#c62828",
+            "土": "#7a5230",
+            "金": "#b8860b",
+            "水": "#1565c0"
+        };
+        function colorizeGanZhiText(text) {
+            return Array.from(text).map((ch) => {
+                const color = wuxingColorMap[ch];
+                if (!color) return ch;
+                return `<span style="color: ${color} !important;">${ch}</span>`;
+            }).join('');
+        }
+
+        // 更新时钟逻辑
+        function updateClock() {
+            const now = new Date();
+            
+            // 公历显示
+            const solarStr = now.getFullYear() + '年' + 
+                (now.getMonth() + 1) + '月' + 
+                now.getDate() + '日 ' + 
+                String(now.getHours()).padStart(2, '0') + ':' + 
+                String(now.getMinutes()).padStart(2, '0') + ':' + 
+                String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('solarClock').innerText = solarStr;
+
+            // 农历显示 (使用 Lunar 库)
+            const lunar = Lunar.fromDate(now);
+            const lunarStr = `${lunar.getYearInGanZhi()}年 ${lunar.getMonthInGanZhi()}月 ${lunar.getDayInGanZhi()}日 ${lunar.getTimeInGanZhi()}时 ${lunar.getMonthInChinese()}月${lunar.getDayInChinese()}`;
+            document.getElementById('lunarClock').innerHTML = colorizeGanZhiText(lunarStr);
+        }
+
+        // 初始化界面
+        function initGrid() {
+            const grid = document.getElementById('palaceGrid');
+            const displayOrder = [1, 2, 3, 0, 5, 4];
+            grid.innerHTML = displayOrder.map((palaceIndex) => {
+                const p = palaces[palaceIndex];
+                const palaceWuxing = palaceWuxingMap[palaceIndex];
+                const underlineColor = wuxingElementColorMap[palaceWuxing] || "#4b3521";
+                return `
+                <div id="palace-${palaceIndex}" class="palace-card glass border-amber-200 relative overflow-hidden">
+                    <span class="palace-slot slot-wuxing palace-wuxing"></span>
+                    <span class="palace-slot slot-liushen palace-liushen"></span>
+                    <span class="palace-slot slot-zhi palace-zhi"></span>
+                    <span class="palace-slot slot-liuqin palace-liuqin"></span>
+                    <span class="palace-slot slot-daytime palace-daytime"></span>
+                    <span class="palace-slot slot-body palace-body"></span>
+                    <span class="palace-slot slot-palace-name" style="color: #000 !important; --palace-underline-color: ${underlineColor};">${p.name}</span>
+                </div>
+            `;
+            }).join('');
+        }
+
+        function setPalaceNameUnderlineVisible(visible) {
+            document.querySelectorAll('.slot-palace-name').forEach((el) => {
+                el.classList.toggle('show-underline', visible);
+            });
+        }
+
+        function getShiChenCount(timeZhi) {
+            const zhiIndex = zhiOrder.indexOf(timeZhi);
+            return zhiIndex === -1 ? 1 : zhiIndex + 1;
+        }
+
+        function toDateTimeLocalValue(date) {
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}T${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+        }
+
+        function formatManualDateTimeValue(date) {
+            return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+        }
+
+        const dateTimeSegments = [
+            { key: 'year', start: 0, end: 4, len: 4 },
+            { key: 'month', start: 5, end: 7, len: 2 },
+            { key: 'day', start: 8, end: 10, len: 2 },
+            { key: 'hour', start: 11, end: 13, len: 2 },
+            { key: 'minute', start: 14, end: 16, len: 2 }
+        ];
+        let activeSegmentIndex = 0;
+        let segmentInputBuffer = '';
+        let segmentPreviousValue = '';
+        let chineseDatePicker = null;
+        let isPointerFocusingManualInput = false;
+
+        function getSegmentIndexByPosition(pos) {
+            if (pos <= 4) return 0;
+            if (pos <= 7) return 1;
+            if (pos <= 10) return 2;
+            if (pos <= 13) return 3;
+            return 4;
+        }
+
+        function selectDateTimeSegment(input, segmentIndex) {
+            const safeIndex = Math.max(0, Math.min(dateTimeSegments.length - 1, segmentIndex));
+            const segment = dateTimeSegments[safeIndex];
+            activeSegmentIndex = safeIndex;
+            segmentInputBuffer = '';
+            const parts = getSegmentValuesFromInput(input.value);
+            segmentPreviousValue = parts[segment.key] || '';
+            input.setSelectionRange(segment.start, segment.end);
+        }
+
+        function getSegmentValuesFromInput(value) {
+            const strictMatch = String(value || '').match(/^(\d{4})\/(\d{2})\/(\d{2})\s(\d{2}):(\d{2})$/);
+            if (strictMatch) {
+                return {
+                    year: strictMatch[1],
+                    month: strictMatch[2],
+                    day: strictMatch[3],
+                    hour: strictMatch[4],
+                    minute: strictMatch[5]
+                };
+            }
+            const fallbackDate = parseDateTimeValue(value) || new Date();
+            return {
+                year: String(fallbackDate.getFullYear()).padStart(4, '0'),
+                month: String(fallbackDate.getMonth() + 1).padStart(2, '0'),
+                day: String(fallbackDate.getDate()).padStart(2, '0'),
+                hour: String(fallbackDate.getHours()).padStart(2, '0'),
+                minute: String(fallbackDate.getMinutes()).padStart(2, '0')
+            };
+        }
+
+        function buildDateTimeTextFromParts(parts) {
+            return `${parts.year}/${parts.month}/${parts.day} ${parts.hour}:${parts.minute}`;
+        }
+
+        function getDaysInMonth(year, month) {
+            return new Date(year, month, 0).getDate();
+        }
+
+        function getCurrentYear() {
+            return new Date().getFullYear();
+        }
+
+        function isSegmentValueValid(segmentKey, candidate, parts) {
+            const numeric = Number(candidate);
+            if (!Number.isFinite(numeric)) return false;
+            if (segmentKey === 'year') return numeric >= 1 && numeric <= getCurrentYear();
+            if (segmentKey === 'month') return numeric >= 1 && numeric <= 12;
+            if (segmentKey === 'hour') return numeric >= 0 && numeric <= 23;
+            if (segmentKey === 'minute') return numeric >= 0 && numeric <= 59;
+            if (segmentKey === 'day') {
+                const year = Number(parts.year);
+                const month = Number(parts.month);
+                if (month < 1 || month > 12 || year < 1 || year > getCurrentYear()) return false;
+                return numeric >= 1 && numeric <= getDaysInMonth(year, month);
+            }
+            return false;
+        }
+
+        function parseStrictManualDateTimeValue(value) {
+            if (!value) return null;
+            const raw = String(value).trim();
+            const slashMatch = raw.match(/^(\d{4})\/(\d{2})\/(\d{2})\s+(\d{2}):(\d{2})$/);
+            if (!slashMatch) return null;
+            const [, yStr, mStr, dStr, hStr, minStr] = slashMatch;
+            const year = Number(yStr);
+            const month = Number(mStr);
+            const day = Number(dStr);
+            const hour = Number(hStr);
+            const minute = Number(minStr);
+            if (year > getCurrentYear()) return null;
+            if (month < 1 || month > 12 || day < 1 || day > 31 || hour > 23 || minute > 59) return null;
+            const date = new Date(year, month - 1, day, hour, minute, 0, 0);
+            if (
+                date.getFullYear() !== year ||
+                date.getMonth() !== month - 1 ||
+                date.getDate() !== day ||
+                date.getHours() !== hour ||
+                date.getMinutes() !== minute
+            ) {
+                return null;
+            }
+            return date;
+        }
+
+        function parseDateTimeValue(value) {
+            if (!value) return null;
+            const strictManualDate = parseStrictManualDateTimeValue(value);
+            if (strictManualDate) return strictManualDate;
+            const raw = String(value).trim();
+            const normalized = raw.includes('T') ? raw : raw.replace(' ', 'T');
+            const date = new Date(normalized);
+            return Number.isNaN(date.getTime()) ? null : date;
+        }
+
+        function validateManualDateTimeInput(rawValue, { report = false } = {}) {
+            const manualInput = document.getElementById('dateTimeManualInput');
+            const date = parseStrictManualDateTimeValue(rawValue);
+            if (date) {
+                manualInput.setCustomValidity('');
+                return date;
+            }
+            const value = String(rawValue || '').trim();
+            const message = value
+                ? '请输入有效时间，格式：yyyy/mm/dd HH:mm（24小时制）'
+                : '请输入起卦时间，格式：yyyy/mm/dd HH:mm（24小时制）';
+            manualInput.setCustomValidity(message);
+            if (report) manualInput.reportValidity();
+            return null;
+        }
+
+        function updateSelectedDateLunarInfo(date) {
+            const lunarInfoEl = document.getElementById('selectedDateLunarInfo');
+            if (!lunarInfoEl) return;
+            if (!date) {
+                lunarInfoEl.innerText = '';
+                return;
+            }
+            const lunar = Lunar.fromDate(date);
+            const lunarText = `${lunar.getYearInGanZhi()}年 ${lunar.getMonthInGanZhi()}月 ${lunar.getDayInGanZhi()}日 ${lunar.getTimeInGanZhi()}时 ${lunar.getMonthInChinese()}月${lunar.getDayInChinese()}`;
+            lunarInfoEl.innerHTML = colorizeGanZhiText(lunarText);
+        }
+
+        function setDateTimeValue(value) {
+            const dateTimeInput = document.getElementById('dateTime');
+            const manualInput = document.getElementById('dateTimeManualInput');
+            const date = parseDateTimeValue(value);
+            const normalizedValue = date ? toDateTimeLocalValue(date) : '';
+            const previousValue = dateTimeInput.value;
+            if (previousValue && previousValue !== normalizedValue) {
+                clearCurrentCalculationResult();
+            }
+            dateTimeInput.value = normalizedValue;
+            if (manualInput) manualInput.value = date ? formatManualDateTimeValue(date) : '';
+            if (chineseDatePicker && date) {
+                chineseDatePicker.setDate(date, false);
+            }
+            updateSelectedDateLunarInfo(date);
+        }
+
+        function clearCurrentCalculationResult() {
+            document.querySelectorAll('.palace-card').forEach(el => el.classList.remove('active-palace'));
+            clearPalaceLayoutTexts();
+            setPalaceNameUnderlineVisible(false);
+        }
+
+        function ensureDefaultCurrentDateTime() {
+            const current = document.getElementById('dateTime').value;
+            if (current && parseDateTimeValue(current)) return;
+            setDateTimeValue(toDateTimeLocalValue(new Date()));
+        }
+
+        function applyManualInputDateTime(rawValue) {
+            const date = validateManualDateTimeInput(rawValue);
+            if (!date) {
+                const hiddenValue = document.getElementById('dateTime').value;
+                const fallbackDate = parseDateTimeValue(hiddenValue);
+                if (fallbackDate) {
+                    document.getElementById('dateTimeManualInput').value = formatManualDateTimeValue(fallbackDate);
+                }
+                return;
+            }
+            setDateTimeValue(toDateTimeLocalValue(date));
+        }
+
+        function setPalaceText(index, selector, text) {
+            const el = document.getElementById(`palace-${index}`);
+            if (!el) return;
+            const slot = el.querySelector(selector);
+            if (!slot) return;
+            slot.innerText = text || '';
+        }
+
+        function setCircledPalaceText(index, selector, texts) {
+            const el = document.getElementById(`palace-${index}`);
+            if (!el) return;
+            const slot = el.querySelector(selector);
+            if (!slot) return;
+            if (!texts || !texts.length) {
+                slot.innerHTML = '';
+                return;
+            }
+            slot.innerHTML = texts.map((text) => `<span class="circled-char">${text}</span>`).join('');
+        }
+
+        function setZhiLabel(index, zhi) {
+            const el = document.getElementById(`palace-${index}`);
+            if (!el) return;
+            const color = wuxingColorMap[zhi] || '#4b3521';
+            const slot = el.querySelector('.palace-zhi');
+            if (!slot) return;
+            slot.innerHTML = zhi ? `<span style="color: ${color} !important;">${zhi}</span>` : '';
+        }
+
+        function setLiuQinLabel(index, liuQin) {
+            const el = document.getElementById(`palace-${index}`);
+            if (!el) return;
+            const slot = el.querySelector('.palace-liuqin');
+            if (!slot) return;
+            if (!liuQin) {
+                slot.innerHTML = '';
+                return;
+            }
+            slot.innerHTML = `<span class="liuqin-badge">${liuQin}</span>`;
+        }
+
+        function setLiuShenLabel(index, liuShen) {
+            const el = document.getElementById(`palace-${index}`);
+            if (!el) return;
+            const slot = el.querySelector('.palace-liushen');
+            if (!slot) return;
+            if (!liuShen) {
+                slot.innerHTML = '';
+                return;
+            }
+            const badgeColor = liuShenBadgeColorMap[liuShen] || '#4b3521';
+            slot.innerHTML = `<span class="liushen-badge" style="border-color: ${badgeColor}; background-color: ${badgeColor}; color: #fff8ea !important;">${liuShen}</span>`;
+        }
+
+        function setWuXingLabel(index, wuXing) {
+            const el = document.getElementById(`palace-${index}`);
+            if (!el) return;
+            const slot = el.querySelector('.palace-wuxing');
+            if (!slot) return;
+            if (!wuXing) {
+                slot.innerHTML = '';
+                return;
+            }
+            const badgeColor = wuXingBadgeColorMap[wuXing] || '#4b3521';
+            slot.innerHTML = `<span class="wuxing-badge" style="border-color: ${badgeColor}; color: ${badgeColor} !important;">${wuXing}</span>`;
+        }
+
+        function clearPalaceLayoutTexts() {
+            for (let i = 0; i < 6; i++) {
+                setPalaceText(i, '.palace-daytime', '');
+                setPalaceText(i, '.palace-body', '');
+                setPalaceText(i, '.palace-zhi', '');
+                setPalaceText(i, '.palace-liuqin', '');
+                setPalaceText(i, '.palace-liushen', '');
+                setPalaceText(i, '.palace-wuxing', '');
+            }
+        }
+
+        function setDayLabel(dayIndex) {
+            setCircledPalaceText(dayIndex, '.palace-daytime', ['日']);
+        }
+
+        function setTimeAndBodyLabel(dayIndex, bodyIndex) {
+            if (bodyIndex === dayIndex) {
+                setCircledPalaceText(dayIndex, '.palace-daytime', ['日', '时']);
+            } else {
+                setCircledPalaceText(bodyIndex, '.palace-daytime', ['时']);
+            }
+            setCircledPalaceText(bodyIndex, '.palace-body', ['身']);
+        }
+
+        function getLiuQinByWuxing(selfWuxing, targetWuxing) {
+            if (!selfWuxing || !targetWuxing) return '';
+            if (selfWuxing === targetWuxing) return '兄弟';
+            if (wuxingShengMap[targetWuxing] === selfWuxing) return '父母';
+            if (wuxingShengMap[selfWuxing] === targetWuxing) return '子孙';
+            if (wuxingKeMap[selfWuxing] === targetWuxing) return '妻财';
+            if (wuxingKeMap[targetWuxing] === selfWuxing) return '官鬼';
+            return '';
+        }
+
+        function calculateLiuQinAssignments(arrangedPalaceZhi, bodyIndex) {
+            const bodyItem = arrangedPalaceZhi.find(item => item.palaceIndex === bodyIndex);
+            if (!bodyItem) return [];
+            const selfWuxing = zhiWuxingMap[bodyItem.zhi];
+            const bodyPalaceWuxing = palaceWuxingMap[bodyIndex];
+            const liuQinList = arrangedPalaceZhi.map((item) => {
+                if (item.palaceIndex === bodyIndex) {
+                    const selfLiuQin = getLiuQinByWuxing(selfWuxing, bodyPalaceWuxing);
+                    return { ...item, liuQin: selfLiuQin || '身宫' };
+                }
+                const targetWuxing = zhiWuxingMap[item.zhi];
+                const liuQin = getLiuQinByWuxing(selfWuxing, targetWuxing);
+                return { ...item, liuQin };
+            });
+
+            const hasBrother = liuQinList.some(item => item.palaceIndex !== bodyIndex && item.liuQin === '兄弟');
+            if (!hasBrother) {
+                for (let step = 1; step <= 5; step++) {
+                    const palaceIndex = (bodyIndex + step) % 6;
+                    const target = liuQinList.find(item => item.palaceIndex === palaceIndex);
+                    if (!target) continue;
+                    const targetWuxing = zhiWuxingMap[target.zhi];
+                    if (targetWuxing === '土') {
+                        target.liuQin = '兄弟';
+                        break;
+                    }
+                }
+            }
+            return liuQinList;
+        }
+
+        function calculateLiuShenAssignments(bodyZhi) {
+            const liuShenOrder = ['青龙', '朱雀', '勾陈', '白虎', '玄武', '腾蛇'];
+            const bodyZhiIndex = zhiOrder.indexOf(bodyZhi);
+            if (bodyZhiIndex === -1) return [];
+            // 从大安起数：子丑寅卯辰巳午未申酉戌亥，身宫地支落到哪一宫，该宫起青龙
+            const qingLongStartPalaceIndex = bodyZhiIndex % 6;
+            const assignments = [];
+            for (let step = 0; step < 6; step++) {
+                assignments.push({
+                    palaceIndex: (qingLongStartPalaceIndex + step) % 6,
+                    liuShen: liuShenOrder[step]
+                });
+            }
+            return assignments;
+        }
+
+        function calculateWuXingAssignments(dayPalaceIndex) {
+            // 日时起卦时，以日宫作为对宫起点：该宫起木星，后续宫位顺排火土金水天空
+            const wuXingOrder = ['木星', '火星', '土星', '金星', '水星', '天空'];
+            const assignments = [];
+            for (let step = 0; step < 6; step++) {
+                assignments.push({
+                    palaceIndex: (dayPalaceIndex + step) % 6,
+                    wuXing: wuXingOrder[step]
+                });
+            }
+            return assignments;
+        }
+
+        function arrangePalaceZhiByTimePalace(timePalaceIndex, timeZhi) {
+            const startZhiIndex = zhiOrder.indexOf(timeZhi);
+            if (startZhiIndex === -1) return [];
+            const arranged = [];
+            for (let step = 0; step < 6; step++) {
+                const palaceIndex = (timePalaceIndex + step) % 6;
+                const zhiIndex = (startZhiIndex + step * 2) % zhiOrder.length;
+                const zhi = zhiOrder[zhiIndex];
+                arranged.push({ palaceIndex, zhi });
+            }
+            return arranged;
+        }
+
+        function startCalculation() {
+            const manualInput = document.getElementById('dateTimeManualInput');
+            const validDate = validateManualDateTimeInput(manualInput.value, { report: true });
+            if (!validDate) {
+                manualInput.focus();
+                return;
+            }
+            setDateTimeValue(toDateTimeLocalValue(validDate));
+            const inputVal = document.getElementById('dateTime').value;
+            const targetDate = inputVal ? new Date(inputVal) : new Date();
+            const lunar = Lunar.fromDate(targetDate);
+
+            // 准备排盘
+            document.querySelectorAll('.palace-card').forEach(el => el.classList.remove('active-palace'));
+            clearPalaceLayoutTexts();
+            setPalaceNameUnderlineVisible(false);
+
+            // 日宫：从第一宫大安起，按农历日数（含起点）顺数
+            const dayCount = lunar.getDay();
+            const dayIndex = (dayCount - 1) % 6;
+
+            // 时宫：从日宫起，按时辰地支序数（含起点）顺数
+            const timeZhi = lunar.getTimeZhi();
+            const bodyCount = getShiChenCount(timeZhi);
+            const bodyIndex = (dayIndex + bodyCount - 1) % 6;
+            
+            // 直接显示最终结果，不播放数宫动画
+            setDayLabel(dayIndex);
+            setTimeAndBodyLabel(dayIndex, bodyIndex);
+
+            // 地支：时宫排当前时支，后续各宫按地支序每次跳过一支（+2）依次排布
+            const arrangedPalaceZhi = arrangePalaceZhiByTimePalace(bodyIndex, timeZhi);
+            arrangedPalaceZhi.forEach(({ palaceIndex, zhi }) => setZhiLabel(palaceIndex, zhi));
+
+            // 六亲：以身宫地支为“我”，按生克关系取六亲；若无兄弟，顺时针首个土宫补兄弟
+            const liuQinAssignments = calculateLiuQinAssignments(arrangedPalaceZhi, bodyIndex);
+            liuQinAssignments.forEach(({ palaceIndex, liuQin }) => setLiuQinLabel(palaceIndex, liuQin));
+
+            // 六神：以身宫地支（时支）从大安起数，落宫起青龙，后续宫位依次朱雀、勾陈、白虎、玄武、腾蛇
+            const liuShenAssignments = calculateLiuShenAssignments(timeZhi);
+            liuShenAssignments.forEach(({ palaceIndex, liuShen }) => setLiuShenLabel(palaceIndex, liuShen));
+
+            // 五星：日时起卦时，以日宫起木星，后续宫位依次火星、土星、金星、水星、天空
+            const wuXingAssignments = calculateWuXingAssignments(dayIndex);
+            wuXingAssignments.forEach(({ palaceIndex, wuXing }) => setWuXingLabel(palaceIndex, wuXing));
+
+            // 显示盘面
+            setPalaceNameUnderlineVisible(true);
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+        initGrid();
+        // 初始化起卦时间选择器
+        ensureDefaultCurrentDateTime();
+        const manualInput = document.getElementById('dateTimeManualInput');
+        const dateTimePickerButton = document.getElementById('dateTimePickerButton');
+        const dateTimeNowButton = document.getElementById('dateTimeNowButton');
+        const dateTimeCalendarInput = document.getElementById('dateTimeCalendarInput');
+        manualInput.addEventListener('pointerdown', () => {
+            isPointerFocusingManualInput = true;
+        });
+        manualInput.addEventListener('focus', (event) => {
+            const currentDate = parseDateTimeValue(event.target.value);
+            if (!currentDate) {
+                setDateTimeValue(toDateTimeLocalValue(new Date()));
+            }
+            // 鼠标/触摸点击进入时，等待 click 事件再按实际点击位置选段
+            if (isPointerFocusingManualInput) return;
+            const idx = getSegmentIndexByPosition(event.target.selectionStart ?? 0);
+            selectDateTimeSegment(event.target, idx);
+        });
+        manualInput.addEventListener('click', (event) => {
+            window.requestAnimationFrame(() => {
+                const idx = getSegmentIndexByPosition(event.target.selectionStart ?? 0);
+                selectDateTimeSegment(event.target, idx);
+                isPointerFocusingManualInput = false;
+            });
+        });
+        manualInput.addEventListener('keydown', (event) => {
+            const input = event.target;
+            const key = event.key;
+            const isDigit = /^[0-9]$/.test(key);
+            const idx = getSegmentIndexByPosition(input.selectionStart || 0);
+            const segment = dateTimeSegments[idx];
+
+            if (key === 'ArrowLeft') {
+                event.preventDefault();
+                selectDateTimeSegment(input, idx - 1);
+                return;
+            }
+            if (key === 'ArrowRight') {
+                event.preventDefault();
+                selectDateTimeSegment(input, idx + 1);
+                return;
+            }
+            if (key === 'Tab') {
+                event.preventDefault();
+                selectDateTimeSegment(input, idx + (event.shiftKey ? -1 : 1));
+                return;
+            }
+            if (key === 'Backspace' || key === 'Delete') {
+                event.preventDefault();
+                segmentInputBuffer = '';
+                selectDateTimeSegment(input, idx);
+                return;
+            }
+            if (!isDigit) {
+                event.preventDefault();
+                return;
+            }
+
+            event.preventDefault();
+            if (activeSegmentIndex !== idx) {
+                activeSegmentIndex = idx;
+                segmentInputBuffer = '';
+                const parts = getSegmentValuesFromInput(input.value);
+                segmentPreviousValue = parts[segment.key] || '';
+            }
+            segmentInputBuffer = (segmentInputBuffer + key).slice(0, segment.len);
+            const parts = getSegmentValuesFromInput(input.value);
+            const previewValue = (segmentInputBuffer + segmentPreviousValue.slice(segmentInputBuffer.length)).slice(0, segment.len);
+            parts[segment.key] = previewValue;
+            input.value = buildDateTimeTextFromParts(parts);
+            input.setSelectionRange(segment.start, segment.end);
+            validateManualDateTimeInput(input.value);
+            if (segmentInputBuffer.length < segment.len) return;
+
+            const candidate = segmentInputBuffer;
+            if (!isSegmentValueValid(segment.key, candidate, { ...parts, [segment.key]: candidate })) {
+                parts[segment.key] = segmentPreviousValue;
+                input.value = buildDateTimeTextFromParts(parts);
+                segmentInputBuffer = '';
+                validateManualDateTimeInput(input.value, { report: true });
+                selectDateTimeSegment(input, idx);
+                return;
+            }
+
+            parts[segment.key] = candidate;
+            if (segment.key !== 'day') {
+                const maxDay = getDaysInMonth(Number(parts.year), Number(parts.month));
+                if (Number(parts.day) > maxDay) {
+                    parts.day = String(maxDay).padStart(2, '0');
+                }
+            }
+            input.value = buildDateTimeTextFromParts(parts);
+            validateManualDateTimeInput(input.value);
+            applyManualInputDateTime(input.value);
+            if (idx < dateTimeSegments.length - 1) {
+                selectDateTimeSegment(input, idx + 1);
+            } else {
+                selectDateTimeSegment(input, idx);
+            }
+        });
+        manualInput.addEventListener('paste', (event) => {
+            const text = (event.clipboardData || window.clipboardData).getData('text');
+            const date = parseStrictManualDateTimeValue(text);
+            if (!date) {
+                event.preventDefault();
+                validateManualDateTimeInput(text, { report: true });
+                return;
+            }
+            event.preventDefault();
+            const formatted = formatManualDateTimeValue(date);
+            manualInput.value = formatted;
+            applyManualInputDateTime(formatted);
+            selectDateTimeSegment(manualInput, 0);
+        });
+        document.getElementById('dateTimeManualInput').addEventListener('change', (event) => {
+            applyManualInputDateTime(event.target.value);
+        });
+        document.getElementById('dateTimeManualInput').addEventListener('blur', (event) => {
+            isPointerFocusingManualInput = false;
+            applyManualInputDateTime(event.target.value);
+        });
+        if (typeof flatpickr === 'function' && dateTimeCalendarInput) {
+            const numericMonthNames = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
+            const closeCustomSelectLists = (calendarContainer) => {
+                const opened = calendarContainer.querySelectorAll('.fp-custom-select.is-open');
+                opened.forEach((node) => {
+                    node.classList.remove('is-open');
+                    const list = node.querySelector('.fp-custom-select-list');
+                    if (list) list.classList.add('is-hidden');
+                });
+            };
+            const createCustomHeaderSelect = ({ className, options, onSelect }) => {
+                const root = document.createElement('div');
+                root.className = `fp-custom-select ${className}`;
+                const trigger = document.createElement('button');
+                trigger.type = 'button';
+                trigger.className = 'fp-custom-select-trigger';
+                const triggerLabel = document.createElement('span');
+                triggerLabel.className = 'fp-custom-select-trigger-label';
+                trigger.appendChild(triggerLabel);
+                const list = document.createElement('div');
+                list.className = 'fp-custom-select-list is-hidden';
+                const optionButtons = new Map();
+                options.forEach((item) => {
+                    const optionButton = document.createElement('button');
+                    optionButton.type = 'button';
+                    optionButton.className = 'fp-custom-select-option';
+                    optionButton.dataset.value = item.value;
+                    optionButton.textContent = item.label;
+                    optionButton.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        onSelect(item.value);
+                        setValue(item.value);
+                        root.classList.remove('is-open');
+                        list.classList.add('is-hidden');
+                    });
+                    list.appendChild(optionButton);
+                    optionButtons.set(item.value, optionButton);
+                });
+                const setValue = (value) => {
+                    const matched = options.find((item) => item.value === value);
+                    if (matched) {
+                        triggerLabel.textContent = matched.label;
+                    }
+                    optionButtons.forEach((button, buttonValue) => {
+                        button.classList.toggle('is-selected', buttonValue === value);
+                    });
+                };
+                trigger.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    const monthHeader = root.closest('.flatpickr-current-month');
+                    if (!monthHeader) return;
+                    monthHeader.querySelectorAll('.fp-custom-select.is-open').forEach((node) => {
+                        if (node === root) return;
+                        node.classList.remove('is-open');
+                        const nodeList = node.querySelector('.fp-custom-select-list');
+                        if (nodeList) nodeList.classList.add('is-hidden');
+                    });
+                    root.classList.toggle('is-open');
+                    list.classList.toggle('is-hidden', !root.classList.contains('is-open'));
+                });
+                root.appendChild(trigger);
+                root.appendChild(list);
+                return { root, setValue };
+            };
+            const ensureCustomMonthYearHeader = (instance) => {
+                const monthHeader = instance.calendarContainer.querySelector('.flatpickr-current-month');
+                if (!monthHeader) return;
+                instance.calendarContainer.classList.add('with-year-select');
+                if (!monthHeader.querySelector('.fp-custom-year-select')) {
+                    const monthDropdown = monthHeader.querySelector('.flatpickr-monthDropdown-months');
+                    const currentYear = getCurrentYear();
+                    const yearOptions = [];
+                    for (let year = 1900; year <= currentYear; year += 1) {
+                        yearOptions.push({
+                            value: String(year),
+                            label: `${year}年`
+                        });
+                    }
+                    const monthOptions = numericMonthNames.map((label, idx) => ({
+                        value: String(idx),
+                        label
+                    }));
+                    const yearSelect = createCustomHeaderSelect({
+                        className: 'fp-custom-year-select',
+                        options: yearOptions,
+                        onSelect: (selectedYear) => {
+                            const numericYear = Number(selectedYear);
+                            if (!Number.isFinite(numericYear)) return;
+                            instance.changeYear(numericYear);
+                        }
+                    });
+                    const monthSelect = createCustomHeaderSelect({
+                        className: 'fp-custom-month-select',
+                        options: monthOptions,
+                        onSelect: (selectedMonth) => {
+                            const numericMonth = Number(selectedMonth);
+                            if (!Number.isFinite(numericMonth)) return;
+                            instance.changeMonth(numericMonth, false);
+                        }
+                    });
+                    if (monthDropdown) {
+                        monthHeader.insertBefore(yearSelect.root, monthDropdown);
+                        monthHeader.insertBefore(monthSelect.root, monthDropdown);
+                    } else {
+                        monthHeader.prepend(monthSelect.root);
+                        monthHeader.prepend(yearSelect.root);
+                    }
+                    instance._fpCustomYearSelect = yearSelect;
+                    instance._fpCustomMonthSelect = monthSelect;
+                }
+                if (!instance._fpCustomOutsideClickHandler) {
+                    instance._fpCustomOutsideClickHandler = (event) => {
+                        if (!instance.calendarContainer.contains(event.target)) return;
+                        const monthHeaderInside = event.target.closest('.flatpickr-current-month');
+                        if (monthHeaderInside) return;
+                        closeCustomSelectLists(instance.calendarContainer);
+                    };
+                    instance.calendarContainer.addEventListener('mousedown', instance._fpCustomOutsideClickHandler);
+                }
+            };
+            const syncCustomMonthYearHeader = (instance) => {
+                if (instance._fpCustomYearSelect) {
+                    instance._fpCustomYearSelect.setValue(String(instance.currentYear));
+                }
+                if (instance._fpCustomMonthSelect) {
+                    instance._fpCustomMonthSelect.setValue(String(instance.currentMonth));
+                }
+            };
+            chineseDatePicker = flatpickr(dateTimeCalendarInput, {
+                locale: {
+                    ...flatpickr.l10ns.zh,
+                    months: {
+                        shorthand: numericMonthNames,
+                        longhand: numericMonthNames
+                    }
+                },
+                disableMobile: true,
+                enableTime: true,
+                time_24hr: true,
+                minuteIncrement: 1,
+                dateFormat: 'Y/m/d H:i',
+                maxDate: new Date(),
+                positionElement: manualInput,
+                position: 'below left',
+                defaultDate: parseDateTimeValue(manualInput.value) || new Date(),
+                onReady: (_, __, instance) => {
+                    ensureCustomMonthYearHeader(instance);
+                    syncCustomMonthYearHeader(instance);
+                    const timeInputs = instance.calendarContainer.querySelectorAll('.flatpickr-time input');
+                    timeInputs.forEach((input) => {
+                        const forceCaret = () => {
+                            const applyCaret = () => {
+                                if (document.activeElement !== input) return;
+                                const len = input.value.length;
+                                try {
+                                    input.setSelectionRange(len, len);
+                                } catch (_) {
+                                    // flatpickr 的时分输入在部分浏览器是 number 类型，setSelectionRange 会抛错
+                                }
+                            };
+                            window.setTimeout(applyCaret, 0);
+                            window.setTimeout(applyCaret, 16);
+                        };
+                        const wrapper = input.closest('.numInputWrapper');
+                        if (wrapper) {
+                            wrapper.addEventListener('mousedown', (event) => {
+                                if (event.target && event.target.closest && event.target.closest('.arrowUp, .arrowDown')) {
+                                    return;
+                                }
+                                event.preventDefault();
+                                input.focus({ preventScroll: true });
+                                forceCaret();
+                            });
+                        }
+                        input.addEventListener('focus', forceCaret);
+                        input.addEventListener('select', forceCaret);
+                        input.addEventListener('mouseup', forceCaret);
+                        input.addEventListener('click', forceCaret);
+                        input.addEventListener('keyup', forceCaret);
+                    });
+                },
+                onYearChange: (_, __, instance) => {
+                    syncCustomMonthYearHeader(instance);
+                },
+                onMonthChange: (_, __, instance) => {
+                    syncCustomMonthYearHeader(instance);
+                },
+                onChange: (selectedDates, __, instance) => {
+                    if (!selectedDates || !selectedDates.length) return;
+                    const formatted = formatManualDateTimeValue(selectedDates[0]);
+                    manualInput.value = formatted;
+                    applyManualInputDateTime(formatted);
+                    selectDateTimeSegment(manualInput, 0);
+                    const activeEl = document.activeElement;
+                    if (activeEl && activeEl.closest && activeEl.closest('.flatpickr-time')) {
+                        activeEl.blur();
+                    }
+                    const selectedDay = instance.calendarContainer.querySelector('.flatpickr-day.selected');
+                    if (selectedDay && typeof selectedDay.focus === 'function') {
+                        selectedDay.focus({ preventScroll: true });
+                    }
+                },
+                onOpen: (_, __, instance) => {
+                    syncCustomMonthYearHeader(instance);
+                    closeCustomSelectLists(instance.calendarContainer);
+                    const activeTimeInput = instance.calendarContainer.querySelector('.flatpickr-time input:focus');
+                    if (activeTimeInput) {
+                        const len = activeTimeInput.value.length;
+                        window.setTimeout(() => {
+                            if (document.activeElement === activeTimeInput) {
+                                activeTimeInput.setSelectionRange(len, len);
+                            }
+                        }, 0);
+                    }
+                }
+            });
+        }
+        if (dateTimePickerButton) {
+            dateTimePickerButton.addEventListener('click', () => {
+                const currentDate =
+                    parseDateTimeValue(manualInput.value) ||
+                    parseDateTimeValue(document.getElementById('dateTime').value) ||
+                    new Date();
+                if (chineseDatePicker) {
+                    chineseDatePicker.setDate(currentDate, false);
+                    chineseDatePicker.open();
+                }
+            });
+        }
+        if (dateTimeNowButton) {
+            dateTimeNowButton.addEventListener('click', () => {
+                const now = new Date();
+                setDateTimeValue(toDateTimeLocalValue(now));
+                validateManualDateTimeInput(manualInput.value);
+            });
+        }
+    </script>
+</body>
+</html>
