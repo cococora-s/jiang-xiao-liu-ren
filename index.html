@@ -6,9 +6,9 @@
     <title>江氏小六壬排盘器</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/zh.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/zh.js"></script>
     <style>
         @font-face {
             font-family: 'STZHONGS';
@@ -16,11 +16,24 @@
             font-weight: normal;
             font-style: normal;
         }
+        :root {
+            --global-scale: 1;
+            --space-scale: 1;
+        }
         body {
             font-family: 'STZHONGS', serif;
             background: #f5e8cf;
             min-height: 100vh;
             color: #4b3521;
+            overflow-x: hidden;
+            zoom: var(--global-scale, 1);
+        }
+        @supports not (zoom: 1) {
+            body {
+                transform: scale(var(--global-scale, 1));
+                transform-origin: top center;
+                width: calc(100% / var(--global-scale, 1));
+            }
         }
         body, body * {
             color: #4b3521 !important;
@@ -32,14 +45,85 @@
             border: 1px solid #d6bc8b;
             border-radius: 10px;
         }
-        .main-panel {
-            background: #fff8ea;
+        .page-root {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: calc(1rem * var(--space-scale));
+        }
+        .page-title {
+            font-size: 2.25rem !important;
+            margin-top: calc(2.5rem * var(--space-scale));
+            margin-bottom: calc(2.5rem * var(--space-scale));
+            color: #5a381f !important;
+        }
+        .clock-panel {
+            padding: calc(1.5rem * var(--space-scale));
+            width: 100%;
+            max-width: 36rem;
+            margin-bottom: calc(1.5rem * var(--space-scale));
+            text-align: center;
+        }
+        .content-panel {
+            padding:
+                calc(1.5rem * var(--space-scale))
+                calc(2rem * var(--space-scale))
+                calc(2rem * var(--space-scale));
+            width: 100%;
+            max-width: 36rem;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: calc(3rem * var(--space-scale));
             border: none;
+        }
+        .form-section {
+            margin-bottom: calc(2rem * var(--space-scale));
+        }
+        .datetime-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .datetime-row {
+            display: grid;
+            width: 100%;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+        }
+        .datetime-picker-wrap {
+            position: relative;
+            grid-column-start: 2;
+            justify-self: center;
+        }
+        .datetime-picker-box {
+            display: inline-flex;
+            align-items: center;
+            gap: calc(0.75rem * var(--space-scale));
+            background: #fff;
+            border: 1.5px solid #4b3521;
+            border-radius: calc(0.5rem * var(--space-scale));
+            padding:
+                calc(0.625rem * var(--space-scale))
+                calc(0.75rem * var(--space-scale))
+                calc(0.625rem * var(--space-scale))
+                calc(1rem * var(--space-scale));
+            transition: all 0.2s ease;
+        }
+        .datetime-now-button {
+            grid-column-start: 3;
+            justify-self: start;
+            margin-left: calc(0.5rem * var(--space-scale));
+            flex-shrink: 0;
+        }
+        .action-button {
+            margin-top: calc(24px * var(--space-scale)) !important;
+            color: #fff8ea !important;
         }
         .hex-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+            gap: calc(15px * var(--space-scale));
         }
         .palace-card {
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -58,26 +142,8 @@
             font-size: 18px;
             font-weight: 700;
         }
-        .wuxing-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2px 8px;
-            border: 1.5px solid #4b3521;
-            border-radius: 6px;
-            line-height: 1.1;
-            background: rgba(255, 248, 234, 0.9);
-        }
-        .liushen-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2px 8px;
-            border: 1.5px solid #4b3521;
-            border-radius: 6px;
-            line-height: 1.1;
-            background: rgba(255, 248, 234, 0.9);
-        }
+        .wuxing-badge,
+        .liushen-badge,
         .liuqin-badge {
             display: inline-flex;
             align-items: center;
@@ -86,6 +152,12 @@
             border: 1.5px solid #4b3521;
             border-radius: 6px;
             line-height: 1.1;
+        }
+        .wuxing-badge,
+        .liushen-badge {
+            background: rgba(255, 248, 234, 0.9);
+        }
+        .liuqin-badge {
             background: transparent;
         }
         .slot-liushen {
@@ -155,15 +227,9 @@
         .slot-palace-name.show-underline {
             background-size: calc(100% + 0px) 2px;
         }
-        .active-palace {
-            background: #f3d8a6 !important;
-            border-color: transparent !important;
-            z-index: 10;
-        }
         /* 调小 flatpickr 顶部月份/年份字号 */
         .flatpickr-current-month,
-        .flatpickr-current-month input.cur-year,
-        .flatpickr-calendar .flatpickr-current-month .fp-custom-select-trigger {
+        .flatpickr-current-month input.cur-year {
             font-size: 14px !important;
             font-weight: 700 !important;
         }
@@ -176,16 +242,50 @@
             align-items: center;
             justify-content: center;
             gap: 30px;
-            transform: translateX(37px);
+            transform: translateX(30px);
             overflow: visible !important;
             z-index: 6;
-            pointer-events: auto;
+            /* Do not block left/right month arrow hit areas. */
+            pointer-events: none;
         }
         .flatpickr-calendar.with-year-select .flatpickr-month {
             overflow: visible !important;
         }
+        .flatpickr-prev-month svg,
+        .flatpickr-next-month svg {
+            display: none !important;
+        }
+        .flatpickr-prev-month,
+        .flatpickr-next-month {
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            line-height: 1;
+            font-size: 0 !important;
+            color: #4b3521 !important;
+        }
+        .flatpickr-prev-month > *,
+        .flatpickr-next-month > * {
+            display: none !important;
+        }
+        .flatpickr-prev-month::after,
+        .flatpickr-next-month::after {
+            font-family: Arial, "Microsoft YaHei", sans-serif !important;
+            font-size: 26px;
+            line-height: 1;
+            color: #4b3521 !important;
+        }
+        .flatpickr-prev-month::after {
+            content: "‹";
+        }
+        .flatpickr-next-month::after {
+            content: "›";
+        }
         .flatpickr-calendar .flatpickr-current-month .fp-custom-select {
             position: relative;
+            pointer-events: auto;
         }
         .flatpickr-calendar .flatpickr-current-month .fp-custom-select-trigger {
             margin-left: 0;
@@ -378,13 +478,13 @@
         }
     </style>
 </head>
-<body class="flex flex-col items-center justify-start p-4">
+<body class="page-root">
 
-    <h1 class="text-3xl md:text-4xl font-bold text-center mt-10 mb-10 tracking-[0.2em]" style="color: #5a381f;">
+    <h1 class="page-title font-bold text-center tracking-[0.2em]">
         江氏小六壬排盘器
     </h1>
 
-    <div class="glass p-6 w-full max-w-xl mb-6 text-center border-amber-500/20">
+    <div class="glass clock-panel border-amber-500/20">
         <div id="solarClock" class="font-mono-custom text-2xl tracking-[0.05em] text-amber-500/90">
             0000年0月0日 00:00:00
         </div>
@@ -393,13 +493,13 @@
         </div>
     </div>
 
-    <div class="glass main-panel px-8 pb-8 pt-6 w-full max-w-xl relative overflow-hidden mb-12">
-        <div class="space-y-4 mb-8">
-            <div class="flex flex-col items-center">
+    <div class="glass content-panel">
+        <div class="space-y-4 form-section">
+            <div class="datetime-section">
                 <label class="text-[18px] uppercase tracking-widest text-amber-500/70 mb-2 font-bold text-center">起卦时间</label>
-                <div class="grid w-full grid-cols-[1fr_auto_1fr] items-center">
-                    <div id="dateTimePickerWrap" class="relative col-start-2 justify-self-center">
-                        <div class="inline-flex bg-white border-[1.5px] border-[#4b3521] rounded-lg py-2.5 pl-4 pr-3 text-base text-amber-900 font-mono-custom font-bold items-center gap-3 focus-within:border-[#4b3521] transition">
+                <div class="datetime-row">
+                    <div id="dateTimePickerWrap" class="datetime-picker-wrap">
+                        <div class="datetime-picker-box text-base text-amber-900 font-mono-custom font-bold focus-within:border-[#4b3521]">
                             <input
                                 type="text"
                                 id="dateTimeManualInput"
@@ -429,7 +529,7 @@
                     <button
                         type="button"
                         id="dateTimeNowButton"
-                        class="col-start-3 justify-self-start ml-2 shrink-0 rounded-lg bg-[#5a381f] px-3 py-2 text-sm font-bold text-white hover:bg-[#4b3521] transition"
+                        class="datetime-now-button rounded-lg bg-[#5a381f] px-3 py-2 text-sm font-bold text-white hover:bg-[#4b3521] transition"
                         style="color: #fff8ea !important;"
                     >
                         当前时间
@@ -437,14 +537,13 @@
                 </div>
                 <div id="selectedDateLunarInfo" class="mt-2 text-base text-amber-900/70 font-mono-custom whitespace-nowrap text-center"></div>
             </div>
-            <button onclick="startCalculation()" class="w-full bg-[#5a381f] hover:bg-[#4b3521] text-[#fff8ea] font-bold py-4 rounded-xl transition-all active:scale-95 tracking-[0.5em] text-2xl border border-[#5a381f]/40" style="margin-top: 24px !important; color: #fff8ea !important;">
+            <button onclick="startCalculation()" class="action-button w-full bg-[#5a381f] hover:bg-[#4b3521] font-bold py-4 rounded-xl transition-all active:scale-95 tracking-[0.5em] text-2xl border border-[#5a381f]/40">
                 开始排盘
             </button>
         </div>
 
         <div id="palaceGrid" class="hex-grid mb-8">
         </div>
-
     </div>
 
     <script>
@@ -490,6 +589,18 @@
             "金": "#b8860b",
             "水": "#1565c0"
         };
+        function updateGlobalScale() {
+            const baseWidth = 600;
+            const minScale = 0.1;
+            const rawScale = Math.max(minScale, Math.min(1, window.innerWidth / baseWidth));
+            const shrinkStrength = 0.8;
+            const scale = 1 - (1 - rawScale) * shrinkStrength;
+            const scaleStr = scale.toFixed(3);
+            document.documentElement.style.setProperty('--global-scale', scaleStr);
+            document.documentElement.style.setProperty('--space-scale', scaleStr);
+        }
+        updateGlobalScale();
+        window.addEventListener('resize', updateGlobalScale);
         function colorizeGanZhiText(text) {
             return Array.from(text).map((ch) => {
                 const color = wuxingColorMap[ch];
@@ -712,7 +823,6 @@
         }
 
         function clearCurrentCalculationResult() {
-            document.querySelectorAll('.palace-card').forEach(el => el.classList.remove('active-palace'));
             clearPalaceLayoutTexts();
             setPalaceNameUnderlineVisible(false);
         }
@@ -920,7 +1030,6 @@
             const targetDate = inputVal ? new Date(inputVal) : new Date();
             const lunar = Lunar.fromDate(targetDate);
 
-            document.querySelectorAll('.palace-card').forEach(el => el.classList.remove('active-palace'));
             clearPalaceLayoutTexts();
             setPalaceNameUnderlineVisible(false);
 
@@ -953,6 +1062,7 @@
         updateClock();
         initGrid();
         ensureDefaultCurrentDateTime();
+
         const manualInput = document.getElementById('dateTimeManualInput');
         const dateTimePickerButton = document.getElementById('dateTimePickerButton');
         const dateTimeNowButton = document.getElementById('dateTimeNowButton');
@@ -1214,6 +1324,8 @@
                 time_24hr: true,
                 minuteIncrement: 1,
                 dateFormat: 'Y/m/d H:i',
+                prevArrow: '‹',
+                nextArrow: '›',
                 maxDate: new Date(),
                 positionElement: manualInput,
                 position: 'below left',
