@@ -4,4 +4,4 @@ Vibe Coding 产物
 
 目前只有日时起卦，之后将更新数字、时刻起卦等方法
 
-<img width="921" height="1388" alt="image" src="https://github.com/user-attachments/assets/4cd459ea-3cf2-475b-bd37-2b100641faa3" />
+<img width="460" height="694" alt="image" src="https://github.com/user-attachments/assets/4cd459ea-3cf2-475b-bd37-2b100641faa3" />

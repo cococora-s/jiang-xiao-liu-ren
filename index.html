@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>江氏小六壬排盘器</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入农历核心库 -->
     <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -385,7 +384,6 @@
         江氏小六壬排盘器
     </h1>
 
-    <!-- 动态时间显示面板 -->
     <div class="glass p-6 w-full max-w-xl mb-6 text-center border-amber-500/20">
         <div id="solarClock" class="font-mono-custom text-2xl tracking-[0.05em] text-amber-500/90">
             0000年0月0日 00:00:00
@@ -395,9 +393,7 @@
         </div>
     </div>
 
-    <!-- 主容器 -->
     <div class="glass main-panel px-8 pb-8 pt-6 w-full max-w-xl relative overflow-hidden mb-12">
-        <!-- 输入区域 -->
         <div class="space-y-4 mb-8">
             <div class="flex flex-col items-center">
                 <label class="text-[18px] uppercase tracking-widest text-amber-500/70 mb-2 font-bold text-center">起卦时间</label>
@@ -446,22 +442,13 @@
             </button>
         </div>
 
-        <!-- 六壬掌中盘 -->
         <div id="palaceGrid" class="hex-grid mb-8">
-            <!-- 宫位会自动渲染 -->
         </div>
 
     </div>
 
     <script>
-        const palaces = [
-            { name: "大安", nature: "吉", desc: "大安事事昌，求财在坤方，失物去不远，宅舍保安康。" },
-            { name: "留连", nature: "凶", desc: "留连事难成，求谋日未明，官事只宜缓，去者未回程。" },
-            { name: "速喜", nature: "吉", desc: "速喜喜临门，求财向南行，失物申未午，逢人路上寻。" },
-            { name: "赤口", nature: "凶", desc: "赤口主口舌，官非切宜防，失物急去寻，行人有惊慌。" },
-            { name: "小吉", nature: "吉", desc: "小吉最吉祥，路上好商量，阴人来报喜，失物在坤方。" },
-            { name: "空亡", nature: "凶", desc: "空亡事不祥，阴人多乖张，求财无利益，行人有灾殃。" }
-        ];
+        const palaces = ["大安", "留连", "速喜", "赤口", "小吉", "空亡"];
         const zhiOrder = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"];
         const palaceWuxingMap = ["木", "水", "火", "金", "木", "土"];
         const zhiWuxingMap = {
@@ -511,11 +498,9 @@
             }).join('');
         }
 
-        // 更新时钟逻辑
         function updateClock() {
             const now = new Date();
-            
-            // 公历显示
+
             const solarStr = now.getFullYear() + '年' + 
                 (now.getMonth() + 1) + '月' + 
                 now.getDate() + '日 ' + 
@@ -524,18 +509,16 @@
                 String(now.getSeconds()).padStart(2, '0');
             document.getElementById('solarClock').innerText = solarStr;
 
-            // 农历显示 (使用 Lunar 库)
             const lunar = Lunar.fromDate(now);
             const lunarStr = `${lunar.getYearInGanZhi()}年 ${lunar.getMonthInGanZhi()}月 ${lunar.getDayInGanZhi()}日 ${lunar.getTimeInGanZhi()}时 ${lunar.getMonthInChinese()}月${lunar.getDayInChinese()}`;
             document.getElementById('lunarClock').innerHTML = colorizeGanZhiText(lunarStr);
         }
 
-        // 初始化界面
         function initGrid() {
             const grid = document.getElementById('palaceGrid');
             const displayOrder = [1, 2, 3, 0, 5, 4];
             grid.innerHTML = displayOrder.map((palaceIndex) => {
-                const p = palaces[palaceIndex];
+                const palaceName = palaces[palaceIndex];
                 const palaceWuxing = palaceWuxingMap[palaceIndex];
                 const underlineColor = wuxingElementColorMap[palaceWuxing] || "#4b3521";
                 return `
@@ -546,7 +529,7 @@
                     <span class="palace-slot slot-liuqin palace-liuqin"></span>
                     <span class="palace-slot slot-daytime palace-daytime"></span>
                     <span class="palace-slot slot-body palace-body"></span>
-                    <span class="palace-slot slot-palace-name" style="color: #000 !important; --palace-underline-color: ${underlineColor};">${p.name}</span>
+                    <span class="palace-slot slot-palace-name" style="color: #000 !important; --palace-underline-color: ${underlineColor};">${palaceName}</span>
                 </div>
             `;
             }).join('');
@@ -631,21 +614,17 @@
             return new Date(year, month, 0).getDate();
         }
 
-        function getCurrentYear() {
-            return new Date().getFullYear();
-        }
-
         function isSegmentValueValid(segmentKey, candidate, parts) {
             const numeric = Number(candidate);
             if (!Number.isFinite(numeric)) return false;
-            if (segmentKey === 'year') return numeric >= 1 && numeric <= getCurrentYear();
+            if (segmentKey === 'year') return numeric >= 1 && numeric <= new Date().getFullYear();
             if (segmentKey === 'month') return numeric >= 1 && numeric <= 12;
             if (segmentKey === 'hour') return numeric >= 0 && numeric <= 23;
             if (segmentKey === 'minute') return numeric >= 0 && numeric <= 59;
             if (segmentKey === 'day') {
                 const year = Number(parts.year);
                 const month = Number(parts.month);
-                if (month < 1 || month > 12 || year < 1 || year > getCurrentYear()) return false;
+                if (month < 1 || month > 12 || year < 1 || year > new Date().getFullYear()) return false;
                 return numeric >= 1 && numeric <= getDaysInMonth(year, month);
             }
             return false;
@@ -662,7 +641,7 @@
             const day = Number(dStr);
             const hour = Number(hStr);
             const minute = Number(minStr);
-            if (year > getCurrentYear()) return null;
+            if (year > new Date().getFullYear()) return null;
             if (month < 1 || month > 12 || day < 1 || day > 31 || hour > 23 || minute > 59) return null;
             const date = new Date(year, month - 1, day, hour, minute, 0, 0);
             if (
@@ -893,7 +872,6 @@
             const liuShenOrder = ['青龙', '朱雀', '勾陈', '白虎', '玄武', '腾蛇'];
             const bodyZhiIndex = zhiOrder.indexOf(bodyZhi);
             if (bodyZhiIndex === -1) return [];
-            // 从大安起数：子丑寅卯辰巳午未申酉戌亥，身宫地支落到哪一宫，该宫起青龙
             const qingLongStartPalaceIndex = bodyZhiIndex % 6;
             const assignments = [];
             for (let step = 0; step < 6; step++) {
@@ -906,7 +884,6 @@
         }
 
         function calculateWuXingAssignments(dayPalaceIndex) {
-            // 日时起卦时，以日宫作为对宫起点：该宫起木星，后续宫位顺排火土金水天空
             const wuXingOrder = ['木星', '火星', '土星', '金星', '水星', '天空'];
             const assignments = [];
             for (let step = 0; step < 6; step++) {
@@ -943,48 +920,38 @@
             const targetDate = inputVal ? new Date(inputVal) : new Date();
             const lunar = Lunar.fromDate(targetDate);
 
-            // 准备排盘
             document.querySelectorAll('.palace-card').forEach(el => el.classList.remove('active-palace'));
             clearPalaceLayoutTexts();
             setPalaceNameUnderlineVisible(false);
 
-            // 日宫：从第一宫大安起，按农历日数（含起点）顺数
             const dayCount = lunar.getDay();
             const dayIndex = (dayCount - 1) % 6;
 
-            // 时宫：从日宫起，按时辰地支序数（含起点）顺数
             const timeZhi = lunar.getTimeZhi();
             const bodyCount = getShiChenCount(timeZhi);
             const bodyIndex = (dayIndex + bodyCount - 1) % 6;
-            
-            // 直接显示最终结果，不播放数宫动画
+
             setDayLabel(dayIndex);
             setTimeAndBodyLabel(dayIndex, bodyIndex);
 
-            // 地支：时宫排当前时支，后续各宫按地支序每次跳过一支（+2）依次排布
             const arrangedPalaceZhi = arrangePalaceZhiByTimePalace(bodyIndex, timeZhi);
             arrangedPalaceZhi.forEach(({ palaceIndex, zhi }) => setZhiLabel(palaceIndex, zhi));
 
-            // 六亲：以身宫地支为“我”，按生克关系取六亲；若无兄弟，顺时针首个土宫补兄弟
             const liuQinAssignments = calculateLiuQinAssignments(arrangedPalaceZhi, bodyIndex);
             liuQinAssignments.forEach(({ palaceIndex, liuQin }) => setLiuQinLabel(palaceIndex, liuQin));
 
-            // 六神：以身宫地支（时支）从大安起数，落宫起青龙，后续宫位依次朱雀、勾陈、白虎、玄武、腾蛇
             const liuShenAssignments = calculateLiuShenAssignments(timeZhi);
             liuShenAssignments.forEach(({ palaceIndex, liuShen }) => setLiuShenLabel(palaceIndex, liuShen));
 
-            // 五星：日时起卦时，以日宫起木星，后续宫位依次火星、土星、金星、水星、天空
             const wuXingAssignments = calculateWuXingAssignments(dayIndex);
             wuXingAssignments.forEach(({ palaceIndex, wuXing }) => setWuXingLabel(palaceIndex, wuXing));
 
-            // 显示盘面
             setPalaceNameUnderlineVisible(true);
         }
 
         setInterval(updateClock, 1000);
         updateClock();
         initGrid();
-        // 初始化起卦时间选择器
         ensureDefaultCurrentDateTime();
         const manualInput = document.getElementById('dateTimeManualInput');
         const dateTimePickerButton = document.getElementById('dateTimePickerButton');
@@ -998,7 +965,6 @@
             if (!currentDate) {
                 setDateTimeValue(toDateTimeLocalValue(new Date()));
             }
-            // 鼠标/触摸点击进入时，等待 click 事件再按实际点击位置选段
             if (isPointerFocusingManualInput) return;
             const idx = getSegmentIndexByPosition(event.target.selectionStart ?? 0);
             selectDateTimeSegment(event.target, idx);
@@ -1177,7 +1143,7 @@
                 instance.calendarContainer.classList.add('with-year-select');
                 if (!monthHeader.querySelector('.fp-custom-year-select')) {
                     const monthDropdown = monthHeader.querySelector('.flatpickr-monthDropdown-months');
-                    const currentYear = getCurrentYear();
+                    const currentYear = new Date().getFullYear();
                     const yearOptions = [];
                     for (let year = 1900; year <= currentYear; year += 1) {
                         yearOptions.push({
@@ -1263,9 +1229,7 @@
                                 const len = input.value.length;
                                 try {
                                     input.setSelectionRange(len, len);
-                                } catch (_) {
-                                    // flatpickr 的时分输入在部分浏览器是 number 类型，setSelectionRange 会抛错
-                                }
+                                } catch (_) {}
                             };
                             window.setTimeout(applyCaret, 0);
                             window.setTimeout(applyCaret, 16);
