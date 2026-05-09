@@ -307,13 +307,17 @@
             border-radius: var(--notes-select-border-radius);
         }
         .notes-field-textarea {
-            min-height: 6rem;
-            height: auto;
             padding: 0.55rem 0.75rem;
-            line-height: 1.4;
-            resize: vertical;
+            line-height: 1.35;
+            resize: none;
             white-space: pre-wrap;
-            overflow-wrap: anywhere;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+        #specificQuestion {
+            min-height: 3rem;
+            height: auto;
+            overflow-y: hidden;
         }
         .notes-field-select option {
             font-size: var(--notes-font-size);
@@ -403,6 +407,10 @@
         }
         .notes-entry-row .notes-field-input {
             height: var(--notes-palace-size, 6rem);
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            overflow-x: hidden;
         }
         .notes-entry-row.is-no-palace .notes-field-input {
             width: 100%;
@@ -1286,7 +1294,7 @@
             </div>
             <div class="notes-field-row">
                 <label for="specificQuestion" class="notes-field-label">具体问题</label>
-                <textarea id="specificQuestion" class="notes-field-input notes-field-textarea"></textarea>
+                <textarea id="specificQuestion" class="notes-field-input notes-field-textarea" rows="2" wrap="soft"></textarea>
             </div>
             <div class="notes-field-row">
                 <span class="notes-field-label"></span>
@@ -1870,6 +1878,7 @@
             }
             if (specificQuestionInput) {
                 specificQuestionInput.value = '';
+                autoResizeTextarea(specificQuestionInput, 48);
             }
             if (notesEntriesContainer) {
                 notesEntriesContainer.innerHTML = '';
@@ -2035,6 +2044,32 @@
         let isNoteRowDeleteMode = false;
         let activeEditingNoteId = null;
         const noteRowAnimationTimers = new WeakMap();
+        function autoResizeTextarea(textareaEl, minHeightPx = 0) {
+            if (!(textareaEl instanceof HTMLTextAreaElement)) return;
+            textareaEl.style.height = 'auto';
+            const targetHeight = Math.max(minHeightPx, textareaEl.scrollHeight);
+            textareaEl.style.height = `${targetHeight}px`;
+        }
+        function bindAutoResizeTextarea(textareaEl, minHeightPx = 0) {
+            if (!(textareaEl instanceof HTMLTextAreaElement)) return;
+            autoResizeTextarea(textareaEl, minHeightPx);
+            textareaEl.addEventListener('input', () => {
+                autoResizeTextarea(textareaEl, minHeightPx);
+            });
+        }
+        const normalizeLegacyNoteRowInputs = () => {
+            if (!notesEntriesContainer) return;
+            const legacyInputs = notesEntriesContainer.querySelectorAll('.notes-entry-row input.notes-field-input');
+            legacyInputs.forEach((inputEl) => {
+                const textArea = document.createElement('textarea');
+                textArea.className = `${inputEl.className} notes-field-textarea`.trim();
+                textArea.placeholder = inputEl.placeholder || '请输入笔记内容';
+                textArea.value = inputEl.value || '';
+                textArea.rows = 3;
+                textArea.wrap = 'soft';
+                inputEl.replaceWith(textArea);
+            });
+        };
         const getNotesRowsSnapshot = () => {
             if (!notesEntriesContainer) return [];
             return Array.from(notesEntriesContainer.querySelectorAll('.notes-entry-row')).map((row) => {
@@ -2331,6 +2366,7 @@
             }
             if (specificQuestionInput && typeof parsed.specificQuestion === 'string') {
                 specificQuestionInput.value = parsed.specificQuestion;
+                autoResizeTextarea(specificQuestionInput, 48);
             }
             if (notesEntriesContainer) {
                 notesEntriesContainer.innerHTML = '';
@@ -2738,10 +2774,11 @@
             });
             picker.appendChild(trigger);
             picker.appendChild(popup);
-            const textInput = document.createElement('input');
-            textInput.type = 'text';
-            textInput.className = 'notes-field-input';
+            const textInput = document.createElement('textarea');
+            textInput.className = 'notes-field-input notes-field-textarea';
             textInput.placeholder = '请输入笔记内容';
+            textInput.rows = 3;
+            textInput.wrap = 'soft';
             const dragHandle = document.createElement('button');
             dragHandle.type = 'button';
             dragHandle.className = 'notes-entry-handle';
@@ -2813,7 +2850,9 @@
             bindNoteRowReorderEvents(row, dragHandle);
             return row;
         };
+        bindAutoResizeTextarea(specificQuestionInput, 48);
         if (addNoteRowButton && notesEntriesContainer) {
+            normalizeLegacyNoteRowInputs();
             addNoteRowButton.addEventListener('click', () => {
                 setNoteRowDeleteMode(false);
                 notesEntriesContainer.appendChild(createNoteEntryRow());
