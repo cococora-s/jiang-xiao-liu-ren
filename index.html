@@ -17,73 +17,685 @@
             font-style: normal;
         }
         :root {
-            --global-scale: 1;
-            --space-scale: 1;
+            /* ===== 页面背景变量 ===== */
+            --page-bg-color: #f5e8cf;                       /* 页面背景色 */
+            --page-text-color: #4b3521;                     /* 页面基础文字色 */
+            --page-title-font-size: 2.25rem;                  /* 标题字号 */
+
+            /* ===== 面板容器变量 ===== */
+            --panel-bg-color: #fff8ea;                      /* 面板背景色 */
+            --panel-border-color: #d6bc8b;                  /* 面板边框色 */
+            --panel-border-width: 0px;                        /* 面板边框粗细 */
+            --panel-border-radius: 10px;                      /* 面板圆角 */
+            --panel-gap: 0.9rem;                              /* 面板间距 */
+
+            /* ===== 按钮主题变量 ===== */
+            --action-btn-text-color: #fff8ea;               /* 按钮文字颜色 */
+            --action-btn-bg-color: #5a381f;                 /* 按钮背景颜色 */
+            --action-btn-hover-bg-color: #4b3521;           /* 按钮悬停背景颜色 */
+            --action-btn-border-color: rgb(255, 255, 255);  /* 按钮边框颜色 */
+            --action-btn-border-width: 0px;                   /* 按钮边框粗细 */
+            --action-btn-radius: 1rem;                        /* 按钮圆角 */
+
+            /* ===== 下拉项变量 ===== */
+            --custom-select-highlight-color: #f5e8cf;         /* 下拉项高亮色 */
+            --custom-select-option-line-height: 2.5rem;          /* 自定义下拉项行距（通用） */
+            --custom-select-option-radius: 0.4rem;            /* 拉项圆角 */
+            --custom-select-slider-height: 15rem;             /* 下拉列表高度（通用） */
+   
+            /* ===== 六宫容器变量 ===== */
+            --palace-card-border-width: 2px;                  /* 六宫边框粗细 */
+            --palace-card-border-color: #6c5347;            /* 六宫边框颜色 */
+            --palace-card-border-radius: 10px;                /* 六宫圆角 */
+            /* ===== 五星/六神/六亲 ===== */
+            --palace-badge-font-size: 1.6rem;                  /* 字号 */
+            --palace-badge-side-gap: 0.5rem;                   /* 左右距边缘 */
+            --palace-badge-top-gap: 0.5rem;                    /* 顶部距边缘 */
+            --palace-zhi-font-size: 1.9rem;                    /* 地支字号 */
+            --palace-name-font-size: 2rem;                     /* 宫位名字号 */
+            --palace-marker-font-size: 1.4rem;                 /* “身/时/日”标志字号 */
+            /* ===== 起卦时间栏变量 ===== */
+            --datetime-picker-text-size: 1.3rem;               /* 起卦时间栏文字字号 */
+            --datetime-picker-calendar-btn-size: 1.6rem;       /* 起卦时间栏日历按钮大小 */
+            --datetime-picker-border-width: 1.5px;             /* 起卦时间栏边框粗细 */
+            --datetime-now-button-text-size: 1.1rem;           /* “当前时间”按钮文字字号 */
+
+            /* ===== 日历容器变量 ===== */
+            --calendar-weekday-text-size: 1rem;                /* 星期字号 */
+            --calendar-date-text-size: 1.3rem;                 /* 日期字号 */
+            --calendar-date-cell-height: 3rem;                 /* 单元格高度 */
+            --calendar-grid-inline-padding: 1.4rem;            /* 网格左右内边距 */
+            --calendar-base-text-size: 1.3rem;                 /* 日历通用字号 */
+            --calendar-header-title-size: 1.3rem;              /* 年/月标题字号 */
+            --calendar-header-title-gap: 1rem;                 /* 年/月标题间距 */
+            --calendar-header-title-offset-x: 0.9rem;          /* 年/月标题横向偏移 */
+            --calendar-nav-arrow-size: 2rem;                   /* 左右切换箭头字号 */
+            
+            /* ===== 笔记面板变量 ===== */
+            --notes-font-size: 1.4rem;                         /* 笔记面板字段字号 */
+            --notes-select-border-radius: 0.4rem;                /* 笔记输入框圆角（含下拉框） */
+            --notes-select-border-width: 2px;                  /* 笔记输入框边框粗细（含下拉框） */
+            --notes-select-border-color: #4b3521;               /* 笔记输入框边框颜色（含下拉框） */
+            --notes-select-bg-color: #ffffff;                /* 笔记输入框背景色（含下拉框） */
+            --notes-handler-bg-color: #f5e8cf;                 /* 笔记条目 handler 按钮背景色 */
+            --notes-drag-placeholder-bg-color: rgba(75, 53, 33, 0.05); /* 拖动时预览占位背景色 */
+            --notes-add-btn-bg-color: #f5e8cf;                 /* 笔记 + / - 按钮默认背景色 */
+            --notes-add-btn-main-color: #5a381fba;             /* 笔记 + / - 按钮默认边框/文字色 */
+            --notes-add-btn-hover-bg-color: #e0c9a795;           /* 笔记 + / - 按钮悬停背景色 */
+            --notes-add-btn-hover-border-color: #5a381f;       /* 笔记 + / - 按钮悬停边框色 */
+            --notes-add-btn-strong-color: #4b3521;             /* 笔记 + / - 按钮悬停文字/按下边框文字色 */
+            --notes-add-btn-active-bg-color: #e0c9a795;          /* 笔记 + / - 按钮按下/激活背景色 */
+            
+            /* ===== 宫位图变量 ===== */
+            --notes-palace-unselected-fill-color: rgba(255, 255, 255, 0); /* 宫位图未选择填充色 */
+            --notes-palace-selected-fill-color: transparent; /* 宫位图已选择填充色 */
+            --notes-palace-dash-thickness: 2px; /* 宫位图虚线粗细 */
+            --notes-palace-dash-gap: 0.5rem; /* 宫位图虚线稀疏程度（间隔） */
+            --notes-palace-dash-outset: 0.25rem; /* 宫位图虚线外扩程度 */
+        
         }
+        html {
+            font-size: 20px;
+        }
+        @media (max-width: 800px) {
+            html {
+                font-size: calc(20 * 100vw / 800);
+            }
+        }
+
         body {
-            font-family: 'STZHONGS', serif;
-            background: #f5e8cf;
+            background: var(--page-bg-color);
             min-height: 100vh;
             margin: 0;
-            color: #4b3521;
             overflow-x: hidden;
-        }
-        #scaleViewport {
-            width: 100%;
-            min-height: 100vh;
-            overflow: hidden;
-        }
-        #scaleRoot {
-            position: relative;
-            left: 50%;
-            transform: translateX(-50%) scale(var(--global-scale, 1));
-            transform-origin: top center;
-            width: calc(100% / var(--global-scale, 1));
+            font-size: 1rem;
+            padding-inline: 0.75rem;
         }
         body, body * {
-            color: #4b3521 !important;
+            color: var(--page-text-color) !important;
             font-family: 'STZHONGS', serif !important;
         }
-        .font-mono-custom { font-family: 'STZHONGS', serif !important; }
-        .glass {
-            background: #fff8ea;
-            border: 1px solid #d6bc8b;
-            border-radius: 10px;
+        .theme-panel {
+            background: var(--panel-bg-color);
+            border: var(--panel-border-width) solid var(--panel-border-color);
+            border-radius: var(--panel-border-radius);
         }
         .page-root {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            padding: calc(1rem * var(--space-scale));
+            width: 100%;
+            max-width: min(100%, 48rem);
+            margin: 0 auto;
+            padding: 1rem;
+            box-sizing: border-box;
         }
         .page-title {
-            font-size: 2.25rem !important;
-            margin-top: calc(2.5rem * var(--space-scale));
-            margin-bottom: calc(2.5rem * var(--space-scale));
+            font-size: var(--page-title-font-size) !important;
+            margin-top: 2rem;
+            margin-bottom: 1.8rem;
             color: #5a381f !important;
         }
-        .clock-panel {
-            padding: calc(1.5rem * var(--space-scale));
+        .page-header {
+            position: relative;
             width: 100%;
-            max-width: 36rem;
-            margin-bottom: calc(1.5rem * var(--space-scale));
+        }
+        .notes-library-open-button {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 2.3rem;
+            padding: 0 0.9rem;
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+        .notes-library-open-button:active {
+            transform: translateY(-50%) scale(0.94);
+        }
+        .notes-library-panel {
+            position: absolute;
+            top: var(--notes-library-panel-top, 5.2rem);
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(calc(100% - 1.5rem), 40rem);
+            padding: 0.9rem 1rem 1rem;
+            border: 2px solid var(--action-btn-bg-color);
+            z-index: 1200;
+        }
+        .notes-library-panel.is-hidden {
+            display: none;
+        }
+        .notes-library-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.8rem;
+        }
+        .notes-library-header-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+        }
+        .notes-library-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .notes-library-close-button {
+            height: 2rem;
+            padding: 0 0.7rem;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+        .notes-library-clear-button {
+            height: 2rem;
+            padding: 0 0.7rem;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+        .notes-library-empty {
+            font-size: 1rem;
+            opacity: 0.75;
+            text-align: center;
+            padding: 0.6rem 0;
+        }
+        .notes-library-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            max-height: 25rem;
+            overflow-y: auto;
+            padding-right: 0.2rem;
+        }
+        .notes-library-item {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 0.75rem;
+            align-items: center;
+            border: 2px solid var(--notes-select-border-color);
+            border-radius: var(--notes-select-border-radius);
+            background: var(--notes-select-bg-color);
+            padding: 0.55rem 0.65rem;
+            cursor: pointer;
+        }
+        .notes-library-item:hover {
+            background: #f5e8cf;
+        }
+        .notes-library-item-time {
+            font-size: 0.95rem;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+        .notes-library-item-desc {
+            font-size: 0.95rem;
+            line-height: 1.2;
+            margin-top: 0.2rem;
+            opacity: 0.9;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .notes-library-delete-button {
+            height: 2rem;
+            padding: 0 0.75rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .time-panel {
+            padding: 1rem;
+            width: 100%;
+            max-width: 100%;
+            margin-bottom: var(--panel-gap);
             text-align: center;
         }
-        .content-panel {
+        .main-panel {
             padding:
-                calc(1.5rem * var(--space-scale))
-                calc(2rem * var(--space-scale))
-                calc(2rem * var(--space-scale));
+                1rem
+                1.3rem
+                1.3rem;
             width: 100%;
-            max-width: 36rem;
+            max-width: 100%;
             position: relative;
             overflow: hidden;
-            margin-bottom: calc(3rem * var(--space-scale));
+            margin-bottom: var(--panel-gap);
+        }
+        .notes-panel {
+            width: 100%;
+            max-width: 100%;
+            min-height: 8rem;
+            margin-bottom: var(--panel-gap);
+            padding:
+                1.5rem
+                1.3rem
+                1.3rem;
+        }
+        .notes-form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+        .notes-field-row {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .notes-field-label {
+            font-size: var(--notes-font-size);
+            font-weight: 700;
+            line-height: 1;
+            white-space: nowrap;
+        }
+        .notes-field-input,
+        .notes-field-select {
+            width: 100%;
+            height: 3rem;
+            font-size: var(--notes-font-size);
+            font-weight: 700;
+            padding: 0 0.75rem;
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+        .notes-field-input {
+            background: var(--notes-select-bg-color);
+            border: var(--notes-select-border-width) solid var(--notes-select-border-color);
+            border-radius: var(--notes-select-border-radius);
+        }
+        .notes-field-select option {
+            font-size: var(--notes-font-size);
+        }
+        .notes-field-select-wrap {
+            position: relative;
+        }
+        .notes-field-select-wrap.notes-custom-select-ready::after {
+            display: none;
+        }
+        .notes-query-item-wrap {
+            width: 7rem;
+            justify-self: start;
+        }
+        .notes-ai-button {
+            width: 100%;
+            height: 3rem;
+            font-size: var(--notes-font-size);
+            font-weight: 700;
+            color: var(--action-btn-text-color);
+            background: var(--action-btn-bg-color);
+            border: var(--action-btn-border-width) solid var(--action-btn-border-color);
+            border-radius: var(--action-btn-radius);
+            transition: background 0.2s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .notes-ai-button:hover {
+            background: var(--action-btn-hover-bg-color);
+        }
+        .notes-entries {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+        .notes-entry-row {
+            display: grid;
+            grid-template-columns: minmax(0, var(--notes-palace-size, 6rem)) minmax(0, 1fr) auto;
+            gap: 0.6rem;
+            align-items: stretch;
+            transition: transform 0.16s ease, opacity 0.16s ease;
+            touch-action: pan-y;
+        }
+        .notes-entry-row.is-dragging {
+            opacity: 0.9;
+            cursor: grabbing;
+            pointer-events: none;
+            transition: none !important;
+            will-change: left, top;
+        }
+        .notes-entries.is-row-sorting {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .notes-entry-placeholder {
+            width: 100%;
             border: none;
+            border-radius: var(--notes-select-border-radius);
+            background: var(--notes-drag-placeholder-bg-color);
+            box-sizing: border-box;
+        }
+        .notes-entry-row.is-no-palace {
+            grid-template-columns: minmax(0, 1fr) auto;
+        }
+        .notes-entry-row.is-no-palace .notes-palace-picker {
+            display: none;
+        }
+        .notes-entry-handle {
+            width: 1.4rem;
+            height: 100%;
+            border: none;
+            border-radius: var(--notes-select-border-radius);
+            background: var(--notes-handler-bg-color);
+            color: var(--notes-select-border-color);
+            font-size: 1.35rem;
+            font-weight: 700;
+            line-height: 1;
+            cursor: grab;
+            margin-left: -0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+        .notes-entry-handle:active {
+            cursor: grabbing;
+        }
+        .notes-entry-row .notes-field-input {
+            height: var(--notes-palace-size, 6rem);
+        }
+        .notes-entry-row.is-no-palace .notes-field-input {
+            width: 100%;
+            transform-origin: right center;
+        }
+        .notes-palace-picker {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 100%;
+            aspect-ratio: auto;
+        }
+        .notes-palace-trigger {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            border: var(--notes-select-border-width) solid var(--notes-select-border-color);
+            border-radius: var(--notes-select-border-radius);
+            border-color: transparent;
+            background: var(--notes-palace-unselected-fill-color);
+            cursor: pointer;
+            position: relative;
+            box-shadow: none !important;
+            filter: none !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .notes-palace-trigger::before {
+            content: "";
+            position: absolute;
+            inset: calc(-1 * var(--notes-palace-dash-outset));
+            border-radius: calc(var(--notes-select-border-radius) + var(--notes-palace-dash-outset));
+            pointer-events: none;
+            background-image: var(--notes-palace-dash-svg-url, none);
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            box-shadow: none !important;
+            filter: none !important;
+        }
+        .notes-palace-trigger.is-selected {
+            border-color: var(--notes-select-border-color);
+            background: var(--notes-palace-selected-fill-color);
+        }
+        .notes-palace-trigger.is-selected::before {
+            display: none;
+        }
+        .notes-palace-placeholder {
+            font-size: 1.35rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .notes-palace-preview {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            aspect-ratio: auto;
+            border: none !important;
+            background: transparent !important;
+        }
+        .notes-palace-popup {
+            position: absolute;
+            top: calc(100% + 0.3rem);
+            left: 0;
+            z-index: 120;
+            width: 13rem;
+            padding: 0.45rem;
+            border: var(--notes-select-border-width) solid var(--notes-select-border-color);
+            border-radius: var(--notes-select-border-radius);
+            background: var(--notes-select-bg-color);
+            box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.12);
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.35rem;
+        }
+        .notes-palace-popup.is-hidden {
+            display: none;
+        }
+        .notes-palace-option {
+            height: 2.2rem;
+            border: 1px solid var(--notes-select-border-color);
+            border-radius: 0.45rem;
+            background: #fff;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .notes-palace-option:hover {
+            background: var(--custom-select-highlight-color);
+        }
+        .notes-add-row {
+            display: flex;
+            justify-content: center;
+            gap: 6rem;
+        }
+        .notes-add-circle-button {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 999px;
+            border: 0.15rem solid;
+            border-color: var(--notes-add-btn-main-color);
+            background: var(--notes-add-btn-bg-color);
+            font-size: 2.7rem;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding-bottom: 0.2rem;
+            transition: background-color 0.12s ease, border-color 0.12s ease;
+        }
+        .notes-add-circle-button-label {
+            display: inline-block;
+            line-height: 1;
+            transform: translateY(0);
+            color: var(--notes-add-btn-main-color) !important;
+            transition: color 0.12s ease;
+        }
+        #addNoteRowButton .notes-add-circle-button-label {
+            transform: translateY(0.12rem);
+        }
+        #removeNoteRowButton .notes-add-circle-button-label {
+            transform: translateY(-0.08rem);
+        }
+        .notes-add-circle-button:hover {
+            background: var(--notes-add-btn-hover-bg-color);
+            border-color: var(--notes-add-btn-hover-border-color);
+        }
+        .notes-add-circle-button:hover .notes-add-circle-button-label {
+            color: var(--notes-add-btn-strong-color) !important;
+        }
+        .notes-add-circle-button:active {
+            background: var(--notes-add-btn-active-bg-color);
+            border-color: var(--notes-add-btn-strong-color);
+        }
+        .notes-add-circle-button:active .notes-add-circle-button-label {
+            color: var(--notes-add-btn-strong-color) !important;
+        }
+        .notes-add-circle-button.is-active {
+            background: var(--notes-add-btn-active-bg-color);
+            border-color: var(--notes-add-btn-strong-color);
+        }
+        .notes-add-circle-button.is-active .notes-add-circle-button-label {
+            color: var(--notes-add-btn-strong-color) !important;
+        }
+        .notes-save-button {
+            height: 3rem;
+            padding: 0 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .notes-entries.is-delete-mode .notes-entry-row {
+            cursor: pointer;
+            position: relative;
+        }
+        .notes-entries.is-delete-mode .notes-entry-row > * {
+            pointer-events: none;
+        }
+        .notes-entries.is-delete-mode .notes-entry-row::after {
+            content: "";
+            position: absolute;
+            inset: -0.3rem;
+            border-radius: calc(var(--notes-select-border-radius) + 0.18rem);
+            background: rgba(0, 0, 0, 0.075);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.08s ease;
+        }
+        .notes-entries.is-delete-mode .notes-entry-row:hover::after {
+            opacity: 1;
+        }
+        .notes-native-select {
+            position: absolute;
+            width: 0;
+            height: 0;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .custom-select {
+            position: relative;
+            width: var(--custom-select-width, 100%);
+        }
+        .custom-select-trigger {
+            width: var(--custom-select-trigger-width, 100%);
+            min-height: var(--custom-select-trigger-min-height, 0);
+            height: var(--custom-select-trigger-height, auto);
+            padding: var(--custom-select-trigger-padding, 0 2.1rem 0 0.75rem);
+            border: var(--custom-select-trigger-border-width, var(--notes-select-border-width)) solid var(--custom-select-trigger-border-color, var(--notes-select-border-color));
+            border-radius: var(--custom-select-trigger-border-radius, var(--notes-select-border-radius));
+            background-color: var(--custom-select-trigger-bg-color, var(--notes-select-bg-color));
+            background-image:
+                linear-gradient(45deg, transparent 50%, #4b3521 50%),
+                linear-gradient(135deg, #4b3521 50%, transparent 50%);
+            background-position:
+                calc(100% - calc(var(--custom-select-arrow-right-gap, 0.75rem) + 0.3rem)) 50%,
+                calc(100% - var(--custom-select-arrow-right-gap, 0.75rem)) 50%;
+            background-repeat: no-repeat;
+            background-size: 0.3rem 0.3rem, 0.3rem 0.3rem;
+            color: var(--custom-select-text-color, #4b3521);
+            font-size: var(--custom-select-trigger-font-size, var(--notes-font-size));
+            font-weight: var(--custom-select-trigger-font-weight, 700);
+            line-height: var(--custom-select-trigger-line-height, normal);
+            text-align: left;
+            outline: none;
+            cursor: pointer;
+            transform: var(--custom-select-trigger-transform, none);
+        }
+        .custom-select.is-open .custom-select-trigger {
+            background-color: var(--custom-select-highlight-color);
+        }
+        .custom-select-list {
+            position: absolute;
+            top: calc(100% + 0.3rem);
+            left: 0;
+            z-index: 40;
+            width: var(--custom-select-list-width, 100%);
+            min-width: var(--custom-select-list-min-width, 0);
+            max-height: var(--custom-select-list-max-height, var(--custom-select-slider-height));
+            overflow-y: auto;
+            overflow-x: hidden;
+            touch-action: pan-y;
+            padding: 0.2rem;
+            border: var(--custom-select-list-border-width, var(--notes-select-border-width)) solid var(--custom-select-list-border-color, var(--notes-select-border-color));
+            border-radius: var(--custom-select-list-border-radius, var(--notes-select-border-radius));
+            background: var(--custom-select-list-bg-color, var(--notes-select-bg-color));
+            box-sizing: border-box;
+            transform: var(--custom-select-list-transform, none);
+        }
+        .custom-select-list.is-hidden {
+            display: none;
+        }
+        .custom-select-option {
+            display: block;
+            width: 100%;
+            padding: 0 0.4rem;
+            border: none;
+            border-radius: var(--custom-select-option-radius);
+            background: transparent;
+            text-align: left;
+            white-space: nowrap;
+            line-height: var(--custom-select-option-line-height);
+            font-size: var(--custom-select-option-font-size, var(--notes-font-size));
+            font-weight: var(--custom-select-option-font-weight, 700);
+            color: var(--custom-select-text-color, #4b3521);
+            cursor: pointer;
+        }
+        .custom-select-option:hover,
+        .custom-select-option:focus-visible,
+        .custom-select-option.is-selected {
+            background: var(--custom-select-highlight-color);
+            outline: none;
+        }
+        .custom-select-list::-webkit-scrollbar {
+            width: 0.4rem;
+        }
+        .custom-select-list::-webkit-scrollbar-thumb {
+            background: #c5ae81;
+            border-radius: 999px;
+        }
+        .notes-panel .custom-select {
+            --custom-select-width: 100%;
+            --custom-select-trigger-height: 3rem;
+            --custom-select-trigger-padding: 0 2.1rem 0 0.75rem;
+            --custom-select-trigger-border-width: var(--notes-select-border-width);
+            --custom-select-trigger-border-color: var(--notes-select-border-color);
+            --custom-select-trigger-border-radius: var(--notes-select-border-radius);
+            --custom-select-trigger-bg-color: var(--notes-select-bg-color);
+            --custom-select-trigger-font-size: var(--notes-font-size);
+            --custom-select-trigger-font-weight: 700;
+            --custom-select-list-border-width: var(--notes-select-border-width);
+            --custom-select-list-border-color: var(--notes-select-border-color);
+            --custom-select-list-border-radius: var(--notes-select-border-radius);
+            --custom-select-list-bg-color: var(--notes-select-bg-color);
+            --custom-select-list-max-height: var(--custom-select-slider-height);
+            --custom-select-option-font-size: var(--notes-font-size);
+            --custom-select-option-font-weight: 700;
+            --custom-select-text-color: #4b3521;
+            --custom-select-arrow-right-gap: 0.75rem;
+        }
+        .notes-field-select {
+            background: var(--notes-select-bg-color);
+            border: var(--notes-select-border-width) solid var(--notes-select-border-color);
+            border-radius: var(--notes-select-border-radius);
+            padding-right: 2.1rem;
+            cursor: pointer;
+        }
+        .notes-field-select-wrap::after {
+            content: "";
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-35%);
+            width: 0;
+            height: 0;
+            border-left: 0.6rem solid transparent;
+            border-right: 0.6rem solid transparent;
+            border-top: 0.8rem solid #000;
+            pointer-events: none;
         }
         .form-section {
-            margin-bottom: calc(2rem * var(--space-scale));
+            margin-bottom: 1.35rem;
         }
         .datetime-section {
             display: flex;
@@ -104,99 +716,126 @@
         .datetime-picker-box {
             display: inline-flex;
             align-items: center;
-            gap: calc(0.75rem * var(--space-scale));
+            gap: 0.75rem;
+            font-size: var(--datetime-picker-text-size);
             background: #fff;
-            border: 1.5px solid #4b3521;
-            border-radius: calc(0.5rem * var(--space-scale));
+            border: var(--datetime-picker-border-width) solid #4b3521;
+            border-radius: 0.625rem;
             padding:
-                calc(0.625rem * var(--space-scale))
-                calc(0.75rem * var(--space-scale))
-                calc(0.625rem * var(--space-scale))
-                calc(1rem * var(--space-scale));
+                0.55rem
+                1rem
+                0.55rem
+                0.9rem;
             transition: all 0.2s ease;
         }
         .datetime-now-button {
             grid-column-start: 3;
             justify-self: start;
-            margin-left: calc(0.5rem * var(--space-scale));
+            margin-left: 0.5rem;
             flex-shrink: 0;
+            font-size: var(--datetime-now-button-text-size);
+        }
+        #dateTimePickerButton {
+            width: var(--datetime-picker-calendar-btn-size);
+            height: var(--datetime-picker-calendar-btn-size);
+            margin-bottom: 0.05rem;
+        }
+        #dateTimePickerButton svg {
+            width: 100%;
+            height: 100%;
+        }
+        .action-theme-button {
+            color: var(--action-btn-text-color) !important;
+            background: var(--action-btn-bg-color) !important;
+            border: var(--action-btn-border-width) solid var(--action-btn-border-color);
+            border-radius: var(--action-btn-radius) !important;
+            transition: background 0.2s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .action-theme-button:hover {
+            background: var(--action-btn-hover-bg-color) !important;
+        }
+        button {
+            transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        button:active {
+            transform: scale(0.94);
+        }
+        button:disabled:active {
+            transform: scale(1);
         }
         .action-button {
-            margin-top: calc(24px * var(--space-scale)) !important;
-            color: #fff8ea !important;
+            margin-top: 1.25rem !important;
         }
         .hex-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: calc(15px * var(--space-scale));
+            gap: 0.9rem;
         }
         .palace-card {
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             aspect-ratio: 1/1;
-            border-width: 2px !important;
-            border-color: #6c5347 !important;
+            border-width: var(--palace-card-border-width) !important;
+            border-color: var(--palace-card-border-color) !important;
+            border-radius: var(--palace-card-border-radius) !important;
         }
         .palace-slot {
             position: absolute;
             line-height: 1;
             white-space: nowrap;
         }
+        .slot-wuxing,
+        .slot-liushen {
+            top: var(--palace-badge-top-gap);
+        }
         .slot-wuxing {
-            top: 16px;
-            left: 14px;
-            font-size: 18px;
-            font-weight: 700;
+            left: var(--palace-badge-side-gap);
         }
         .wuxing-badge,
         .liushen-badge,
         .liuqin-badge {
+            --badge-border-color: #4b3521;
+            --badge-bg-color: transparent;
+            --badge-text-color: inherit;
+            font-size: var(--palace-badge-font-size);
+            font-weight: 700;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 2px 8px;
-            border: 1.5px solid #4b3521;
-            border-radius: 6px;
+            padding: 0.1rem 0.35rem;
+            border: 1.5px solid var(--badge-border-color);
+            border-radius: 0.3rem;
             line-height: 1.1;
+            background: var(--badge-bg-color);
+            color: var(--badge-text-color) !important;
         }
         .wuxing-badge,
         .liushen-badge {
-            background: rgba(255, 248, 234, 0.9);
+            --badge-bg-color: rgba(255, 248, 234, 0.9);
         }
-        .liuqin-badge {
-            background: transparent;
-        }
+        .liushen-badge { --badge-text-color: #fff8ea; }
         .slot-liushen {
-            top: 16px;
-            right: 14px;
-            font-size: 18px;
-            font-weight: 700;
+            right: var(--palace-badge-side-gap);
         }
         .slot-zhi {
-            left: 18px;
+            left: 0.8rem;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 25px;
+            font-size: var(--palace-zhi-font-size);
             font-weight: 700;
         }
         .slot-liuqin {
-            right: 14px;
+            right: var(--palace-badge-side-gap);
             top: 50%;
             transform: translateY(-50%);
-            font-size: 18px;
-            font-weight: 700;
         }
         .slot-daytime {
-            left: 16px;
-            bottom: 16px;
-            font-size: 18px;
-            font-weight: 700;
+            left: 0.7rem;
+            bottom: 0.55rem;
         }
         .slot-body {
-            left: calc(50% - 14px);
+            left: calc(50% - 0.9rem);
             top: 50%;
             transform: translate(-50%, -50%);
-            font-size: 18px;
-            font-weight: 700;
         }
         .circled-char {
             display: inline-flex;
@@ -212,184 +851,58 @@
         .slot-body {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 0.18rem;
+            font-size: var(--palace-marker-font-size);
+            font-weight: 700;
         }
         .slot-palace-name {
-            right: 14px;
-            bottom: 9px;
-            font-size: 24px;
+            right: 0.62rem;
+            bottom: 0.3rem;
+            font-size: var(--palace-name-font-size);
             font-weight: 700;
             letter-spacing: 0.08em;
             text-decoration: none;
             display: inline-block;
-            padding-bottom: 10px;
+            padding-bottom: 0.48rem;
             background-image: linear-gradient(var(--palace-underline-color, #4b3521), var(--palace-underline-color, #4b3521));
             background-repeat: no-repeat;
             background-size: 0 2px;
-            background-position: -3px calc(100% - 4px);
+            background-position: -2px calc(100% - 2px);
             transition: background-size 0.25s ease;
         }
-        .slot-palace-name.show-underline {
-            background-size: calc(100% + 0px) 2px;
-        }
-        /* 调小 flatpickr 顶部月份/年份字号 */
-        .flatpickr-current-month,
-        .flatpickr-current-month input.cur-year {
-            font-size: 14px !important;
-            font-weight: 700 !important;
-        }
-        .flatpickr-calendar.with-year-select .flatpickr-current-month input.cur-year,
-        .flatpickr-calendar.with-year-select .flatpickr-current-month .flatpickr-monthDropdown-months {
-            display: none !important;
-        }
-        .flatpickr-calendar.with-year-select .flatpickr-current-month {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 30px;
-            transform: translateX(30px);
-            overflow: visible !important;
-            z-index: 6;
-            /* Do not block left/right month arrow hit areas. */
-            pointer-events: none;
-        }
-        .flatpickr-calendar.with-year-select .flatpickr-month {
-            overflow: visible !important;
-        }
-        .flatpickr-prev-month svg,
-        .flatpickr-next-month svg {
-            display: none !important;
-        }
-        .flatpickr-prev-month,
-        .flatpickr-next-month {
-            display: inline-flex !important;
-            align-items: center;
-            justify-content: center;
-            width: 28px;
-            height: 28px;
-            line-height: 1;
-            font-size: 0 !important;
-            color: #4b3521 !important;
-        }
-        .flatpickr-prev-month > *,
-        .flatpickr-next-month > * {
-            display: none !important;
-        }
-        .flatpickr-prev-month::after,
-        .flatpickr-next-month::after {
-            font-family: Arial, "Microsoft YaHei", sans-serif !important;
-            font-size: 26px;
-            line-height: 1;
-            color: #4b3521 !important;
-        }
-        .flatpickr-prev-month::after {
-            content: "‹";
-        }
-        .flatpickr-next-month::after {
-            content: "›";
-        }
-        .flatpickr-calendar .flatpickr-current-month .fp-custom-select {
-            position: relative;
-            pointer-events: auto;
-        }
-        .flatpickr-calendar .flatpickr-current-month .fp-custom-select-trigger {
-            margin-left: 0;
-            border: none;
-            border-radius: 8px;
-            background: #fff8ea;
-            color: #4b3521;
-            font-size: 14px;
-            font-weight: 700;
-            padding: 0 26px 0 8px;
-            height: 26px;
-            line-height: 26px;
-            outline: none;
-            cursor: pointer;
-            white-space: nowrap;
-            background-image:
-                linear-gradient(45deg, transparent 50%, #4b3521 50%),
-                linear-gradient(135deg, #4b3521 50%, transparent 50%);
-            background-position:
-                calc(100% - 13px) 11px,
-                calc(100% - 8px) 11px;
-            background-size: 5px 5px, 5px 5px;
-            background-repeat: no-repeat;
-        }
-        .flatpickr-calendar .flatpickr-current-month .fp-custom-select.is-open .fp-custom-select-trigger {
-            background-color: #fae2ad;
-        }
-        .flatpickr-calendar .flatpickr-current-month .fp-custom-select-list {
-            position: absolute;
-            top: calc(100% + 6px);
-            left: 0;
-            z-index: 30;
-            min-width: 100%;
-            max-height: 190px;
-            overflow-y: auto;
-            border: 2px solid #4b3521;
-            border-radius: 10px;
-            background: #fff8ea;
-            box-shadow: none;
-            padding: 4px;
-            box-sizing: border-box;
-        }
-        .flatpickr-calendar .flatpickr-current-month .fp-custom-select-list.is-hidden {
-            display: none;
-        }
-        .flatpickr-calendar .flatpickr-current-month .fp-custom-select-option {
-            display: block;
-            width: 100%;
-            border: none;
-            border-radius: 8px;
-            background: transparent;
-            color: #4b3521;
-            text-align: left;
-            font-size: 14px;
-            font-weight: 400;
-            line-height: 24px;
-            padding: 0 8px;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-        .flatpickr-calendar .flatpickr-current-month .fp-custom-select-option:hover,
-        .flatpickr-calendar .flatpickr-current-month .fp-custom-select-option:focus-visible {
-            background: #fae2ad;
-            outline: none;
-        }
-        .flatpickr-calendar .flatpickr-current-month .fp-custom-select-option.is-selected {
-            background: #f3d8a6;
-        }
-        .flatpickr-calendar .flatpickr-current-month .fp-custom-select-list::-webkit-scrollbar {
-            width: 8px;
-        }
-        .flatpickr-calendar .flatpickr-current-month .fp-custom-select-list::-webkit-scrollbar-thumb {
-            background: #d2b37f;
-            border-radius: 999px;
-        }
-        /* 日历主题与主容器配色一致 */
+        .slot-palace-name.show-underline { background-size: 100% 2px; }
+        /* ===== 日历样式（flatpickr）总览 =====
+           目标：
+           1) 保持当前布局与视觉不变
+           2) 按结构分区，便于后续维护
+           3) 删除重复/冲突/非日历规则
+        */
+
+        /* ===== A. 外层容器与统一主题 ===== */
         .flatpickr-calendar {
-            background: #fff8ea !important;
+            transform-origin: top center !important;
+            width: 25rem !important;
+            height: auto !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: flex-start !important;
+            align-items: center !important;
+            background: #fff !important;
             border: 2px solid #4b3521 !important;
             border-radius: 14px !important;
             box-shadow: none !important;
-            overflow: hidden;
+            overflow: hidden !important;
         }
+
         .flatpickr-months,
         .flatpickr-weekdays,
         .flatpickr-weekdaycontainer,
         .flatpickr-rContainer,
         .flatpickr-days,
-        .dayContainer,
-        .flatpickr-time {
-            background: #fff8ea !important;
+        .dayContainer {
+            background: #fff !important;
         }
-        .flatpickr-innerContainer,
-        .flatpickr-rContainer,
-        .flatpickr-days,
-        .dayContainer,
-        .flatpickr-time {
-            border-radius: 12px;
-        }
+
         .flatpickr-weekday,
         .flatpickr-current-month .flatpickr-monthDropdown-months,
         .flatpickr-current-month input.cur-year,
@@ -398,115 +911,309 @@
         .flatpickr-time .flatpickr-am-pm {
             color: #4b3521 !important;
         }
-        /* 星期与日期排列：两侧留白 + 七等分对齐 */
+
+        /* ===== B. 顶部（月份/年份 + 切换箭头 + 自定义下拉） ===== */
+        /* 基础头部：统一字号与垂直对齐 */
+        .flatpickr-current-month {
+            display: flex !important;
+            align-items: center !important;
+            height: 3rem !important;
+            padding: 0.5rem !important;
+            font-size: var(--calendar-header-title-size) !important;
+            font-weight: 700 !important;
+        }
+        .flatpickr-current-month input.cur-year {
+            font-size: var(--calendar-header-title-size) !important;
+            font-weight: 700 !important;
+        }
+
+        /* 自定义年月下拉模式：居中布局并避免遮挡左右箭头点击 */
+        .flatpickr-calendar.with-year-select .flatpickr-current-month {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--calendar-header-title-gap);
+            position: relative !important;
+            pointer-events: none;
+            overflow: visible !important;
+            transform: none !important;
+            z-index: 6;
+            margin-top: 0.3rem !important;
+        }
+
+        /* 自定义模式下隐藏 Flatpickr 原生年/月控件 */
+        .flatpickr-calendar.with-year-select .flatpickr-current-month input.cur-year,
+        .flatpickr-calendar.with-year-select .flatpickr-current-month .flatpickr-monthDropdown-months {
+            display: none !important;
+        }
+
+        .flatpickr-month {
+            height: auto !important;
+            overflow: visible !important;
+        }
+
+        .flatpickr-prev-month,
+        .flatpickr-next-month {
+            width: 1rem !important;
+            height: 1rem !important;
+            padding: 1rem !important;
+            margin-left: 1rem !important;
+            margin-right: 1rem !important;
+            margin-top: 0.5rem !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 0 !important;
+        }
+
+        .flatpickr-prev-month > *,
+        .flatpickr-next-month > * {
+            display: none !important;
+        }
+
+        .flatpickr-prev-month::after,
+        .flatpickr-next-month::after {
+            font-family: Arial, "Microsoft YaHei", sans-serif !important;
+            font-size: var(--calendar-nav-arrow-size);
+            line-height: 1;
+            color: #4b3521 !important;
+        }
+
+        .flatpickr-prev-month::after { content: "‹"; }
+        .flatpickr-next-month::after { content: "›"; }
+
+        .flatpickr-calendar .flatpickr-current-month .custom-select {
+            pointer-events: auto;
+            --custom-select-trigger-min-height: 1.7rem;
+            --custom-select-trigger-height: auto;
+            --custom-select-trigger-padding: 0.2rem 1.3rem 0 0.6rem;
+            --custom-select-trigger-border-width: 0;
+            --custom-select-trigger-border-color: transparent;
+            --custom-select-trigger-border-radius: var(--custom-select-option-radius);
+            --custom-select-trigger-bg-color: var(--notes-select-bg-color);
+            --custom-select-trigger-font-size: var(--calendar-header-title-size);
+            --custom-select-trigger-font-weight: 700;
+            --custom-select-trigger-line-height: 1.1;
+            --custom-select-trigger-transform: translateX(var(--calendar-header-title-offset-x));
+            --custom-select-list-transform: translateX(var(--calendar-header-title-offset-x));
+            --custom-select-list-min-width: 100%;
+            --custom-select-list-max-height: var(--custom-select-slider-height);
+            --custom-select-list-border-width: var(--notes-select-border-width);
+            --custom-select-list-border-color: var(--notes-select-border-color);
+            --custom-select-list-border-radius: var(--custom-select-option-radius);
+            --custom-select-list-bg-color: var(--notes-select-bg-color);
+            --custom-select-option-font-size: var(--calendar-base-text-size);
+            --custom-select-option-font-weight: 400;
+            --custom-select-text-color: #4b3521;
+            --custom-select-arrow-right-gap: 0.4rem;
+        }
+        .flatpickr-calendar .flatpickr-current-month .custom-select-trigger {
+            white-space: nowrap;
+        }
+        .flatpickr-calendar .flatpickr-current-month .custom-select-trigger:active {
+            transform: var(--custom-select-trigger-transform, none) !important;
+        }
+
+        /* ===== C. 星期与日期网格（保持七列对齐） ===== */
+        .flatpickr-innerContainer {
+            width: 100% !important;
+            display: block !important;
+        }
+
+        .flatpickr-months {
+            height: auto !important;
+            min-height: 0 !important;
+        }
+
         .flatpickr-weekdays {
-            height: 22px !important;
+            height: calc(var(--calendar-date-cell-height) * 0.75) !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            display: flex !important;
+            align-items: flex-start !important;
         }
+
         .flatpickr-days {
-            margin-top: 0 !important;
+            width: 100% !important;
+            height: auto !important;
+            min-height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            align-items: flex-start !important;
         }
+
         .flatpickr-weekdaycontainer,
         .dayContainer {
-            padding-left: 30px !important;
-            padding-right: 30px !important;
-            box-sizing: border-box;
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: 0 !important;
+            height: auto !important;
+            min-height: 0 !important;
+            margin: 0 !important;
+            padding-left: var(--calendar-grid-inline-padding) !important;
+            padding-right: var(--calendar-grid-inline-padding) !important;
+            box-sizing: border-box !important;
         }
+
+        .dayContainer {
+            align-content: flex-start !important;
+        }
+
         .flatpickr-weekdaycontainer {
+            transform-origin: top center !important;
             display: grid !important;
             grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
         }
+
         .flatpickr-weekday {
             width: 100% !important;
-            line-height: 22px !important;
+            min-width: 0 !important;
             box-sizing: border-box;
+            font-size: var(--calendar-weekday-text-size) !important;
+            line-height: var(--calendar-date-cell-height) !important;
         }
+
         .flatpickr-day {
+            flex: 0 0 calc(100% / 7) !important;
             width: calc(100% / 7) !important;
             max-width: calc(100% / 7) !important;
+            min-width: 0 !important;
+            height: var(--calendar-date-cell-height) !important;
+            line-height: var(--calendar-date-cell-height) !important;
             box-sizing: border-box;
-            color: #4b3521 !important;
-            height: 30px !important;
-            line-height: 30px !important;
             border-radius: 4px;
+            font-size: var(--calendar-date-text-size) !important;
+            color: #4b3521 !important;
         }
-        /* 仅显示当月日期：隐藏前后月份日期，但保留占位以保证星期对齐 */
+
+        /* 保留占位，只隐藏前后月日期，保证星期列对齐 */
         .flatpickr-day.prevMonthDay,
         .flatpickr-day.nextMonthDay {
             visibility: hidden !important;
             pointer-events: none !important;
         }
-        /* 允许日期区域按当月实际行数自适应高度 */
-        .flatpickr-days,
-        .dayContainer {
-            height: auto !important;
-            min-height: 0 !important;
-        }
-        .flatpickr-day:hover {
-            background: #fae2ad !important;
+
+        /* ===== D. 日期交互态 ===== */
+        .flatpickr-day:hover,
+        .flatpickr-day.selected,
+        .flatpickr-day.startRange,
+        .flatpickr-day.endRange {
+            background: #f5e8cf !important;
             border-color: transparent !important;
             border-radius: 9999px !important;
             box-shadow: none !important;
         }
+
         .flatpickr-day:focus {
             border-radius: 9999px !important;
         }
+
         .flatpickr-day.today:not(.selected) {
             border-color: transparent !important;
             box-shadow: none !important;
         }
-        .flatpickr-day.selected,
-        .flatpickr-day.startRange,
-        .flatpickr-day.endRange {
-            background: #fae2ad !important;
-            border-color: transparent !important;
-            box-shadow: none !important;
-            color: #4b3521 !important;
-            border-radius: 9999px !important;
+
+        /* ===== E. 时间面板 ===== */
+        .flatpickr-time {
+            width: 100% !important;
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            padding: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border-radius: 0 !important;
+            background: #fff !important;
         }
-        .flatpickr-time input:hover,
-        .flatpickr-time .flatpickr-am-pm:hover,
-        .numInputWrapper:hover {
-            background: #fae2ad !important;
+
+        .flatpickr-time .numInputWrapper {
+            height: 100% !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
         }
-        .flatpickr-time .numInputWrapper:focus-within,
-        .flatpickr-time input:focus {
-            background: #fae2ad !important;
+
+        .flatpickr-time .numInputWrapper span.arrowUp,
+        .flatpickr-time .numInputWrapper span.arrowDown {
+            width: 2rem !important;
+            padding: 0.5rem !important;
         }
+
         .flatpickr-time input,
         .flatpickr-time .flatpickr-time-separator,
         .flatpickr-time .flatpickr-am-pm {
-            font-size: 14px !important;
+            font-size: var(--calendar-base-text-size) !important;
             font-weight: 700 !important;
         }
+
         .flatpickr-time input {
+            height: 100% !important;
+            padding: 0.8rem !important;
+            text-align: center !important;
+            line-height: 1 !important;
             caret-color: #4b3521 !important;
+        }
+
+        .flatpickr-time .flatpickr-time-separator {
+            height: 100% !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            line-height: 1 !important;
+        }
+
+        .flatpickr-time input:hover,
+        .flatpickr-time .numInputWrapper:focus-within,
+        .flatpickr-time input:focus,
+        .flatpickr-time .flatpickr-am-pm:hover,
+        .numInputWrapper:hover {
+            width: 100% !important;
+            height: 100% !important;
+            background: #f5e8cf !important;
         }
     </style>
 </head>
 <body>
-    <div id="scaleViewport">
-        <div id="scaleRoot" class="page-root">
+    <div class="page-root max-w-screen-md">
 
-    <h1 class="page-title font-bold text-center tracking-[0.2em]">
-        江氏小六壬排盘器
-    </h1>
+    <div class="page-header">
+        <h1 class="page-title font-bold text-center tracking-[0.2em]">
+            江氏小六壬排盘器
+        </h1>
+        <button type="button" id="openNotesLibraryButton" class="notes-library-open-button action-theme-button" aria-label="打开我的笔记">
+            我的笔记
+        </button>
+    </div>
 
-    <div class="glass clock-panel border-amber-500/20">
-        <div id="solarClock" class="font-mono-custom text-2xl tracking-[0.05em] text-amber-500/90">
+    <div id="notesLibraryPanel" class="theme-panel notes-library-panel is-hidden">
+        <div class="notes-library-header">
+            <span class="notes-library-title">笔记库</span>
+            <div class="notes-library-header-actions">
+                <button type="button" id="clearNotesLibraryButton" class="notes-library-clear-button action-theme-button" aria-label="清空所有笔记">清空所有笔记</button>
+                <button type="button" id="closeNotesLibraryButton" class="notes-library-close-button action-theme-button" aria-label="关闭笔记库">关闭</button>
+            </div>
+        </div>
+        <div id="notesLibraryList" class="notes-library-list"></div>
+        <div id="notesLibraryEmpty" class="notes-library-empty">暂无已保存笔记</div>
+    </div>
+
+    <div class="theme-panel time-panel">
+        <div id="solarClock" class="font-mono-custom text-[1.5rem] tracking-[0.05em]">
             0000年0月0日 00:00:00
         </div>
-        <div id="lunarClock" class="text-xl text-amber-900/70 mt-2 tracking-[0.2em] text-center whitespace-nowrap">
+        <div id="lunarClock" class="text-[1.25rem] mt-2 tracking-[0.2em] text-center whitespace-nowrap">
             获取农历中...
         </div>
     </div>
 
-    <div class="glass content-panel">
+    <div class="theme-panel main-panel">
         <div class="space-y-4 form-section">
             <div class="datetime-section">
-                <label class="text-[18px] uppercase tracking-widest text-amber-500/70 mb-2 font-bold text-center">起卦时间</label>
+                <label class="text-[1.4rem] uppercase tracking-widest mb-2 font-bold text-center">起卦时间</label>
                 <div class="datetime-row">
                     <div id="dateTimePickerWrap" class="datetime-picker-wrap">
-                        <div class="datetime-picker-box text-base text-amber-900 font-mono-custom font-bold focus-within:border-[#4b3521]">
+                        <div class="datetime-picker-box font-mono-custom font-bold focus-within:border-[#4b3521]">
                             <input
                                 type="text"
                                 id="dateTimeManualInput"
@@ -514,15 +1221,15 @@
                                 inputmode="numeric"
                                 maxlength="16"
                                 pattern="\d{4}/\d{2}/\d{2} \d{2}:\d{2}"
-                                class="w-[15ch] bg-transparent outline-none text-amber-900 font-mono-custom font-bold"
+                                class="w-[15ch] bg-transparent outline-none font-mono-custom font-bold"
                             >
                             <button
                                 type="button"
                                 id="dateTimePickerButton"
                                 aria-label="打开中文日历选择起卦时间"
-                                class="relative shrink-0 w-6 h-6 inline-flex items-center justify-center rounded text-[#4b3521] hover:bg-amber-100 transition overflow-hidden"
+                                class="relative shrink-0 inline-flex items-center justify-center rounded transition overflow-hidden"
                             >
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                                     <line x1="16" y1="2" x2="16" y2="6"></line>
                                     <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -536,15 +1243,14 @@
                     <button
                         type="button"
                         id="dateTimeNowButton"
-                        class="datetime-now-button rounded-lg bg-[#5a381f] px-3 py-2 text-sm font-bold text-white hover:bg-[#4b3521] transition"
-                        style="color: #fff8ea !important;"
+                        class="datetime-now-button action-theme-button px-3 py-2 font-bold"
                     >
                         当前时间
                     </button>
                 </div>
-                <div id="selectedDateLunarInfo" class="mt-2 text-base text-amber-900/70 font-mono-custom whitespace-nowrap text-center"></div>
+                <div id="selectedDateLunarInfo" class="mt-2 text-[1rem] font-mono-custom whitespace-nowrap text-center"></div>
             </div>
-            <button onclick="startCalculation()" class="action-button w-full bg-[#5a381f] hover:bg-[#4b3521] font-bold py-4 rounded-xl transition-all active:scale-95 tracking-[0.5em] text-2xl border border-[#5a381f]/40">
+            <button onclick="startCalculation()" class="action-button action-theme-button w-full font-bold py-4 tracking-[0.5em] text-[2.2rem]">
                 开始排盘
             </button>
         </div>
@@ -553,7 +1259,38 @@
         </div>
     </div>
 
+    <div id="notesPanelContainer" class="theme-panel notes-panel">
+        <div class="notes-form">
+            <div class="notes-field-row">
+                <label for="queryItem" class="notes-field-label">求测事项</label>
+                <div class="notes-field-select-wrap notes-query-item-wrap">
+                    <select id="queryItem" class="notes-field-select notes-native-select">
+                        <option value=""></option>
+                        <option value="感情">感情</option>
+                        <option value="事业">事业</option>
+                        <option value="财运">财运</option>
+                        <option value="健康">健康</option>
+                        <option value="学业">学业</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+            </div>
+            <div class="notes-field-row">
+                <label for="specificQuestion" class="notes-field-label">具体问题</label>
+                <input id="specificQuestion" type="text" class="notes-field-input" />
+            </div>
+            <div class="notes-field-row">
+                <span class="notes-field-label"></span>
+                <button type="button" id="askAiButton" class="notes-ai-button action-theme-button">问AI</button>
+            </div>
+            <div id="notesEntriesContainer" class="notes-entries"></div>
+            <div class="notes-add-row">
+                <button type="button" id="addNoteRowButton" class="notes-add-circle-button" aria-label="添加一行笔记"><span class="notes-add-circle-button-label">+</span></button>
+                <button type="button" id="removeNoteRowButton" class="notes-add-circle-button" aria-label="删除一行笔记" aria-pressed="false"><span class="notes-add-circle-button-label">-</span></button>
+                <button type="button" id="saveNotesButton" class="notes-save-button action-theme-button" aria-label="保存当前笔记">保存笔记</button>
+            </div>
         </div>
+    </div>
     </div>
     <script>
         const palaces = ["大安", "留连", "速喜", "赤口", "小吉", "空亡"];
@@ -598,36 +1335,6 @@
             "金": "#b8860b",
             "水": "#1565c0"
         };
-        function syncScaleViewportHeight() {
-            const scaleViewport = document.getElementById('scaleViewport');
-            const scaleRoot = document.getElementById('scaleRoot');
-            if (!scaleViewport || !scaleRoot) return;
-            const scaledHeight = Math.max(0, scaleRoot.getBoundingClientRect().height);
-            scaleViewport.style.height = `${scaledHeight.toFixed(1)}px`;
-        }
-        function updateGlobalScale() {
-            const viewportWidth = Math.max(1, window.innerWidth || document.documentElement.clientWidth || 1);
-            const shrinkStartWidth = 600;
-            const blendFactor = 0.2;
-            const normalizedWidth = Math.min(1, viewportWidth / shrinkStartWidth);
-            const blendedProgress = normalizedWidth + blendFactor * normalizedWidth * (1 - normalizedWidth);
-            const scale = viewportWidth >= shrinkStartWidth ? 1 : blendedProgress;
-            const scaleStr = scale.toFixed(3);
-            document.documentElement.style.setProperty('--global-scale', scaleStr);
-            document.documentElement.style.setProperty('--space-scale', scaleStr);
-            window.requestAnimationFrame(syncScaleViewportHeight);
-        }
-        updateGlobalScale();
-        window.addEventListener('resize', updateGlobalScale);
-        if (window.ResizeObserver) {
-            const scaleRoot = document.getElementById('scaleRoot');
-            if (scaleRoot) {
-                const scaleViewportObserver = new ResizeObserver(() => {
-                    window.requestAnimationFrame(syncScaleViewportHeight);
-                });
-                scaleViewportObserver.observe(scaleRoot);
-            }
-        }
         function colorizeGanZhiText(text) {
             return Array.from(text).map((ch) => {
                 const color = wuxingColorMap[ch];
@@ -660,7 +1367,7 @@
                 const palaceWuxing = palaceWuxingMap[palaceIndex];
                 const underlineColor = wuxingElementColorMap[palaceWuxing] || "#4b3521";
                 return `
-                <div id="palace-${palaceIndex}" class="palace-card glass border-amber-200 relative overflow-hidden">
+                <div id="palace-${palaceIndex}" class="palace-card relative overflow-hidden">
                     <span class="palace-slot slot-wuxing palace-wuxing"></span>
                     <span class="palace-slot slot-liushen palace-liushen"></span>
                     <span class="palace-slot slot-zhi palace-zhi"></span>
@@ -704,6 +1411,7 @@
         let segmentPreviousValue = '';
         let chineseDatePicker = null;
         let isPointerFocusingManualInput = false;
+        let detachCalendarAutoPosition = null;
 
         function getSegmentIndexByPosition(pos) {
             if (pos <= 4) return 0;
@@ -811,11 +1519,7 @@
                 manualInput.setCustomValidity('');
                 return date;
             }
-            const value = String(rawValue || '').trim();
-            const message = value
-                ? '请输入有效时间，格式：yyyy/mm/dd HH:mm（24小时制）'
-                : '请输入起卦时间，格式：yyyy/mm/dd HH:mm（24小时制）';
-            manualInput.setCustomValidity(message);
+            manualInput.setCustomValidity('请输入有效时间，格式为 yyyy/mm/dd HH:mm');
             if (report) manualInput.reportValidity();
             return null;
         }
@@ -830,6 +1534,54 @@
             const lunar = Lunar.fromDate(date);
             const lunarText = `${lunar.getYearInGanZhi()}年 ${lunar.getMonthInGanZhi()}月 ${lunar.getDayInGanZhi()}日 ${lunar.getTimeInGanZhi()}时 ${lunar.getMonthInChinese()}月${lunar.getDayInChinese()}`;
             lunarInfoEl.innerHTML = colorizeGanZhiText(lunarText);
+        }
+
+        function positionCalendarCenteredBelowDateTimeRow(instance) {
+            if (!instance || !instance.calendarContainer) return;
+            const anchorRow = document.querySelector('.datetime-row');
+            if (!anchorRow) return;
+            const calendarEl = instance.calendarContainer;
+            const rowRect = anchorRow.getBoundingClientRect();
+            const calendarRect = calendarEl.getBoundingClientRect();
+            const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
+            const sidePadding = Math.max(8, Math.floor(viewportWidth * 0.03));
+            const centeredLeft = (viewportWidth - calendarRect.width) / 2;
+            const maxLeft = Math.max(sidePadding, viewportWidth - calendarRect.width - sidePadding);
+            const horizontalLeft = Math.min(Math.max(sidePadding, centeredLeft), maxLeft);
+            const verticalTop = rowRect.bottom + (window.scrollY || window.pageYOffset || 0) + 8;
+
+            calendarEl.style.position = 'absolute';
+            calendarEl.style.left = `${horizontalLeft + (window.scrollX || window.pageXOffset || 0)}px`;
+            calendarEl.style.top = `${verticalTop}px`;
+            calendarEl.style.right = 'auto';
+        }
+
+        function attachCalendarAutoPosition(instance) {
+            if (!instance || detachCalendarAutoPosition) return;
+            const syncPosition = () => {
+                if (!instance.isOpen) return;
+                positionCalendarCenteredBelowDateTimeRow(instance);
+            };
+            const onResize = () => {
+                if (typeof instance.redraw === 'function') {
+                    instance.redraw();
+                }
+                syncPosition();
+            };
+            const onScroll = () => syncPosition();
+            window.addEventListener('resize', onResize);
+            window.addEventListener('scroll', onScroll, true);
+            detachCalendarAutoPosition = () => {
+                window.removeEventListener('resize', onResize);
+                window.removeEventListener('scroll', onScroll, true);
+                detachCalendarAutoPosition = null;
+            };
+        }
+
+        function detachCalendarPositionListeners() {
+            if (detachCalendarAutoPosition) {
+                detachCalendarAutoPosition();
+            }
         }
 
         function setDateTimeValue(value) {
@@ -852,6 +1604,7 @@
         function clearCurrentCalculationResult() {
             clearPalaceLayoutTexts();
             setPalaceNameUnderlineVisible(false);
+            refreshAllNotePalacePreviews();
         }
 
         function ensureDefaultCurrentDateTime() {
@@ -907,11 +1660,7 @@
             if (!el) return;
             const slot = el.querySelector('.palace-liuqin');
             if (!slot) return;
-            if (!liuQin) {
-                slot.innerHTML = '';
-                return;
-            }
-            slot.innerHTML = `<span class="liuqin-badge">${liuQin}</span>`;
+            setBadgeLabel(slot, 'liuqin-badge', liuQin);
         }
 
         function setLiuShenLabel(index, liuShen) {
@@ -919,12 +1668,11 @@
             if (!el) return;
             const slot = el.querySelector('.palace-liushen');
             if (!slot) return;
-            if (!liuShen) {
-                slot.innerHTML = '';
-                return;
-            }
             const badgeColor = liuShenBadgeColorMap[liuShen] || '#4b3521';
-            slot.innerHTML = `<span class="liushen-badge" style="border-color: ${badgeColor}; background-color: ${badgeColor}; color: #fff8ea !important;">${liuShen}</span>`;
+            setBadgeLabel(slot, 'liushen-badge', liuShen, {
+                borderColor: badgeColor,
+                backgroundColor: badgeColor,
+            });
         }
 
         function setWuXingLabel(index, wuXing) {
@@ -932,12 +1680,25 @@
             if (!el) return;
             const slot = el.querySelector('.palace-wuxing');
             if (!slot) return;
-            if (!wuXing) {
+            const badgeColor = wuXingBadgeColorMap[wuXing] || '#4b3521';
+            setBadgeLabel(slot, 'wuxing-badge', wuXing, {
+                borderColor: badgeColor,
+                textColor: badgeColor,
+            });
+        }
+
+        function setBadgeLabel(slot, badgeClass, text, styles = {}) {
+            if (!slot) return;
+            if (!text) {
                 slot.innerHTML = '';
                 return;
             }
-            const badgeColor = wuXingBadgeColorMap[wuXing] || '#4b3521';
-            slot.innerHTML = `<span class="wuxing-badge" style="border-color: ${badgeColor}; color: ${badgeColor} !important;">${wuXing}</span>`;
+            const styleEntries = [];
+            if (styles.borderColor) styleEntries.push(`--badge-border-color: ${styles.borderColor};`);
+            if (styles.backgroundColor) styleEntries.push(`--badge-bg-color: ${styles.backgroundColor};`);
+            if (styles.textColor) styleEntries.push(`--badge-text-color: ${styles.textColor};`);
+            const styleAttr = styleEntries.length ? ` style="${styleEntries.join(' ')}"` : '';
+            slot.innerHTML = `<span class="${badgeClass}"${styleAttr}>${text}</span>`;
         }
 
         function clearPalaceLayoutTexts() {
@@ -1083,6 +1844,8 @@
             wuXingAssignments.forEach(({ palaceIndex, wuXing }) => setWuXingLabel(palaceIndex, wuXing));
 
             setPalaceNameUnderlineVisible(true);
+            refreshAllNotePalacePreviews();
+            clearCurrentPageNotesContent();
         }
 
         setInterval(updateClock, 1000);
@@ -1090,10 +1853,1013 @@
         initGrid();
         ensureDefaultCurrentDateTime();
 
+        function clearCurrentPageNotesContent() {
+            activeEditingNoteId = null;
+            if (queryItemSelect) {
+                queryItemSelect.value = '';
+                queryItemSelect.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+            if (specificQuestionInput) {
+                specificQuestionInput.value = '';
+            }
+            if (notesEntriesContainer) {
+                notesEntriesContainer.innerHTML = '';
+            }
+            setNoteRowDeleteMode(false);
+            closeAllNotePalaceSelectors();
+        }
+
         const manualInput = document.getElementById('dateTimeManualInput');
         const dateTimePickerButton = document.getElementById('dateTimePickerButton');
         const dateTimeNowButton = document.getElementById('dateTimeNowButton');
         const dateTimeCalendarInput = document.getElementById('dateTimeCalendarInput');
+        const closeOpenCustomSelects = (container, exceptNode = null) => {
+            if (!container) return;
+            const opened = container.querySelectorAll('.custom-select.is-open');
+            opened.forEach((node) => {
+                if (exceptNode && node === exceptNode) return;
+                node.classList.remove('is-open');
+                const list = node.querySelector('.custom-select-list');
+                const trigger = node.querySelector('.custom-select-trigger');
+                if (list) list.classList.add('is-hidden');
+                if (trigger) trigger.setAttribute('aria-expanded', 'false');
+            });
+        };
+        const createCustomSelect = ({
+            rootClassName = '',
+            options = [],
+            onSelect = () => {},
+            closeScopeElement = null,
+            bindDocumentClose = false,
+            emptyLabel = '',
+            centerSelectedOnOpen = false
+        }) => {
+            const root = document.createElement('div');
+            root.className = `custom-select ${rootClassName}`.trim();
+            const trigger = document.createElement('button');
+            trigger.type = 'button';
+            trigger.className = 'custom-select-trigger';
+            trigger.setAttribute('aria-haspopup', 'listbox');
+            trigger.setAttribute('aria-expanded', 'false');
+            const triggerLabel = document.createElement('span');
+            trigger.appendChild(triggerLabel);
+            const list = document.createElement('div');
+            list.className = 'custom-select-list is-hidden';
+            list.setAttribute('role', 'listbox');
+            const optionButtons = new Map();
+            const closeList = () => {
+                root.classList.remove('is-open');
+                list.classList.add('is-hidden');
+                trigger.setAttribute('aria-expanded', 'false');
+            };
+            const openList = () => {
+                const scope = closeScopeElement || root.parentElement || document;
+                closeOpenCustomSelects(scope, root);
+                root.classList.add('is-open');
+                list.classList.remove('is-hidden');
+                trigger.setAttribute('aria-expanded', 'true');
+                if (centerSelectedOnOpen) {
+                    window.requestAnimationFrame(() => {
+                        const selectedOption = list.querySelector('.custom-select-option.is-selected');
+                        if (!selectedOption) return;
+                        const targetTop = selectedOption.offsetTop - (list.clientHeight - selectedOption.offsetHeight) / 2;
+                        list.scrollTop = Math.max(0, targetTop);
+                    });
+                }
+            };
+            const setValue = (value) => {
+                const fallback = options[0];
+                const matched = options.find((item) => item.value === value) || fallback;
+                if (!matched) return;
+                triggerLabel.textContent = matched.label.trim() ? matched.label : emptyLabel;
+                optionButtons.forEach((button, buttonValue) => {
+                    const selected = buttonValue === matched.value;
+                    button.classList.toggle('is-selected', selected);
+                    button.setAttribute('aria-selected', selected ? 'true' : 'false');
+                });
+            };
+            options.forEach((item) => {
+                const optionButton = document.createElement('button');
+                optionButton.type = 'button';
+                optionButton.className = 'custom-select-option';
+                optionButton.dataset.value = item.value;
+                optionButton.setAttribute('role', 'option');
+                optionButton.textContent = item.label.trim() ? item.label : emptyLabel;
+                optionButton.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    onSelect(item.value);
+                    setValue(item.value);
+                    closeList();
+                });
+                list.appendChild(optionButton);
+                optionButtons.set(item.value, optionButton);
+            });
+            trigger.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                if (root.classList.contains('is-open')) {
+                    closeList();
+                } else {
+                    openList();
+                }
+            });
+            if (bindDocumentClose) {
+                document.addEventListener('mousedown', (event) => {
+                    if (root.contains(event.target)) return;
+                    closeList();
+                });
+                document.addEventListener('keydown', (event) => {
+                    if (event.key === 'Escape') closeList();
+                });
+            }
+            root.appendChild(trigger);
+            root.appendChild(list);
+            return { root, setValue, closeList };
+        };
+        const initNotesQueryItemCustomSelect = () => {
+            const nativeSelect = document.getElementById('queryItem');
+            if (!nativeSelect) return;
+            const wrap = nativeSelect.closest('.notes-field-select-wrap');
+            if (!wrap || wrap.querySelector('.custom-select')) return;
+            const options = Array.from(nativeSelect.options).map((option) => ({
+                value: option.value,
+                label: option.textContent || ''
+            }));
+            if (!options.length) return;
+            const notesSelect = createCustomSelect({
+                rootClassName: 'notes-query-item-select',
+                options,
+                closeScopeElement: document,
+                bindDocumentClose: true,
+                emptyLabel: '',
+                onSelect: (value) => {
+                    if (nativeSelect.value === value) return;
+                    nativeSelect.value = value;
+                    nativeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            });
+            nativeSelect.addEventListener('change', () => {
+                notesSelect.setValue(nativeSelect.value);
+            });
+            wrap.classList.add('notes-custom-select-ready');
+            wrap.appendChild(notesSelect.root);
+            notesSelect.setValue(nativeSelect.value || options[0].value);
+        };
+        const notesEntriesContainer = document.getElementById('notesEntriesContainer');
+        const addNoteRowButton = document.getElementById('addNoteRowButton');
+        const removeNoteRowButton = document.getElementById('removeNoteRowButton');
+        const saveNotesButton = document.getElementById('saveNotesButton');
+        const openNotesLibraryButton = document.getElementById('openNotesLibraryButton');
+        const clearNotesLibraryButton = document.getElementById('clearNotesLibraryButton');
+        const closeNotesLibraryButton = document.getElementById('closeNotesLibraryButton');
+        const notesLibraryPanel = document.getElementById('notesLibraryPanel');
+        const notesLibraryList = document.getElementById('notesLibraryList');
+        const notesLibraryEmpty = document.getElementById('notesLibraryEmpty');
+        const queryItemSelect = document.getElementById('queryItem');
+        const specificQuestionInput = document.getElementById('specificQuestion');
+        const askAiButton = document.getElementById('askAiButton');
+        const notesPanelContainer = document.getElementById('notesPanelContainer');
+        const NOTES_STORAGE_KEY = 'jiangshi_xiaoliuren_saved_notes_v1';
+        const PALACE_LAYOUT_SELECTORS = ['.palace-daytime', '.palace-body', '.palace-zhi', '.palace-liuqin', '.palace-liushen', '.palace-wuxing'];
+        const NOTE_ROW_REORDER_ANIMATION_MS = 180;
+        let noteRowDragState = null;
+        let isNoteRowDeleteMode = false;
+        let activeEditingNoteId = null;
+        const noteRowAnimationTimers = new WeakMap();
+        const getNotesRowsSnapshot = () => {
+            if (!notesEntriesContainer) return [];
+            return Array.from(notesEntriesContainer.querySelectorAll('.notes-entry-row')).map((row) => {
+                const textInput = row.querySelector('.notes-field-input');
+                const trigger = row.querySelector('.notes-palace-trigger');
+                const palaceIndex = Number(trigger?.dataset?.palaceIndex);
+                return {
+                    text: textInput?.value || '',
+                    noPalace: row.classList.contains('is-no-palace'),
+                    palaceIndex: Number.isFinite(palaceIndex) ? palaceIndex : null
+                };
+            });
+        };
+        const getPalaceLayoutSnapshot = () => {
+            const palacesLayout = [];
+            for (let index = 0; index < 6; index += 1) {
+                const card = document.getElementById(`palace-${index}`);
+                if (!card) continue;
+                const slots = {};
+                PALACE_LAYOUT_SELECTORS.forEach((selector) => {
+                    const slot = card.querySelector(selector);
+                    if (slot) slots[selector] = slot.innerHTML || '';
+                });
+                palacesLayout.push({ index, slots });
+            }
+            const firstPalaceName = document.querySelector('#palace-0 .slot-palace-name');
+            return {
+                underlineVisible: firstPalaceName?.classList.contains('show-underline') || false,
+                palacesLayout
+            };
+        };
+        const restorePalaceLayoutSnapshot = (layoutSnapshot) => {
+            if (!layoutSnapshot || !Array.isArray(layoutSnapshot.palacesLayout)) return;
+            layoutSnapshot.palacesLayout.forEach((palaceState) => {
+                if (!palaceState || !Number.isFinite(palaceState.index) || typeof palaceState.slots !== 'object') return;
+                const card = document.getElementById(`palace-${palaceState.index}`);
+                if (!card) return;
+                PALACE_LAYOUT_SELECTORS.forEach((selector) => {
+                    if (!(selector in palaceState.slots)) return;
+                    const slot = card.querySelector(selector);
+                    if (!slot) return;
+                    slot.innerHTML = String(palaceState.slots[selector] || '');
+                });
+            });
+            setPalaceNameUnderlineVisible(Boolean(layoutSnapshot.underlineVisible));
+        };
+        const formatLibraryTimestamp = (value) => {
+            const date = new Date(value);
+            if (!Number.isFinite(date.getTime())) return '未知时间';
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            const hh = String(date.getHours()).padStart(2, '0');
+            const mm = String(date.getMinutes()).padStart(2, '0');
+            return `${y}/${m}/${d} ${hh}:${mm}`;
+        };
+        const syncNotesLibraryPanelTopWithButton = () => {
+            if (!notesLibraryPanel || !openNotesLibraryButton) return;
+            const buttonRect = openNotesLibraryButton.getBoundingClientRect();
+            const panelTop = Math.max(12, buttonRect.bottom + window.scrollY + 0.8 * 16);
+            notesLibraryPanel.style.setProperty('--notes-library-panel-top', `${panelTop}px`);
+        };
+        const getNotesLibraryFromStorage = () => {
+            try {
+                const raw = localStorage.getItem(NOTES_STORAGE_KEY);
+                if (!raw) return [];
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed)) return parsed.filter((item) => item && typeof item === 'object');
+                if (parsed && typeof parsed === 'object') return [parsed];
+                return [];
+            } catch (error) {
+                console.error('读取笔记库失败:', error);
+                return [];
+            }
+        };
+        const persistNotesLibraryToStorage = (notesLibrary) => {
+            try {
+                localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(notesLibrary));
+                return true;
+            } catch (error) {
+                console.error('写入笔记库失败:', error);
+                return false;
+            }
+        };
+        const buildCurrentNotesSnapshot = (noteId = null) => {
+            const dateTimeValue = document.getElementById('dateTime')?.value || '';
+            return {
+                id: noteId || `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+                version: 1,
+                savedAt: Date.now(),
+                dateTimeValue,
+                palaceLayout: getPalaceLayoutSnapshot(),
+                queryItem: queryItemSelect?.value || '',
+                specificQuestion: specificQuestionInput?.value || '',
+                notesRows: getNotesRowsSnapshot()
+            };
+        };
+        const DEFAULT_AI_PROMPT_TEMPLATE = [
+            '你是一个专业的算命师，请以【江氏小六壬】的方法为我解读卦象。',
+            '',
+            '【占问之事】：',
+            '  求测事项：<求测事项>',
+            '  具体问题：<具体问题>',
+            '',
+            '【六宫卦象基础配置】',
+            '  大安：地支 <地支>，六亲 <六亲>，六神 <六神>，五星 <五星>',
+            '  留连：地支 <地支>，六亲 <六亲>，六神 <六神>，五星 <五星>',
+            '  速喜：地支 <地支>，六亲 <六亲>，六神 <六神>，五星 <五星>',
+            '  赤口：地支 <地支>，六亲 <六亲>，六神 <六神>，五星 <五星>',
+            '  小吉：地支 <地支>，六亲 <六亲>，六神 <六神>，五星 <五星>',
+            '  空亡：地支 <地支>，六亲 <六亲>，六神 <六神>，五星 <五星>'
+        ].join('\n');
+        let aiPromptTemplateCache = '';
+        const normalizeAiSlotText = (value) => {
+            return String(value || '').replace(/\s+/g, ' ').trim();
+        };
+        const getPalaceSlotTextBySelector = (palaceIndex, selector, fallback = '未填写') => {
+            const node = document.querySelector(`#palace-${palaceIndex} ${selector}`);
+            const text = normalizeAiSlotText(node?.textContent || '');
+            return text || fallback;
+        };
+        const getCurrentPalacePromptData = () => {
+            return palaces.map((palaceName, palaceIndex) => ({
+                palaceName,
+                zhi: getPalaceSlotTextBySelector(palaceIndex, '.palace-zhi'),
+                liuqin: getPalaceSlotTextBySelector(palaceIndex, '.palace-liuqin'),
+                liushen: getPalaceSlotTextBySelector(palaceIndex, '.palace-liushen'),
+                wuxing: getPalaceSlotTextBySelector(palaceIndex, '.palace-wuxing')
+            }));
+        };
+        const upsertPalacePromptLine = (templateText, palaceInfo) => {
+            const line = `  ${palaceInfo.palaceName}：地支 ${palaceInfo.zhi}，六亲 ${palaceInfo.liuqin}，六神 ${palaceInfo.liushen}，五星 ${palaceInfo.wuxing}`;
+            const lineRegex = new RegExp(`^\\s*${palaceInfo.palaceName}：.*$`, 'm');
+            if (lineRegex.test(templateText)) {
+                return templateText.replace(lineRegex, line);
+            }
+            return `${templateText}\n${line}`;
+        };
+        const getAiPromptTemplateText = async () => {
+            if (aiPromptTemplateCache) return aiPromptTemplateCache;
+            try {
+                const response = await fetch('/prompt.txt', { cache: 'no-store' });
+                if (response.ok) {
+                    const text = await response.text();
+                    if (text && text.trim()) {
+                        aiPromptTemplateCache = text;
+                        return aiPromptTemplateCache;
+                    }
+                }
+            } catch (error) {
+                console.warn('读取 prompt.txt 失败，使用默认模板:', error);
+            }
+            aiPromptTemplateCache = DEFAULT_AI_PROMPT_TEMPLATE;
+            return aiPromptTemplateCache;
+        };
+        const buildAiPrompt = async () => {
+            const queryItem = (queryItemSelect?.value || '').trim();
+            const specificQuestion = (specificQuestionInput?.value || '').trim();
+            const notesRows = getNotesRowsSnapshot();
+            const notesText = notesRows
+                .map((row, index) => {
+                    const content = String(row?.text || '').trim();
+                    return content ? `${index + 1}. ${content}` : '';
+                })
+                .filter(Boolean)
+                .join('\n');
+            let prompt = await getAiPromptTemplateText();
+            prompt = prompt.replace(/<求测事项>/g, queryItem || '未填写');
+            prompt = prompt.replace(/<具体问题>/g, specificQuestion || '未填写');
+            const palaceInfoList = getCurrentPalacePromptData();
+            palaceInfoList.forEach((palaceInfo) => {
+                prompt = upsertPalacePromptLine(prompt, palaceInfo);
+            });
+            if (notesText) {
+                prompt = `${prompt}\n\n【补充笔记】\n${notesText}`;
+            }
+            return prompt.trim();
+        };
+        const AI_PALACE_NAME_TO_INDEX = {
+            '大安': 0,
+            '留连': 1,
+            '速喜': 2,
+            '赤口': 3,
+            '小吉': 4,
+            '空亡': 5
+        };
+        const normalizeAiReplyLine = (line) => {
+            return String(line || '')
+                .trim()
+                .replace(/^["'“”]+|["'“”]+$/g, '')
+                .trim();
+        };
+        const parseAiReplyToNoteRows = (replyText) => {
+            const resultRows = [];
+            const lines = String(replyText || '')
+                .split(/\r?\n/)
+                .map((line) => normalizeAiReplyLine(line))
+                .filter(Boolean);
+            lines.forEach((line) => {
+                const palaceMatch = line.match(/^(大安|留连|速喜|赤口|小吉|空亡)(?:宫)?\s*[：:]\s*(.+)$/);
+                if (palaceMatch) {
+                    const palaceName = palaceMatch[1];
+                    const explanation = (palaceMatch[2] || '').trim();
+                    if (!explanation) return;
+                    resultRows.push({
+                        text: explanation,
+                        noPalace: false,
+                        palaceIndex: AI_PALACE_NAME_TO_INDEX[palaceName]
+                    });
+                    return;
+                }
+                const conclusionMatch = line.match(/^结论\s*[：:]\s*(.+)$/);
+                if (conclusionMatch) {
+                    const conclusion = (conclusionMatch[1] || '').trim();
+                    if (!conclusion) return;
+                    resultRows.push({
+                        text: conclusion,
+                        noPalace: true
+                    });
+                }
+            });
+            return resultRows;
+        };
+        const appendAiReplyRowsToNotes = (replyText) => {
+            if (!notesEntriesContainer) return;
+            const parsedRows = parseAiReplyToNoteRows(replyText);
+            if (parsedRows.length) {
+                parsedRows.forEach((rowData) => {
+                    notesEntriesContainer.appendChild(createNoteEntryRow(rowData));
+                });
+                return;
+            }
+            notesEntriesContainer.appendChild(createNoteEntryRow({
+                text: replyText,
+                noPalace: true
+            }));
+        };
+        const requestAiAnswer = async () => {
+            const queryItem = (queryItemSelect?.value || '').trim();
+            const specificQuestion = (specificQuestionInput?.value || '').trim();
+            if (!queryItem && !specificQuestion) {
+                window.alert('请先填写“求测事项”或“具体问题”后再问AI。');
+                return;
+            }
+            const prompt = await buildAiPrompt();
+            if (askAiButton) {
+                askAiButton.disabled = true;
+                askAiButton.dataset.originalLabel = askAiButton.textContent || '问AI';
+                askAiButton.textContent = '思考中...';
+            }
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        prompt
+                    })
+                });
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok) {
+                    const message = typeof data?.error === 'string' && data.error ? data.error : 'AI 请求失败';
+                    throw new Error(message);
+                }
+                const reply = typeof data?.reply === 'string' ? data.reply.trim() : '';
+                if (!reply) {
+                    throw new Error('AI 返回为空，请稍后重试');
+                }
+                appendAiReplyRowsToNotes(reply);
+            } catch (error) {
+                console.error('问AI失败:', error);
+                window.alert(`问AI失败：${error?.message || '未知错误'}`);
+            } finally {
+                if (askAiButton) {
+                    askAiButton.disabled = false;
+                    askAiButton.textContent = askAiButton.dataset.originalLabel || '问AI';
+                }
+            }
+        };
+        const applyNotesSnapshot = (parsed) => {
+            if (!parsed || typeof parsed !== 'object') return;
+            activeEditingNoteId = typeof parsed.id === 'string' && parsed.id ? parsed.id : null;
+            if (typeof parsed.dateTimeValue === 'string' && parsed.dateTimeValue.trim()) {
+                const restoredDate = parseDateTimeValue(parsed.dateTimeValue);
+                if (restoredDate) {
+                    setDateTimeValue(toDateTimeLocalValue(restoredDate));
+                }
+            }
+            restorePalaceLayoutSnapshot(parsed.palaceLayout);
+            if (queryItemSelect && typeof parsed.queryItem === 'string') {
+                queryItemSelect.value = parsed.queryItem;
+                queryItemSelect.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+            if (specificQuestionInput && typeof parsed.specificQuestion === 'string') {
+                specificQuestionInput.value = parsed.specificQuestion;
+            }
+            if (notesEntriesContainer) {
+                notesEntriesContainer.innerHTML = '';
+                const savedRows = Array.isArray(parsed.notesRows) ? parsed.notesRows : [];
+                savedRows.forEach((rowData) => {
+                    notesEntriesContainer.appendChild(createNoteEntryRow(rowData));
+                });
+            }
+            setNoteRowDeleteMode(false);
+            closeAllNotePalaceSelectors();
+            refreshAllNotePalacePreviews();
+        };
+        const renderNotesLibraryList = () => {
+            if (!notesLibraryList || !notesLibraryEmpty) return;
+            const notesLibrary = getNotesLibraryFromStorage();
+            notesLibraryList.innerHTML = '';
+            if (!notesLibrary.length) {
+                notesLibraryEmpty.style.display = '';
+                return;
+            }
+            notesLibraryEmpty.style.display = 'none';
+            notesLibrary.forEach((noteItem, noteIndex) => {
+                const item = document.createElement('div');
+                item.className = 'notes-library-item';
+                item.addEventListener('click', () => {
+                    applyNotesSnapshot(noteItem);
+                    if (notesLibraryPanel) notesLibraryPanel.classList.add('is-hidden');
+                });
+                const content = document.createElement('div');
+                const timeEl = document.createElement('div');
+                timeEl.className = 'notes-library-item-time';
+                timeEl.textContent = formatLibraryTimestamp(noteItem.savedAt);
+                const descEl = document.createElement('div');
+                descEl.className = 'notes-library-item-desc';
+                const itemType = (noteItem.queryItem || '').trim() || '未填写事项';
+                const question = (noteItem.specificQuestion || '').trim() || '未填写具体问题';
+                descEl.textContent = `${itemType} | ${question}`;
+                content.appendChild(timeEl);
+                content.appendChild(descEl);
+                const deleteButton = document.createElement('button');
+                deleteButton.type = 'button';
+                deleteButton.className = 'notes-library-delete-button action-theme-button';
+                deleteButton.textContent = '删除';
+                deleteButton.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    const latestLibrary = getNotesLibraryFromStorage();
+                    if (!latestLibrary[noteIndex]) return;
+                    const deletedNote = latestLibrary[noteIndex];
+                    latestLibrary.splice(noteIndex, 1);
+                    if (activeEditingNoteId && deletedNote?.id === activeEditingNoteId) {
+                        activeEditingNoteId = null;
+                    }
+                    if (!persistNotesLibraryToStorage(latestLibrary)) return;
+                    renderNotesLibraryList();
+                });
+                item.appendChild(content);
+                item.appendChild(deleteButton);
+                notesLibraryList.appendChild(item);
+            });
+        };
+        const saveNotesToLocalStorage = () => {
+            const notesLibrary = getNotesLibraryFromStorage();
+            const existingIndex = activeEditingNoteId
+                ? notesLibrary.findIndex((item) => item?.id === activeEditingNoteId)
+                : -1;
+            const payload = buildCurrentNotesSnapshot(activeEditingNoteId);
+            if (existingIndex >= 0) {
+                notesLibrary.splice(existingIndex, 1);
+            }
+            notesLibrary.unshift(payload);
+            const saved = persistNotesLibraryToStorage(notesLibrary);
+            if (saved) {
+                activeEditingNoteId = payload.id;
+                renderNotesLibraryList();
+            }
+            return saved;
+        };
+        const restoreNotesFromLocalStorage = () => {
+            const notesLibrary = getNotesLibraryFromStorage();
+            if (!notesLibrary.length) return;
+            const latest = notesLibrary[0];
+            applyNotesSnapshot(latest);
+        };
+        const showSaveNotesFeedback = (saved) => {
+            if (!saveNotesButton) return;
+            const originalText = '保存笔记';
+            saveNotesButton.textContent = saved ? '已保存' : '保存失败';
+            window.setTimeout(() => {
+                saveNotesButton.textContent = originalText;
+            }, 1000);
+        };
+        const setNoteRowDeleteMode = (enabled) => {
+            isNoteRowDeleteMode = Boolean(enabled);
+            if (notesEntriesContainer) {
+                notesEntriesContainer.classList.toggle('is-delete-mode', isNoteRowDeleteMode);
+            }
+            if (removeNoteRowButton) {
+                removeNoteRowButton.classList.toggle('is-active', isNoteRowDeleteMode);
+                removeNoteRowButton.setAttribute('aria-pressed', String(isNoteRowDeleteMode));
+            }
+            if (isNoteRowDeleteMode) {
+                closeAllNotePalaceSelectors();
+            }
+        };
+        const clearRowAnimationTimer = (row) => {
+            const timerId = noteRowAnimationTimers.get(row);
+            if (!timerId) return;
+            clearTimeout(timerId);
+            noteRowAnimationTimers.delete(row);
+        };
+        const captureNoteRowRects = () => {
+            if (!notesEntriesContainer) return new Map();
+            const rectMap = new Map();
+            notesEntriesContainer.querySelectorAll('.notes-entry-row').forEach((item) => {
+                rectMap.set(item, item.getBoundingClientRect());
+            });
+            return rectMap;
+        };
+        const animateNoteRowsReflow = (previousRects) => {
+            if (!notesEntriesContainer || !previousRects?.size) return;
+            notesEntriesContainer.querySelectorAll('.notes-entry-row').forEach((item) => {
+                const previousRect = previousRects.get(item);
+                if (!previousRect) return;
+                const currentRect = item.getBoundingClientRect();
+                const deltaX = previousRect.left - currentRect.left;
+                const deltaY = previousRect.top - currentRect.top;
+                if (Math.abs(deltaX) < 0.5 && Math.abs(deltaY) < 0.5) return;
+                clearRowAnimationTimer(item);
+                item.style.transition = 'none';
+                item.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0)`;
+                window.requestAnimationFrame(() => {
+                    item.style.transition = `transform ${NOTE_ROW_REORDER_ANIMATION_MS}ms cubic-bezier(0.22, 1, 0.36, 1)`;
+                    item.style.transform = '';
+                    const timerId = window.setTimeout(() => {
+                        item.style.removeProperty('transition');
+                        clearRowAnimationTimer(item);
+                    }, NOTE_ROW_REORDER_ANIMATION_MS);
+                    noteRowAnimationTimers.set(item, timerId);
+                });
+            });
+        };
+        const updateDraggingNoteRowFollowPointer = (clientX, clientY) => {
+            if (!noteRowDragState || !notesEntriesContainer) return;
+            const { row, pointerOffsetX, pointerOffsetY } = noteRowDragState;
+            row.style.left = `${clientX - pointerOffsetX}px`;
+            row.style.top = `${clientY - pointerOffsetY}px`;
+        };
+        const moveDraggingNoteRowByPointerY = (clientY) => {
+            if (!noteRowDragState || !notesEntriesContainer) return;
+            const { placeholder } = noteRowDragState;
+            const previousRects = captureNoteRowRects();
+            const siblingRows = Array.from(notesEntriesContainer.querySelectorAll('.notes-entry-row'));
+            let insertBeforeRow = null;
+            for (const sibling of siblingRows) {
+                const rect = sibling.getBoundingClientRect();
+                if (clientY < rect.top + rect.height / 2) {
+                    insertBeforeRow = sibling;
+                    break;
+                }
+            }
+            if (insertBeforeRow) {
+                if (insertBeforeRow !== placeholder.nextElementSibling) {
+                    notesEntriesContainer.insertBefore(placeholder, insertBeforeRow);
+                    animateNoteRowsReflow(previousRects);
+                }
+                return;
+            }
+            if (notesEntriesContainer.lastElementChild !== placeholder) {
+                notesEntriesContainer.appendChild(placeholder);
+                animateNoteRowsReflow(previousRects);
+            }
+        };
+        const endNoteRowDragging = () => {
+            if (!noteRowDragState || !notesEntriesContainer) return;
+            const { row, pointerId, placeholder } = noteRowDragState;
+            const floatingRect = row.getBoundingClientRect();
+            if (row.hasPointerCapture?.(pointerId)) {
+                row.releasePointerCapture(pointerId);
+            }
+            row.style.removeProperty('position');
+            row.style.removeProperty('left');
+            row.style.removeProperty('top');
+            row.style.removeProperty('width');
+            row.style.removeProperty('z-index');
+            row.style.removeProperty('pointer-events');
+            notesEntriesContainer.insertBefore(row, placeholder);
+            placeholder.remove();
+            const droppedRect = row.getBoundingClientRect();
+            const deltaX = floatingRect.left - droppedRect.left;
+            const deltaY = floatingRect.top - droppedRect.top;
+            clearRowAnimationTimer(row);
+            row.style.transition = 'none';
+            row.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0) scale(0.985)`;
+            window.requestAnimationFrame(() => {
+                row.style.transition = `transform ${NOTE_ROW_REORDER_ANIMATION_MS}ms cubic-bezier(0.22, 1, 0.36, 1), opacity ${NOTE_ROW_REORDER_ANIMATION_MS}ms ease`;
+                row.classList.remove('is-dragging');
+                row.style.transform = '';
+                const timerId = window.setTimeout(() => {
+                    row.style.removeProperty('transition');
+                    clearRowAnimationTimer(row);
+                }, NOTE_ROW_REORDER_ANIMATION_MS);
+                noteRowAnimationTimers.set(row, timerId);
+            });
+            notesEntriesContainer.classList.remove('is-row-sorting');
+            setTimeout(() => {
+                delete row.dataset.suppressClick;
+            }, 0);
+            noteRowDragState = null;
+        };
+        const startNoteRowDragging = (row, pointerId, clientX, clientY) => {
+            if (!notesEntriesContainer || noteRowDragState || row.parentElement !== notesEntriesContainer) return;
+            closeAllNotePalaceSelectors();
+            const rowRect = row.getBoundingClientRect();
+            const placeholder = document.createElement('div');
+            placeholder.className = 'notes-entry-placeholder';
+            placeholder.style.height = `${rowRect.height}px`;
+            notesEntriesContainer.insertBefore(placeholder, row);
+            noteRowDragState = {
+                row,
+                pointerId,
+                placeholder,
+                pointerOffsetX: clientX - rowRect.left,
+                pointerOffsetY: clientY - rowRect.top
+            };
+            row.dataset.suppressClick = '1';
+            row.classList.add('is-dragging');
+            notesEntriesContainer.classList.add('is-row-sorting');
+            row.setPointerCapture?.(pointerId);
+            row.style.position = 'fixed';
+            row.style.left = `${rowRect.left}px`;
+            row.style.top = `${rowRect.top}px`;
+            row.style.width = `${rowRect.width}px`;
+            row.style.zIndex = '999';
+            row.style.pointerEvents = 'none';
+            document.body.appendChild(row);
+            updateDraggingNoteRowFollowPointer(clientX, clientY);
+            moveDraggingNoteRowByPointerY(clientY);
+        };
+        const handleGlobalNoteRowPointerMove = (event) => {
+            if (noteRowDragState && noteRowDragState.pointerId === event.pointerId) {
+                event.preventDefault();
+                updateDraggingNoteRowFollowPointer(event.clientX, event.clientY);
+                moveDraggingNoteRowByPointerY(event.clientY);
+            }
+        };
+        const handleGlobalNoteRowPointerUpOrCancel = (event) => {
+            if (noteRowDragState && noteRowDragState.pointerId === event.pointerId) {
+                endNoteRowDragging();
+            }
+        };
+        const bindNoteRowReorderEvents = (row, handle) => {
+            handle.addEventListener('pointerdown', (event) => {
+                if (!notesEntriesContainer) return;
+                if (isNoteRowDeleteMode) return;
+                if (!event.isPrimary) return;
+                if (event.pointerType === 'mouse' && event.button !== 0) return;
+                event.preventDefault();
+                event.stopPropagation();
+                startNoteRowDragging(row, event.pointerId, event.clientX, event.clientY);
+            });
+            row.addEventListener('click', (event) => {
+                if (!isNoteRowDeleteMode || noteRowDragState) return;
+                event.preventDefault();
+                event.stopPropagation();
+                const previousRects = captureNoteRowRects();
+                row.remove();
+                animateNoteRowsReflow(previousRects);
+                setNoteRowDeleteMode(false);
+            }, true);
+            row.addEventListener('click', (event) => {
+                if (row.dataset.suppressClick !== '1') return;
+                event.preventDefault();
+                event.stopPropagation();
+            }, true);
+        };
+        document.addEventListener('pointermove', handleGlobalNoteRowPointerMove, { passive: false });
+        document.addEventListener('pointerup', handleGlobalNoteRowPointerUpOrCancel);
+        document.addEventListener('pointercancel', handleGlobalNoteRowPointerUpOrCancel);
+        const cssLengthToPx = (lengthText, fallbackPx = 0) => {
+            const raw = (lengthText || '').trim();
+            if (!raw) return fallbackPx;
+            const probe = document.createElement('div');
+            probe.style.position = 'absolute';
+            probe.style.visibility = 'hidden';
+            probe.style.width = raw;
+            probe.style.height = '0';
+            probe.style.pointerEvents = 'none';
+            document.body.appendChild(probe);
+            const px = probe.getBoundingClientRect().width;
+            probe.remove();
+            return Number.isFinite(px) && px > 0 ? px : fallbackPx;
+        };
+        const getDevicePixelAlignedValue = (value) => {
+            const dpr = Math.max(1, window.devicePixelRatio || 1);
+            return Math.round(value * dpr) / dpr;
+        };
+        const buildNotesPalaceDashSvg = ({ sizePx, strokePx, gapPx, radiusPx, color }) => {
+            const dashLengthPx = getDevicePixelAlignedValue(Math.max(strokePx * 4, gapPx * 1.8));
+            const insetPx = getDevicePixelAlignedValue(Math.max(strokePx / 2, 0.5));
+            const rectSize = Math.max(sizePx - insetPx * 2, 1);
+            const safeRadius = getDevicePixelAlignedValue(Math.max(0, Math.min(radiusPx, rectSize / 2)));
+            const alignedGapPx = getDevicePixelAlignedValue(Math.max(1, gapPx));
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${sizePx}" height="${sizePx}" viewBox="0 0 ${sizePx} ${sizePx}" shape-rendering="geometricPrecision"><rect x="${insetPx}" y="${insetPx}" width="${rectSize}" height="${rectSize}" rx="${safeRadius}" ry="${safeRadius}" fill="none" stroke="${color}" stroke-width="${strokePx}" stroke-dasharray="${dashLengthPx} ${alignedGapPx}" vector-effect="non-scaling-stroke"/></svg>`;
+            return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+        };
+        const syncNotesPalaceDashStyle = () => {
+            const rootStyle = getComputedStyle(document.documentElement);
+            const dashThicknessPx = getDevicePixelAlignedValue(Math.max(1, cssLengthToPx(rootStyle.getPropertyValue('--notes-palace-dash-thickness'), 2)));
+            const dashGapPx = getDevicePixelAlignedValue(Math.max(1, cssLengthToPx(rootStyle.getPropertyValue('--notes-palace-dash-gap'), 12)));
+            const dashOutsetPx = getDevicePixelAlignedValue(Math.max(0, cssLengthToPx(rootStyle.getPropertyValue('--notes-palace-dash-outset'), 3)));
+            const borderRadiusPx = getDevicePixelAlignedValue(Math.max(0, cssLengthToPx(rootStyle.getPropertyValue('--notes-select-border-radius'), 8)));
+            const color = (rootStyle.getPropertyValue('--notes-select-border-color') || '#4b3521').trim() || '#4b3521';
+            const referencePalaceCard = document.querySelector('#palaceGrid .palace-card');
+            const palaceSizeRaw = referencePalaceCard ? referencePalaceCard.getBoundingClientRect().width : 120;
+            const palaceSizePx = getDevicePixelAlignedValue(Math.max(24, palaceSizeRaw));
+            const svgUrl = buildNotesPalaceDashSvg({
+                sizePx: getDevicePixelAlignedValue(palaceSizePx + dashOutsetPx * 2),
+                strokePx: dashThicknessPx,
+                gapPx: dashGapPx,
+                radiusPx: getDevicePixelAlignedValue(borderRadiusPx + dashOutsetPx),
+                color
+            });
+            document.documentElement.style.setProperty('--notes-palace-dash-svg-url', svgUrl);
+        };
+        const syncNotePalaceSizeWithMainGrid = () => {
+            if (!notesPanelContainer) return;
+            const referencePalaceCard = document.querySelector('#palaceGrid .palace-card');
+            if (!referencePalaceCard) return;
+            const cardWidth = referencePalaceCard.getBoundingClientRect().width;
+            if (!Number.isFinite(cardWidth) || cardWidth <= 0) return;
+            notesPanelContainer.style.setProperty('--notes-palace-size', `${cardWidth}px`);
+            syncNotesPalaceDashStyle();
+        };
+        const setNotePalaceTriggerPlaceholder = (trigger) => {
+            trigger.innerHTML = '';
+            trigger.classList.remove('is-selected');
+            delete trigger.dataset.palaceIndex;
+        };
+        const renderNotePalacePreview = (trigger, palaceIndex) => {
+            const sourceCard = document.getElementById(`palace-${palaceIndex}`);
+            if (!sourceCard) {
+                setNotePalaceTriggerPlaceholder(trigger);
+                return;
+            }
+            const previewCard = sourceCard.cloneNode(true);
+            previewCard.removeAttribute('id');
+            previewCard.classList.add('notes-palace-preview');
+            trigger.innerHTML = '';
+            trigger.appendChild(previewCard);
+            trigger.classList.add('is-selected');
+            trigger.dataset.palaceIndex = String(palaceIndex);
+        };
+        const refreshAllNotePalacePreviews = () => {
+            if (!notesEntriesContainer) return;
+            notesEntriesContainer.querySelectorAll('.notes-palace-trigger').forEach((trigger) => {
+                const palaceIndex = Number(trigger.dataset.palaceIndex);
+                if (!Number.isFinite(palaceIndex)) return;
+                renderNotePalacePreview(trigger, palaceIndex);
+            });
+        };
+        const closeAllNotePalaceSelectors = (exceptPicker = null) => {
+            document.querySelectorAll('.notes-palace-picker.is-open').forEach((picker) => {
+                if (exceptPicker && picker === exceptPicker) return;
+                picker.classList.remove('is-open');
+                const popup = picker.querySelector('.notes-palace-popup');
+                if (popup) popup.classList.add('is-hidden');
+            });
+        };
+        const createNoteEntryRow = (initialData = null) => {
+            const row = document.createElement('div');
+            row.className = 'notes-entry-row';
+            const picker = document.createElement('div');
+            picker.className = 'notes-palace-picker';
+            const trigger = document.createElement('button');
+            trigger.type = 'button';
+            trigger.className = 'notes-palace-trigger';
+            trigger.setAttribute('aria-label', '选择宫位图');
+            setNotePalaceTriggerPlaceholder(trigger);
+            const popup = document.createElement('div');
+            popup.className = 'notes-palace-popup is-hidden';
+            palaces.forEach((palaceName, palaceIndex) => {
+                const option = document.createElement('button');
+                option.type = 'button';
+                option.className = 'notes-palace-option';
+                option.textContent = palaceName;
+                option.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    setNoPalaceMode(false);
+                    renderNotePalacePreview(trigger, palaceIndex);
+                    popup.classList.add('is-hidden');
+                    picker.classList.remove('is-open');
+                });
+                popup.appendChild(option);
+            });
+            trigger.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                const isOpen = picker.classList.contains('is-open');
+                closeAllNotePalaceSelectors();
+                if (!isOpen) {
+                    picker.classList.add('is-open');
+                    popup.classList.remove('is-hidden');
+                }
+            });
+            picker.appendChild(trigger);
+            picker.appendChild(popup);
+            const textInput = document.createElement('input');
+            textInput.type = 'text';
+            textInput.className = 'notes-field-input';
+            textInput.placeholder = '请输入笔记内容';
+            const dragHandle = document.createElement('button');
+            dragHandle.type = 'button';
+            dragHandle.className = 'notes-entry-handle';
+            dragHandle.setAttribute('aria-label', '拖动排序');
+            dragHandle.textContent = '⋮⋮';
+            const clearNoPalaceInputAnimationState = () => {
+                textInput.style.removeProperty('transition');
+                textInput.style.removeProperty('width');
+                textInput.style.removeProperty('margin-left');
+                textInput.style.removeProperty('will-change');
+            };
+            const playNoPalaceExpandAnimation = (startWidthPx) => {
+                clearNoPalaceInputAnimationState();
+                const safeStartWidth = Math.max(1, startWidthPx);
+                textInput.style.willChange = 'width';
+                textInput.style.marginLeft = 'auto';
+                textInput.style.width = `${safeStartWidth}px`;
+                void textInput.offsetWidth;
+                textInput.style.transition = 'width 280ms cubic-bezier(0.22, 1, 0.36, 1)';
+                textInput.style.width = '100%';
+            };
+            const setNoPalaceMode = (enabled, { animate = true } = {}) => {
+                const wasNoPalaceMode = row.classList.contains('is-no-palace');
+                const widthBefore = textInput.getBoundingClientRect().width;
+                row.classList.toggle('is-no-palace', enabled);
+                if (enabled) {
+                    setNotePalaceTriggerPlaceholder(trigger);
+                    if (!wasNoPalaceMode && animate) {
+                        window.requestAnimationFrame(() => {
+                            playNoPalaceExpandAnimation(widthBefore);
+                        });
+                    }
+                } else {
+                    clearNoPalaceInputAnimationState();
+                }
+            };
+            textInput.addEventListener('transitionend', (event) => {
+                if (event.propertyName !== 'width') return;
+                clearNoPalaceInputAnimationState();
+            });
+            const noPalaceOption = document.createElement('button');
+            noPalaceOption.type = 'button';
+            noPalaceOption.className = 'notes-palace-option';
+            noPalaceOption.textContent = '不填';
+            noPalaceOption.addEventListener('click', (event) => {
+                event.preventDefault();
+                setNoPalaceMode(true);
+                popup.classList.add('is-hidden');
+                picker.classList.remove('is-open');
+            });
+            popup.insertBefore(noPalaceOption, popup.firstChild);
+            row.appendChild(picker);
+            row.appendChild(textInput);
+            row.appendChild(dragHandle);
+            if (initialData && typeof initialData === 'object') {
+                if (typeof initialData.text === 'string') {
+                    textInput.value = initialData.text;
+                }
+                if (initialData.noPalace) {
+                    setNoPalaceMode(true, { animate: false });
+                } else {
+                    const savedPalaceIndex = Number(initialData.palaceIndex);
+                    if (Number.isFinite(savedPalaceIndex)) {
+                        setNoPalaceMode(false, { animate: false });
+                        renderNotePalacePreview(trigger, savedPalaceIndex);
+                    }
+                }
+            }
+            bindNoteRowReorderEvents(row, dragHandle);
+            return row;
+        };
+        if (addNoteRowButton && notesEntriesContainer) {
+            addNoteRowButton.addEventListener('click', () => {
+                setNoteRowDeleteMode(false);
+                notesEntriesContainer.appendChild(createNoteEntryRow());
+            });
+            if (removeNoteRowButton) {
+                removeNoteRowButton.addEventListener('click', () => {
+                    if (!notesEntriesContainer.querySelector('.notes-entry-row')) return;
+                    setNoteRowDeleteMode(!isNoteRowDeleteMode);
+                });
+            }
+            if (saveNotesButton) {
+                saveNotesButton.addEventListener('click', () => {
+                    const saved = saveNotesToLocalStorage();
+                    showSaveNotesFeedback(saved);
+                });
+            }
+            if (askAiButton) {
+                askAiButton.addEventListener('click', () => {
+                    requestAiAnswer();
+                });
+            }
+            if (openNotesLibraryButton && notesLibraryPanel) {
+                openNotesLibraryButton.addEventListener('click', () => {
+                    renderNotesLibraryList();
+                    syncNotesLibraryPanelTopWithButton();
+                    notesLibraryPanel.classList.toggle('is-hidden');
+                });
+            }
+            if (closeNotesLibraryButton && notesLibraryPanel) {
+                closeNotesLibraryButton.addEventListener('click', () => {
+                    notesLibraryPanel.classList.add('is-hidden');
+                });
+            }
+            if (clearNotesLibraryButton) {
+                clearNotesLibraryButton.addEventListener('click', () => {
+                    if (!persistNotesLibraryToStorage([])) return;
+                    activeEditingNoteId = null;
+                    renderNotesLibraryList();
+                });
+            }
+            document.addEventListener('mousedown', (event) => {
+                if (event.target.closest('.notes-palace-picker')) return;
+                closeAllNotePalaceSelectors();
+                if (!notesLibraryPanel || notesLibraryPanel.classList.contains('is-hidden')) return;
+                const clickedInsideLibrary = notesLibraryPanel.contains(event.target);
+                const clickedLibraryTrigger = openNotesLibraryButton?.contains(event.target);
+                if (!clickedInsideLibrary && !clickedLibraryTrigger) {
+                    notesLibraryPanel.classList.add('is-hidden');
+                }
+            });
+        }
+        syncNotePalaceSizeWithMainGrid();
+        syncNotesPalaceDashStyle();
+        window.addEventListener('resize', syncNotePalaceSizeWithMainGrid);
+        initNotesQueryItemCustomSelect();
         manualInput.addEventListener('pointerdown', () => {
             isPointerFocusingManualInput = true;
         });
@@ -1113,47 +2879,26 @@
                 isPointerFocusingManualInput = false;
             });
         });
-        manualInput.addEventListener('keydown', (event) => {
-            const input = event.target;
-            const key = event.key;
-            const isDigit = /^[0-9]$/.test(key);
+        function normalizeDigitKeyChar(value) {
+            if (!value || typeof value !== 'string') return '';
+            if (/^[0-9]$/.test(value)) return value;
+            const code = value.charCodeAt(0);
+            if (code >= 0xFF10 && code <= 0xFF19) {
+                return String(code - 0xFF10);
+            }
+            return '';
+        }
+        function applySegmentDigitInput(input, digit) {
             const idx = getSegmentIndexByPosition(input.selectionStart || 0);
             const segment = dateTimeSegments[idx];
-
-            if (key === 'ArrowLeft') {
-                event.preventDefault();
-                selectDateTimeSegment(input, idx - 1);
-                return;
-            }
-            if (key === 'ArrowRight') {
-                event.preventDefault();
-                selectDateTimeSegment(input, idx + 1);
-                return;
-            }
-            if (key === 'Tab') {
-                event.preventDefault();
-                selectDateTimeSegment(input, idx + (event.shiftKey ? -1 : 1));
-                return;
-            }
-            if (key === 'Backspace' || key === 'Delete') {
-                event.preventDefault();
-                segmentInputBuffer = '';
-                selectDateTimeSegment(input, idx);
-                return;
-            }
-            if (!isDigit) {
-                event.preventDefault();
-                return;
-            }
-
-            event.preventDefault();
+            if (!segment) return;
             if (activeSegmentIndex !== idx) {
                 activeSegmentIndex = idx;
                 segmentInputBuffer = '';
                 const parts = getSegmentValuesFromInput(input.value);
                 segmentPreviousValue = parts[segment.key] || '';
             }
-            segmentInputBuffer = (segmentInputBuffer + key).slice(0, segment.len);
+            segmentInputBuffer = (segmentInputBuffer + digit).slice(0, segment.len);
             const parts = getSegmentValuesFromInput(input.value);
             const previewValue = (segmentInputBuffer + segmentPreviousValue.slice(segmentInputBuffer.length)).slice(0, segment.len);
             parts[segment.key] = previewValue;
@@ -1187,6 +2932,65 @@
             } else {
                 selectDateTimeSegment(input, idx);
             }
+        }
+        manualInput.addEventListener('beforeinput', (event) => {
+            if (event.isComposing) return;
+            const inputType = event.inputType || '';
+            if (inputType === 'insertText' || inputType === 'insertCompositionText') {
+                const text = typeof event.data === 'string' ? event.data : '';
+                if (!text) return;
+                const digits = Array.from(text).map(normalizeDigitKeyChar).filter(Boolean);
+                if (!digits.length) {
+                    event.preventDefault();
+                    return;
+                }
+                event.preventDefault();
+                digits.forEach((digit) => applySegmentDigitInput(manualInput, digit));
+                return;
+            }
+            if (inputType === 'deleteContentBackward' || inputType === 'deleteContentForward') {
+                event.preventDefault();
+                segmentInputBuffer = '';
+                const idx = getSegmentIndexByPosition(manualInput.selectionStart || 0);
+                selectDateTimeSegment(manualInput, idx);
+            }
+        });
+        manualInput.addEventListener('keydown', (event) => {
+            const input = event.target;
+            const key = event.key;
+            const idx = getSegmentIndexByPosition(input.selectionStart || 0);
+
+            if (key === 'ArrowLeft') {
+                event.preventDefault();
+                selectDateTimeSegment(input, idx - 1);
+                return;
+            }
+            if (key === 'ArrowRight') {
+                event.preventDefault();
+                selectDateTimeSegment(input, idx + 1);
+                return;
+            }
+            if (key === 'Tab') {
+                event.preventDefault();
+                selectDateTimeSegment(input, idx + (event.shiftKey ? -1 : 1));
+                return;
+            }
+            if (key === 'Backspace' || key === 'Delete') {
+                event.preventDefault();
+                segmentInputBuffer = '';
+                selectDateTimeSegment(input, idx);
+                return;
+            }
+            if (event.ctrlKey || event.metaKey || event.altKey || event.isComposing) return;
+
+            const digit = normalizeDigitKeyChar(key);
+            if (!digit) {
+                if (key.length === 1) event.preventDefault();
+                return;
+            }
+
+            event.preventDefault();
+            applySegmentDigitInput(input, digit);
         });
         manualInput.addEventListener('paste', (event) => {
             const text = (event.clipboardData || window.clipboardData).getData('text');
@@ -1202,77 +3006,26 @@
             applyManualInputDateTime(formatted);
             selectDateTimeSegment(manualInput, 0);
         });
-        document.getElementById('dateTimeManualInput').addEventListener('change', (event) => {
+        manualInput.addEventListener('change', (event) => {
             applyManualInputDateTime(event.target.value);
         });
-        document.getElementById('dateTimeManualInput').addEventListener('blur', (event) => {
+        manualInput.addEventListener('blur', (event) => {
             isPointerFocusingManualInput = false;
             applyManualInputDateTime(event.target.value);
         });
         if (typeof flatpickr === 'function' && dateTimeCalendarInput) {
             const numericMonthNames = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
             const closeCustomSelectLists = (calendarContainer) => {
-                const opened = calendarContainer.querySelectorAll('.fp-custom-select.is-open');
-                opened.forEach((node) => {
-                    node.classList.remove('is-open');
-                    const list = node.querySelector('.fp-custom-select-list');
-                    if (list) list.classList.add('is-hidden');
-                });
+                closeOpenCustomSelects(calendarContainer);
             };
             const createCustomHeaderSelect = ({ className, options, onSelect }) => {
-                const root = document.createElement('div');
-                root.className = `fp-custom-select ${className}`;
-                const trigger = document.createElement('button');
-                trigger.type = 'button';
-                trigger.className = 'fp-custom-select-trigger';
-                const triggerLabel = document.createElement('span');
-                triggerLabel.className = 'fp-custom-select-trigger-label';
-                trigger.appendChild(triggerLabel);
-                const list = document.createElement('div');
-                list.className = 'fp-custom-select-list is-hidden';
-                const optionButtons = new Map();
-                options.forEach((item) => {
-                    const optionButton = document.createElement('button');
-                    optionButton.type = 'button';
-                    optionButton.className = 'fp-custom-select-option';
-                    optionButton.dataset.value = item.value;
-                    optionButton.textContent = item.label;
-                    optionButton.addEventListener('click', (event) => {
-                        event.preventDefault();
-                        onSelect(item.value);
-                        setValue(item.value);
-                        root.classList.remove('is-open');
-                        list.classList.add('is-hidden');
-                    });
-                    list.appendChild(optionButton);
-                    optionButtons.set(item.value, optionButton);
+                return createCustomSelect({
+                    rootClassName: className,
+                    options,
+                    onSelect,
+                    emptyLabel: '',
+                    centerSelectedOnOpen: true
                 });
-                const setValue = (value) => {
-                    const matched = options.find((item) => item.value === value);
-                    if (matched) {
-                        triggerLabel.textContent = matched.label;
-                    }
-                    optionButtons.forEach((button, buttonValue) => {
-                        button.classList.toggle('is-selected', buttonValue === value);
-                    });
-                };
-                trigger.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    const monthHeader = root.closest('.flatpickr-current-month');
-                    if (!monthHeader) return;
-                    monthHeader.querySelectorAll('.fp-custom-select.is-open').forEach((node) => {
-                        if (node === root) return;
-                        node.classList.remove('is-open');
-                        const nodeList = node.querySelector('.fp-custom-select-list');
-                        if (nodeList) nodeList.classList.add('is-hidden');
-                    });
-                    root.classList.toggle('is-open');
-                    list.classList.toggle('is-hidden', !root.classList.contains('is-open'));
-                });
-                root.appendChild(trigger);
-                root.appendChild(list);
-                return { root, setValue };
             };
             const ensureCustomMonthYearHeader = (instance) => {
                 const monthHeader = instance.calendarContainer.querySelector('.flatpickr-current-month');
@@ -1415,6 +3168,10 @@
                 onOpen: (_, __, instance) => {
                     syncCustomMonthYearHeader(instance);
                     closeCustomSelectLists(instance.calendarContainer);
+                    attachCalendarAutoPosition(instance);
+                    window.requestAnimationFrame(() => {
+                        positionCalendarCenteredBelowDateTimeRow(instance);
+                    });
                     const activeTimeInput = instance.calendarContainer.querySelector('.flatpickr-time input:focus');
                     if (activeTimeInput) {
                         const len = activeTimeInput.value.length;
@@ -1424,6 +3181,9 @@
                             }
                         }, 0);
                     }
+                },
+                onClose: () => {
+                    detachCalendarPositionListeners();
                 }
             });
         }
@@ -1446,6 +3206,16 @@
                 validateManualDateTimeInput(manualInput.value);
             });
         }
+        const previousWindowOnload = window.onload;
+        window.onload = (event) => {
+            if (typeof previousWindowOnload === 'function') {
+                previousWindowOnload.call(window, event);
+            }
+            syncNotesLibraryPanelTopWithButton();
+            renderNotesLibraryList();
+            clearCurrentPageNotesContent();
+        };
+        window.addEventListener('resize', syncNotesLibraryPanelTopWithButton);
     </script>
 </body>
 </html>
