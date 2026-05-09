@@ -55,10 +55,11 @@
             --palace-name-font-size: 2rem;                     /* 宫位名字号 */
             --palace-marker-font-size: 1.4rem;                 /* “身/时/日”标志字号 */
             /* ===== 起卦时间栏变量 ===== */
-            --datetime-picker-text-size: 1.3rem;               /* 起卦时间栏文字字号 */
+            --datetime-picker-text-size: 1.4rem;               /* 起卦时间栏文字字号 */
             --datetime-picker-calendar-btn-size: 1.6rem;       /* 起卦时间栏日历按钮大小 */
             --datetime-picker-border-width: 1.5px;             /* 起卦时间栏边框粗细 */
-            --datetime-now-button-text-size: 1.1rem;           /* “当前时间”按钮文字字号 */
+            --datetime-picker-box-width: 17rem;                /* 起卦时间选择栏总宽度 */
+            --datetime-now-button-text-size: 1.3rem;           /* “当前时间”按钮文字字号 */
 
             /* ===== 日历容器变量 ===== */
             --calendar-weekday-text-size: 1rem;                /* 星期字号 */
@@ -95,11 +96,16 @@
         
         }
         html {
-            font-size: 20px;
+            font-size: 15px;
         }
-        @media (max-width: 800px) {
+        @media (min-aspect-ratio: 1001/1000) {
             html {
-                font-size: calc(20 * 100vw / 800);
+                font-size: calc(17 * 100vw / 1600);
+            }
+        }
+        @media (max-aspect-ratio: 1/1) {
+            html {
+                font-size: calc(15 * 100vw / 800);
             }
         }
 
@@ -130,6 +136,34 @@
             padding: 1rem;
             box-sizing: border-box;
         }
+        @media (min-aspect-ratio: 1/1) {
+            .page-root {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-template-areas:
+                    "header header"
+                    "time notes"
+                    "main notes";
+                column-gap: var(--panel-gap);
+                row-gap: 0;
+                align-items: start;
+                justify-content: center;
+                max-width: 96rem;
+                margin-inline: auto;
+            }
+            .page-header {
+                grid-area: header;
+            }
+            .time-panel {
+                grid-area: time;
+            }
+            .main-panel {
+                grid-area: main;
+            }
+            .notes-panel {
+                grid-area: notes;
+            }
+        }
         .page-title {
             font-size: var(--page-title-font-size) !important;
             margin-top: 2rem;
@@ -142,12 +176,12 @@
         }
         .notes-library-open-button {
             position: absolute;
+            align-items: right;
             right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            height: 2.3rem;
-            padding: 0 0.9rem;
-            font-size: 1.05rem;
+            top: 32%;
+            height: 3rem;
+            padding: 0 1.15rem;
+            font-size: 1.3rem;
             font-weight: 700;
         }
         .notes-library-open-button:active {
@@ -558,8 +592,8 @@
         }
         .notes-save-button {
             height: 3rem;
-            padding: 0 1rem;
-            font-size: 1.1rem;
+            padding: 0 1.25rem;
+            font-size: 1.3rem;
             font-weight: 700;
             white-space: nowrap;
         }
@@ -729,21 +763,28 @@
             position: relative;
             grid-column-start: 2;
             justify-self: center;
+            width: var(--datetime-picker-box-width);
         }
         .datetime-picker-box {
             display: inline-flex;
+            width: 100%;
+            box-sizing: border-box;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
             font-size: var(--datetime-picker-text-size);
             background: #fff;
             border: var(--datetime-picker-border-width) solid #4b3521;
             border-radius: 0.625rem;
             padding:
                 0.55rem
-                1rem
+                0rem
                 0.55rem
                 0.9rem;
-            transition: all 0.2s ease;
+        }
+        .datetime-manual-input {
+            width: auto;
+            flex: 1 1 auto;
+            min-width: 0;
         }
         .datetime-now-button {
             grid-column-start: 3;
@@ -751,11 +792,13 @@
             margin-left: 0.5rem;
             flex-shrink: 0;
             font-size: var(--datetime-now-button-text-size);
+            padding: 0.6rem 0.6rem;
         }
         #dateTimePickerButton {
             width: var(--datetime-picker-calendar-btn-size);
             height: var(--datetime-picker-calendar-btn-size);
             margin-bottom: 0.05rem;
+            margin-right: 0.6rem;
         }
         #dateTimePickerButton svg {
             width: 100%;
@@ -1192,7 +1235,7 @@
     </style>
 </head>
 <body>
-    <div class="page-root max-w-screen-md">
+    <div class="page-root">
 
     <div class="page-header">
         <h1 class="page-title font-bold text-center tracking-[0.2em]">
@@ -1216,10 +1259,10 @@
     </div>
 
     <div class="theme-panel time-panel">
-        <div id="solarClock" class="font-mono-custom text-[1.5rem] tracking-[0.05em]">
+        <div id="solarClock" class="font-mono-custom font-bold text-[1.8rem] tracking-[0.05em]">
             0000年0月0日 00:00:00
         </div>
-        <div id="lunarClock" class="text-[1.25rem] mt-2 tracking-[0.2em] text-center whitespace-nowrap">
+        <div id="lunarClock" class="font-bold text-[1.45rem] mt-2 tracking-[0.2em] text-center whitespace-nowrap">
             获取农历中...
         </div>
     </div>
@@ -1238,7 +1281,7 @@
                                 inputmode="numeric"
                                 maxlength="16"
                                 pattern="\d{4}/\d{2}/\d{2} \d{2}:\d{2}"
-                                class="w-[15ch] bg-transparent outline-none font-mono-custom font-bold"
+                                class="datetime-manual-input bg-transparent outline-none font-mono-custom font-bold"
                             >
                             <button
                                 type="button"
@@ -1260,7 +1303,7 @@
                     <button
                         type="button"
                         id="dateTimeNowButton"
-                        class="datetime-now-button action-theme-button px-3 py-2 font-bold"
+                        class="datetime-now-button action-theme-button font-bold"
                     >
                         当前时间
                     </button>
