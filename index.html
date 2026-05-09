@@ -306,6 +306,15 @@
             border: var(--notes-select-border-width) solid var(--notes-select-border-color);
             border-radius: var(--notes-select-border-radius);
         }
+        .notes-field-textarea {
+            min-height: 6rem;
+            height: auto;
+            padding: 0.55rem 0.75rem;
+            line-height: 1.4;
+            resize: vertical;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
         .notes-field-select option {
             font-size: var(--notes-font-size);
         }
@@ -1277,7 +1286,7 @@
             </div>
             <div class="notes-field-row">
                 <label for="specificQuestion" class="notes-field-label">具体问题</label>
-                <input id="specificQuestion" type="text" class="notes-field-input" />
+                <textarea id="specificQuestion" class="notes-field-input notes-field-textarea"></textarea>
             </div>
             <div class="notes-field-row">
                 <span class="notes-field-label"></span>
