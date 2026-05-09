@@ -27,6 +27,13 @@
             margin: 0;
             color: #4b3521;
             overflow-x: hidden;
+        }
+        #scaleViewport {
+            width: 100%;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        #scaleRoot {
             position: relative;
             left: 50%;
             transform: translateX(-50%) scale(var(--global-scale, 1));
@@ -476,7 +483,9 @@
         }
     </style>
 </head>
-<body class="page-root">
+<body>
+    <div id="scaleViewport">
+        <div id="scaleRoot" class="page-root">
 
     <h1 class="page-title font-bold text-center tracking-[0.2em]">
         江氏小六壬排盘器
@@ -544,6 +553,8 @@
         </div>
     </div>
 
+        </div>
+    </div>
     <script>
         const palaces = ["大安", "留连", "速喜", "赤口", "小吉", "空亡"];
         const zhiOrder = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"];
@@ -587,6 +598,13 @@
             "金": "#b8860b",
             "水": "#1565c0"
         };
+        function syncScaleViewportHeight() {
+            const scaleViewport = document.getElementById('scaleViewport');
+            const scaleRoot = document.getElementById('scaleRoot');
+            if (!scaleViewport || !scaleRoot) return;
+            const scaledHeight = Math.max(0, scaleRoot.getBoundingClientRect().height);
+            scaleViewport.style.height = `${scaledHeight.toFixed(1)}px`;
+        }
         function updateGlobalScale() {
             const viewportWidth = Math.max(1, window.innerWidth || document.documentElement.clientWidth || 1);
             const shrinkStartWidth = 600;
@@ -597,9 +615,19 @@
             const scaleStr = scale.toFixed(3);
             document.documentElement.style.setProperty('--global-scale', scaleStr);
             document.documentElement.style.setProperty('--space-scale', scaleStr);
+            window.requestAnimationFrame(syncScaleViewportHeight);
         }
         updateGlobalScale();
         window.addEventListener('resize', updateGlobalScale);
+        if (window.ResizeObserver) {
+            const scaleRoot = document.getElementById('scaleRoot');
+            if (scaleRoot) {
+                const scaleViewportObserver = new ResizeObserver(() => {
+                    window.requestAnimationFrame(syncScaleViewportHeight);
+                });
+                scaleViewportObserver.observe(scaleRoot);
+            }
+        }
         function colorizeGanZhiText(text) {
             return Array.from(text).map((ch) => {
                 const color = wuxingColorMap[ch];
