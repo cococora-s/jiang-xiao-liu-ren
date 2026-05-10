@@ -176,6 +176,11 @@
             box-sizing: border-box;
             row-gap: var(--panel-gap);
         }
+        .left-column-panels {
+            width: 100%;
+            display: grid;
+            row-gap: var(--panel-gap);
+        }
         @media (min-aspect-ratio: 1/1) {
             /* 控制宽屏下页面根容器网格布局 */
             .page-root {
@@ -184,8 +189,7 @@
                 grid-template-columns: 1fr 1fr;
                 grid-template-areas:
                     "header header"
-                    "time notes"
-                    "main notes";
+                    "left notes";
                 column-gap: 2rem;
                 row-gap: var(--panel-gap);
                 align-items: start;
@@ -196,17 +200,15 @@
             .page-header {
                 grid-area: header;
             }
-            /* 控制宽屏下时间面板所在网格区域 */
-            .time-panel {
-                grid-area: time;
-            }
-            /* 控制宽屏下排盘主面板所在网格区域 */
-            .main-panel {
-                grid-area: main;
+            /* 控制宽屏下左侧容器所在网格区域 */
+            .left-column-panels {
+                grid-area: left;
+                align-self: start;
             }
             /* 控制宽屏下笔记面板所在网格区域 */
             .notes-panel {
                 grid-area: notes;
+                align-self: start;
             }
         }
         
@@ -648,8 +650,11 @@
         }
         /* 下拉框宽度 */
         .notes-query-item-wrap {
-            width: 7rem;
+            width: 8rem;
             justify-self: start;
+        }
+        .notes-query-item-wrap .custom-select {
+            --custom-select-trigger-height: 5rem;
         }
         /* 下拉框 */
         .notes-field-select {
@@ -657,6 +662,7 @@
             border: 2px solid var(--dark-brown);
             border-radius: 0.4rem;
             cursor: pointer;
+            height: 5rem;
         }
         .notes-field-select-wrap::after {
             content: "";
@@ -1385,63 +1391,65 @@
         <div id="notesLibraryEmpty" class="notes-library-empty">暂无已保存笔记</div>
     </div>
 
-    <div class="theme-panel time-panel">
-        <div id="solarClock" class="font-mono-custom font-bold">
-            0000年0月0日 00:00:00
+    <div class="left-column-panels">
+        <div class="theme-panel time-panel">
+            <div id="solarClock" class="font-mono-custom font-bold">
+                0000年0月0日 00:00:00
+            </div>
+            <div id="lunarClock" class="font-bold mt-2 text-center whitespace-nowrap">
+                获取农历中...
+            </div>
         </div>
-        <div id="lunarClock" class="font-bold mt-2 text-center whitespace-nowrap">
-            获取农历中...
-        </div>
-    </div>
 
-    <div class="theme-panel main-panel">
-        <div class="datetime-section">
-                <label class="datetime-title tracking-widest mb-2 font-bold text-center">起卦时间</label>
-                <div class="datetime-row">
-                    <div
-                        id="dateTimePickerWrap"
-                        class="datetime-picker-wrap font-mono-custom font-bold"
-                    >
-                        <input
-                            type="text"
-                            id="dateTimeManualInput"
-                            placeholder="yyyy/mm/dd HH:mm"
-                            inputmode="numeric"
-                            maxlength="16"
-                            pattern="\d{4}/\d{2}/\d{2} \d{2}:\d{2}"
-                            class="datetime-manual-input font-mono-custom font-bold"
+        <div class="theme-panel main-panel">
+            <div class="datetime-section">
+                    <label class="datetime-title tracking-widest mb-2 font-bold text-center">起卦时间</label>
+                    <div class="datetime-row">
+                        <div
+                            id="dateTimePickerWrap"
+                            class="datetime-picker-wrap font-mono-custom font-bold"
                         >
+                            <input
+                                type="text"
+                                id="dateTimeManualInput"
+                                placeholder="yyyy/mm/dd HH:mm"
+                                inputmode="numeric"
+                                maxlength="16"
+                                pattern="\d{4}/\d{2}/\d{2} \d{2}:\d{2}"
+                                class="datetime-manual-input font-mono-custom font-bold"
+                            >
+                            <button
+                                type="button"
+                                id="dateTimePickerButton"
+                                aria-label="打开中文日历选择起卦时间"
+                                class="relative shrink-0 inline-flex items-center justify-center rounded transition overflow-hidden"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                            </button>
+                            <input type="hidden" id="dateTime">
+                            <input type="text" id="dateTimeCalendarInput" class="hidden" tabindex="-1" aria-hidden="true">
+                        </div>
                         <button
                             type="button"
-                            id="dateTimePickerButton"
-                            aria-label="打开中文日历选择起卦时间"
-                            class="relative shrink-0 inline-flex items-center justify-center rounded transition overflow-hidden"
+                            id="dateTimeNowButton"
+                            class="datetime-now-button small-action-button"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="16" y1="2" x2="16" y2="6"></line>
-                                <line x1="8" y1="2" x2="8" y2="6"></line>
-                                <line x1="3" y1="10" x2="21" y2="10"></line>
-                            </svg>
+                            当前时间
                         </button>
-                        <input type="hidden" id="dateTime">
-                        <input type="text" id="dateTimeCalendarInput" class="hidden" tabindex="-1" aria-hidden="true">
                     </div>
-                    <button
-                        type="button"
-                        id="dateTimeNowButton"
-                        class="datetime-now-button small-action-button"
-                    >
-                        当前时间
-                    </button>
+                    <div id="selectedDateLunarInfo" class="mt-2 font-mono-custom whitespace-nowrap text-center"></div>
                 </div>
-                <div id="selectedDateLunarInfo" class="mt-2 font-mono-custom whitespace-nowrap text-center"></div>
-        </div>
-        <button onclick="startCalculation()" class="action-button action-theme-button">
-            开始排盘
-        </button>
+            <button onclick="startCalculation()" class="action-button action-theme-button">
+                开始排盘
+            </button>
 
-        <div id="palaceGrid" class="hex-grid mb-8">
+            <div id="palaceGrid" class="hex-grid mb-8">
+            </div>
         </div>
     </div>
 
@@ -1599,6 +1607,7 @@
         let chineseDatePicker = null;
         let isPointerFocusingManualInput = false;
         let detachCalendarAutoPosition = null;
+        let hasInitializedNotesPanel = false;
 
         function getSegmentIndexByPosition(pos) {
             if (pos <= 4) return 0;
@@ -1777,8 +1786,14 @@
             const date = parseDateTimeValue(value);
             const normalizedValue = date ? toDateTimeLocalValue(date) : '';
             const previousValue = dateTimeInput.value;
-            if (previousValue && previousValue !== normalizedValue) {
-                clearCurrentCalculationResult();
+            const hasDateTimeChanged = previousValue !== normalizedValue;
+            if (hasDateTimeChanged) {
+                if (previousValue) {
+                    clearCurrentCalculationResult();
+                }
+                if (hasInitializedNotesPanel) {
+                    clearCurrentPageNotesContent();
+                }
             }
             dateTimeInput.value = normalizedValue;
             if (manualInput) manualInput.value = date ? formatManualDateTimeValue(date) : '';
@@ -2219,6 +2234,7 @@
         let isNoteRowDeleteMode = false;
         let activeEditingNoteId = null;
         const noteRowAnimationTimers = new WeakMap();
+        hasInitializedNotesPanel = true;
         function autoResizeTextarea(textareaEl, minHeightPx = 0) {
             if (!(textareaEl instanceof HTMLTextAreaElement)) return;
             // 不能用 auto：该 textarea 的基础样式是 height: 100%，会导致无法测到真实内容高度
@@ -2330,6 +2346,14 @@
                     debounceMs: 220,
                     lockMinHeight: false
                 });
+            });
+        };
+        const resizeNoteRowTextarea = (row) => {
+            const textArea = row?.querySelector('textarea.notes-field-textarea');
+            if (!(textArea instanceof HTMLTextAreaElement)) return;
+            autoResizeTextarea(textArea, 0);
+            window.requestAnimationFrame(() => {
+                autoResizeTextarea(textArea, 0);
             });
         };
         const getNotesRowsSnapshot = () => {
@@ -2596,14 +2620,18 @@
             const parsedRows = parseAiReplyToNoteRows(replyText);
             if (parsedRows.length) {
                 parsedRows.forEach((rowData) => {
-                    notesEntriesContainer.appendChild(createNoteEntryRow(rowData));
+                    const row = createNoteEntryRow(rowData);
+                    notesEntriesContainer.appendChild(row);
+                    resizeNoteRowTextarea(row);
                 });
                 return;
             }
-            notesEntriesContainer.appendChild(createNoteEntryRow({
+            const fallbackRow = createNoteEntryRow({
                 text: replyText,
                 noPalace: true
-            }));
+            });
+            notesEntriesContainer.appendChild(fallbackRow);
+            resizeNoteRowTextarea(fallbackRow);
         };
         const requestAiAnswer = async () => {
             const queryItem = (queryItemSelect?.value || '').trim();
@@ -2670,7 +2698,9 @@
                 notesEntriesContainer.innerHTML = '';
                 const savedRows = Array.isArray(parsed.notesRows) ? parsed.notesRows : [];
                 savedRows.forEach((rowData) => {
-                    notesEntriesContainer.appendChild(createNoteEntryRow(rowData));
+                    const row = createNoteEntryRow(rowData);
+                    notesEntriesContainer.appendChild(row);
+                    resizeNoteRowTextarea(row);
                 });
             }
             setNoteRowDeleteMode(false);
