@@ -23,6 +23,12 @@
             --light: #fff8ea;
             --dark: #f5e8cf;
             --gold: #b59443;
+
+            /*===小按钮颜色===*/
+            --sb-bg:#cb9e2d46;
+            --sb-font:#4b3521d8;
+            --sb-hover:#a3802846;
+
             --panel-top-margin: 0rem;
 
             /* ===== 面板容器 ===== */
@@ -46,7 +52,7 @@
             /* ===== 起卦时间栏 ===== */
             --datetime-picker-text-size: 1.6rem;               /* 起卦时间栏文字字号 */
             --datetime-picker-calendar-btn-size: 1.6rem;       /* 起卦时间栏日历按钮大小 */
-            --datetime-picker-border-width: 1.5px;             /* 起卦时间栏边框粗细 */
+            --datetime-picker-border-width: 2px;             /* 起卦时间栏边框粗细 */
             --datetime-title-text-size: 2rem;                  /* “起卦时间”文字字号 */
             --datetime-lunar-info-text-size: 1.6rem;           /* 起卦时间下方农历文字字号 */
           
@@ -71,6 +77,7 @@
             
             /* ===== 笔记面板 ===== */
             --notes-font-size: 1.8rem;                         /* 笔记面板字段字号 */
+            --notes-palace-size: 13rem;                        /* 笔记宫位预览固定边长 */
             --notes-ai-button-font-size: 2rem;               /* “问AI”按钮字号 */
             --notes-select-border-radius: 0.4rem;                /* 笔记输入框圆角（含下拉框） */
             --notes-select-border-width: 2px;                  /* 笔记输入框边框粗细（含下拉框） */
@@ -90,7 +97,7 @@
             --notes-palace-selected-fill-color: transparent; /* 宫位图已选择填充色 */
             --notes-palace-dash-thickness: 2px; /* 宫位图虚线粗细 */
             --notes-palace-dash-gap: 0.5rem; /* 宫位图虚线稀疏程度（间隔） */
-            --notes-palace-dash-outset: 0.25rem; /* 宫位图虚线外扩程度 */
+            --notes-palace-dash-outset: 0rem; /* 宫位图虚线外扩程度 */
 
         
         }
@@ -157,11 +164,11 @@
             line-height: 1;
             white-space: nowrap;
             border-radius: 1rem;
-            background: #cb9e2d46;
-            color: #4b3521d8!important;
+            background: var(--sb-bg);
+            color: var(--sb-font)!important;
         }
         .small-action-button:hover {
-            background: #a3802846;
+            background: var(--sb-hover);
         }
 
 
@@ -572,91 +579,113 @@
         .slot-palace-name.show-underline { background-size: 100% 2px; }
 
         /* ===== 笔记面板（页面底部） ===== */
-        /* 控制笔记面板容器尺寸与内边距 */
+        /* 笔记面板容器 */
         .notes-panel {
             width: 100%;
-            max-width: 100%;
-            min-height: 8rem;
-            margin-bottom: var(--panel-gap);
-            padding:
-                1.5rem
-                1.3rem
-                1.3rem;
+            margin-bottom: 1rem;
+            padding:1rem 2rem 1rem 2rem;
         }
-        /* 控制笔记表单整体纵向布局 */
-        .notes-form {
-            display: flex;
-            flex-direction: column;
-            gap: 0.9rem;
-        }
-        /* 控制笔记字段行的标签-输入网格布局 */
+
+        /* 笔记字段行的标签 */
         .notes-field-row {
+            margin-top: 0.75rem;
             display: grid;
             grid-template-columns: auto 1fr;
             align-items: center;
             gap: 0.75rem;
         }
-        /* 控制笔记字段标签文本样式 */
+        /* 标签文本 */
         .notes-field-label {
             font-size: var(--notes-font-size);
             font-weight: 700;
             line-height: 1;
             white-space: nowrap;
         }
+        /* 输入框/下拉框 */
         .notes-field-input,
-        /* 控制笔记字段输入框/下拉框基础尺寸 */
         .notes-field-select {
             width: 100%;
-            height: 3rem;
+            height: 100%;
             font-size: var(--notes-font-size);
             font-weight: 700;
-            padding: 0 0.75rem;
             outline: none;
             appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none;
+
         }
-        /* 控制笔记输入框边框与背景 */
+        /* 文本输入框 */
         .notes-field-input {
-            background: var(--notes-select-bg-color);
-            border: var(--notes-select-border-width) solid var(--notes-select-border-color);
-            border-radius: var(--notes-select-border-radius);
+            background: #ffffff;
+            border: 2px solid var(--dark-brown);
+            border-radius: 0.4rem;
+            padding: 0.3rem 0.75rem 0.75rem 1rem;
         }
-        /* 控制笔记多行输入框文本换行行为 */
-        .notes-field-textarea {
-            padding: 0.55rem 0.75rem;
-            line-height: 1.35;
-            resize: none;
-            white-space: pre-wrap;
-            overflow-wrap: break-word;
-            word-break: break-word;
+        .notes-custom-scroll-host {
+            position: relative;
+            width: 100%;
         }
+        /* 具体问题输入框：隐藏系统滚动条，使用自绘滚动条 */
         #specificQuestion {
-            min-height: 3rem;
-            height: auto;
-            overflow-y: hidden;
+            height: 3rem;
+            max-height: 15rem;
+            resize: none;
+            overflow-y: auto;
+            padding-right: 1.45rem;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
         }
+        #specificQuestion::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+            display: none;
+        }
+        .notes-custom-scrollbar {
+            position: absolute;
+            top: 0.4rem;
+            bottom: 1rem;
+            right: 0.45rem;
+            width: 0.6rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+        }
+        .notes-custom-scroll-host.is-scrollable .notes-custom-scrollbar {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .notes-custom-scrollbar-thumb {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 0;
+            min-height: 1.35rem;
+            border-radius: 999px;
+            background: var(--dark);
+            cursor: pointer;
+        }
+        /* 下拉框 */
         .notes-field-select option {
             font-size: var(--notes-font-size);
         }
-        /* 控制笔记下拉框外层定位（用于箭头） */
+        /* 下拉框外层定位（用于箭头） */
         .notes-field-select-wrap {
             position: relative;
         }
         .notes-field-select-wrap.notes-custom-select-ready::after {
             display: none;
         }
-        /* 控制“求测事项”下拉框宽度 */
+        /* 下拉框宽度 */
         .notes-query-item-wrap {
             width: 7rem;
             justify-self: start;
         }
-        /* 控制笔记下拉框可视边框与右侧留白 */
+        /* 下拉框 */
         .notes-field-select {
-            background: var(--notes-select-bg-color);
-            border: var(--notes-select-border-width) solid var(--notes-select-border-color);
-            border-radius: var(--notes-select-border-radius);
-            padding-right: 2.1rem;
+            background: #ffffff;
+            border: 2px solid var(--dark-brown);
+            border-radius: 0.4rem;
             cursor: pointer;
         }
         .notes-field-select-wrap::after {
@@ -672,13 +701,8 @@
             border-top: 0.8rem solid #000;
             pointer-events: none;
         }
-        /* 控制“问AI”按钮外观 */
-        .notes-ai-button {
-            font-size: var(--notes-ai-button-font-size);
-            padding: 0.8rem 0 0.8rem 0;
-            letter-spacing: 0.5em;
-        }
-        /* 控制原生 select 隐藏（交由自定义下拉显示） */
+
+        /* 原生 select 隐藏（交由自定义下拉显示） */
         .notes-native-select {
             position: absolute;
             width: 0;
@@ -686,18 +710,30 @@
             opacity: 0;
             pointer-events: none;
         }
-        /* 控制笔记条目列表纵向间距 */
+        /* “问AI”按钮独立行（不在字段 grid 中） */
+        .notes-ai-row {
+            margin-top: 0.75rem;
+            margin-bottom: 1.7rem;
+        }
+        /* “问AI”按钮外观 */
+        .notes-ai-button {
+            display: block;
+            width: 100%;
+            font-size: var(--notes-ai-button-font-size);
+            padding: 0.8rem 0 0.8rem 0;
+            letter-spacing: 0.5em;
+        }
+        /* 笔记条目列表纵向间距 */
         .notes-entries {
             display: flex;
             flex-direction: column;
-            gap: 0.6rem;
+            gap: 0.5rem;
         }
-        /* 控制单条笔记行（宫位图/文本/拖拽柄）网格布局 */
+        /* 单条笔记行网格布局 */
         .notes-entry-row {
             display: grid;
-            grid-template-columns: minmax(0, var(--notes-palace-size, 6rem)) minmax(0, 1fr) auto;
-            gap: 0.6rem;
-            align-items: stretch;
+            grid-template-columns: var(--notes-palace-size) 1fr auto;
+            gap: 0.4rem;
             transition: transform 0.16s ease, opacity 0.16s ease;
             touch-action: pan-y;
         }
@@ -731,9 +767,9 @@
             width: 1.4rem;
             height: 100%;
             border: none;
-            border-radius: var(--notes-select-border-radius);
-            background: var(--notes-handler-bg-color);
-            color: var(--notes-select-border-color);
+            border-radius: 0.4rem;
+            background: var(--dark);
+            color: #00000071 !important;
             font-size: 1.35rem;
             font-weight: 700;
             line-height: 1;
@@ -763,109 +799,104 @@
         /* 控制笔记行宫位选择器容器 */
         .notes-palace-picker {
             position: relative;
-            width: 100%;
-            height: 100%;
+            width: var(--notes-palace-size, 6rem);
+            height: var(--notes-palace-size, 6rem);
             max-width: 100%;
             aspect-ratio: auto;
         }
-        /* 控制笔记行宫位预览触发按钮 */
+        /* 宫位预览触发按钮 */
         .notes-palace-trigger {
             width: 100%;
             height: 100%;
+            border: none;
             padding: 0;
-            border: var(--notes-select-border-width) solid var(--notes-select-border-color);
-            border-radius: var(--notes-select-border-radius);
-            border-color: transparent;
-            background: var(--notes-palace-unselected-fill-color);
+            box-sizing: border-box;
+            /* overflow: hidden; */
+            appearance: none;
             cursor: pointer;
             position: relative;
-            box-shadow: none !important;
-            filter: none !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        }
+        .notes-palace-trigger.is-selected {
+            padding: 2.5px;
+        }
+        .notes-palace-trigger .notes-palace-preview {
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            display: block;
         }
         .notes-palace-trigger::before {
             content: "";
             position: absolute;
             inset: calc(-1 * var(--notes-palace-dash-outset));
-            border-radius: calc(var(--notes-select-border-radius) + var(--notes-palace-dash-outset));
-            pointer-events: none;
             background-image: var(--notes-palace-dash-svg-url, none);
             background-repeat: no-repeat;
             background-size: 100% 100%;
-            box-shadow: none !important;
-            filter: none !important;
-        }
-        .notes-palace-trigger.is-selected {
-            border-color: var(--notes-select-border-color);
-            background: var(--notes-palace-selected-fill-color);
         }
         .notes-palace-trigger.is-selected::before {
             display: none;
         }
-        /* 控制宫位未选择时的占位文本 */
+        /* 宫位未选择时的占位文本 */
         .notes-palace-placeholder {
             font-size: 1.35rem;
             font-weight: 700;
             line-height: 1;
         }
-        /* 控制笔记行中的宫位预览卡片 */
-        .notes-palace-preview {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            aspect-ratio: auto;
-            border: none !important;
-            background: transparent !important;
-        }
+
         /* 控制宫位选择下拉弹层布局 */
         .notes-palace-popup {
             position: absolute;
-            top: calc(100% + 0.3rem);
             left: 0;
+            bottom: 105%;
             z-index: 120;
-            width: 13rem;
-            padding: 0.45rem;
-            border: var(--notes-select-border-width) solid var(--notes-select-border-color);
-            border-radius: var(--notes-select-border-radius);
-            background: var(--notes-select-bg-color);
-            box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.12);
+            width:26rem;
+            padding: 0.7rem;
+            border-radius: 1rem;
+            background: #583e2cef;
+
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 0.35rem;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr 1fr;
+            gap: 0.38rem;
         }
         .notes-palace-popup.is-hidden {
             display: none;
         }
         /* 控制宫位选择项按钮样式 */
         .notes-palace-option {
-            height: 2.2rem;
-            border: 1px solid var(--notes-select-border-color);
-            border-radius: 0.45rem;
-            background: #fff;
-            font-size: 1rem;
+            width: 100%;
+            padding: 1.1rem 0;
+            border-radius: 0.35rem;
+            background: #ffffff;
+            color: var(--dark-brown);
+            font-size: 1.7rem;
             font-weight: 700;
             cursor: pointer;
         }
         .notes-palace-option:hover {
-            background: var(--dark);
+            background: #ede3d7;
         }
+        /* 宫位弹层「不填」占满一行 */
+        .notes-palace-option-full-row {
+            grid-column: 1 / -1;
+        }
+
         /* 控制笔记底部 + / - / 保存 按钮行布局 */
         .notes-add-row {
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
             display: flex;
             justify-content: center;
             gap: 6rem;
         }
         /* 控制笔记 + / - 圆形按钮外观 */
         .notes-add-circle-button {
-            width: 3rem;
-            height: 3rem;
+            width: 3.8rem;
+            height: 3.8rem;
             border-radius: 999px;
-            border: 0.15rem solid;
-            border-color: var(--notes-add-btn-main-color);
-            background: var(--notes-add-btn-bg-color);
-            font-size: 2.7rem;
+            border: 1.5px solid;
+            border-color: var(--sb-font);
+            background: var(--sb-bg);
             line-height: 1;
             display: inline-flex;
             align-items: center;
@@ -879,28 +910,28 @@
             display: inline-block;
             line-height: 1;
             transform: translateY(0);
-            color: var(--notes-add-btn-main-color) !important;
+            color: var(--sb-font) !important;
             transition: color 0.12s ease;
         }
+
+
         #addNoteRowButton .notes-add-circle-button-label {
             transform: translateY(0.12rem);
+            font-size: 4rem;
         }
         #removeNoteRowButton .notes-add-circle-button-label {
-            transform: translateY(-0.08rem);
+            transform: translateY(-0.2rem);
+            font-size: 5rem;
         }
         .notes-add-circle-button:hover {
-            background: var(--notes-add-btn-hover-bg-color);
-            border-color: var(--notes-add-btn-hover-border-color);
-        }
-        .notes-add-circle-button:hover .notes-add-circle-button-label {
-            color: var(--notes-add-btn-strong-color) !important;
+            background: var(--sb-hover);
         }
         .notes-add-circle-button:active {
-            background: var(--notes-add-btn-active-bg-color);
-            border-color: var(--notes-add-btn-strong-color);
+            background: var(--sb-hover);
+            border-color: var(--sb-font);
         }
         .notes-add-circle-button:active .notes-add-circle-button-label {
-            color: var(--notes-add-btn-strong-color) !important;
+            color: var(--sb-font) !important;
         }
         .notes-add-circle-button.is-active {
             background: var(--notes-add-btn-active-bg-color);
@@ -1014,11 +1045,12 @@
             outline: none;
         }
         .custom-select-list::-webkit-scrollbar {
-            width: 0.4rem;
+            width: 0.5rem;
         }
         .custom-select-list::-webkit-scrollbar-thumb {
-            background: #c5ae81;
+            background:var(--dark);
             border-radius: 999px;
+
         }
         .notes-panel .custom-select {
             --custom-select-width: 100%;
@@ -1460,13 +1492,17 @@
             </div>
             <div class="notes-field-row">
                 <label for="specificQuestion" class="notes-field-label">具体问题</label>
-                <textarea id="specificQuestion" class="notes-field-input notes-field-textarea" rows="2" wrap="soft"></textarea>
+                <div class="notes-custom-scroll-host">
+                    <textarea id="specificQuestion" class="notes-field-input notes-field-textarea" rows="1" wrap="soft"></textarea>
+                    <div class="notes-custom-scrollbar" aria-hidden="true">
+                        <div class="notes-custom-scrollbar-thumb"></div>
+                    </div>
+                </div>
             </div>
-            <div class="notes-field-row">
-                <span class="notes-field-label"></span>
+            <div class="notes-ai-row">
                 <button type="button" id="askAiButton" class="notes-ai-button action-theme-button">问AI</button>
             </div>
-            <div id="notesEntriesContainer" class="notes-entries"></div>
+            <div id="notesEntriesContainer" class="notes-entries" style="margin-bottom: 2rem;"></div>
             <div class="notes-add-row">
                 <button type="button" id="addNoteRowButton" class="notes-add-circle-button" aria-label="添加一行笔记"><span class="notes-add-circle-button-label">+</span></button>
                 <button type="button" id="removeNoteRowButton" class="notes-add-circle-button" aria-label="删除一行笔记" aria-pressed="false"><span class="notes-add-circle-button-label">-</span></button>
@@ -2210,11 +2246,85 @@
         let isNoteRowDeleteMode = false;
         let activeEditingNoteId = null;
         const noteRowAnimationTimers = new WeakMap();
+        const customTextareaScrollbarRefreshers = new WeakMap();
+        const initCustomTextareaScrollbar = (textareaEl) => {
+            if (!(textareaEl instanceof HTMLTextAreaElement)) return;
+            const host = textareaEl.closest('.notes-custom-scroll-host');
+            const bar = host?.querySelector('.notes-custom-scrollbar');
+            const thumb = bar?.querySelector('.notes-custom-scrollbar-thumb');
+            if (!host || !bar || !thumb) return;
+            let dragState = null;
+            const sync = () => {
+                const maxScroll = Math.max(0, textareaEl.scrollHeight - textareaEl.clientHeight);
+                if (maxScroll <= 0) {
+                    host.classList.remove('is-scrollable');
+                    thumb.style.height = '0';
+                    thumb.style.transform = 'translateY(0)';
+                    return;
+                }
+                host.classList.add('is-scrollable');
+                const trackHeight = bar.clientHeight;
+                if (trackHeight <= 0) return;
+                const thumbHeight = Math.max(22, Math.round((textareaEl.clientHeight / textareaEl.scrollHeight) * trackHeight));
+                const maxThumbTop = Math.max(0, trackHeight - thumbHeight);
+                const thumbTop = Math.round((textareaEl.scrollTop / maxScroll) * maxThumbTop);
+                thumb.style.height = `${thumbHeight}px`;
+                thumb.style.transform = `translateY(${thumbTop}px)`;
+            };
+            const syncWithRaf = () => window.requestAnimationFrame(sync);
+            const onDragMove = (event) => {
+                if (!dragState) return;
+                event.preventDefault();
+                const deltaY = event.clientY - dragState.startY;
+                const maxScroll = Math.max(0, textareaEl.scrollHeight - textareaEl.clientHeight);
+                const maxThumbTop = Math.max(0, dragState.trackHeight - dragState.thumbHeight);
+                if (maxScroll <= 0 || maxThumbTop <= 0) return;
+                const nextThumbTop = Math.max(0, Math.min(maxThumbTop, dragState.startThumbTop + deltaY));
+                textareaEl.scrollTop = (nextThumbTop / maxThumbTop) * maxScroll;
+            };
+            const onDragEnd = () => {
+                dragState = null;
+                window.removeEventListener('pointermove', onDragMove);
+                window.removeEventListener('pointerup', onDragEnd);
+            };
+            thumb.addEventListener('pointerdown', (event) => {
+                if (!host.classList.contains('is-scrollable')) return;
+                event.preventDefault();
+                const barRect = bar.getBoundingClientRect();
+                const thumbRect = thumb.getBoundingClientRect();
+                dragState = {
+                    startY: event.clientY,
+                    startThumbTop: thumbRect.top - barRect.top,
+                    thumbHeight: thumbRect.height,
+                    trackHeight: barRect.height
+                };
+                window.addEventListener('pointermove', onDragMove);
+                window.addEventListener('pointerup', onDragEnd);
+            });
+            bar.addEventListener('pointerdown', (event) => {
+                if (event.target === thumb || !host.classList.contains('is-scrollable')) return;
+                const rect = bar.getBoundingClientRect();
+                const thumbHeight = thumb.getBoundingClientRect().height;
+                const maxThumbTop = Math.max(0, rect.height - thumbHeight);
+                const clickedTop = event.clientY - rect.top - thumbHeight / 2;
+                const nextThumbTop = Math.max(0, Math.min(maxThumbTop, clickedTop));
+                const maxScroll = Math.max(0, textareaEl.scrollHeight - textareaEl.clientHeight);
+                textareaEl.scrollTop = maxThumbTop > 0 ? (nextThumbTop / maxThumbTop) * maxScroll : 0;
+                syncWithRaf();
+            });
+            textareaEl.addEventListener('scroll', syncWithRaf, { passive: true });
+            textareaEl.addEventListener('input', syncWithRaf);
+            window.addEventListener('resize', syncWithRaf);
+            customTextareaScrollbarRefreshers.set(textareaEl, syncWithRaf);
+            syncWithRaf();
+        };
         function autoResizeTextarea(textareaEl, minHeightPx = 0) {
             if (!(textareaEl instanceof HTMLTextAreaElement)) return;
             textareaEl.style.height = 'auto';
             const targetHeight = Math.max(minHeightPx, textareaEl.scrollHeight);
             textareaEl.style.height = `${targetHeight}px`;
+            const syncCustomScrollbar = customTextareaScrollbarRefreshers.get(textareaEl);
+            if (typeof syncCustomScrollbar === 'function') syncCustomScrollbar();
         }
         function bindAutoResizeTextarea(textareaEl, minHeightPx = 0) {
             if (!(textareaEl instanceof HTMLTextAreaElement)) return;
@@ -2882,8 +2992,7 @@
             const dashOutsetPx = getDevicePixelAlignedValue(Math.max(0, cssLengthToPx(rootStyle.getPropertyValue('--notes-palace-dash-outset'), 3)));
             const borderRadiusPx = getDevicePixelAlignedValue(Math.max(0, cssLengthToPx(rootStyle.getPropertyValue('--notes-select-border-radius'), 8)));
             const color = (rootStyle.getPropertyValue('--notes-select-border-color') || '#4b3521').trim() || '#4b3521';
-            const referencePalaceCard = document.querySelector('#palaceGrid .palace-card');
-            const palaceSizeRaw = referencePalaceCard ? referencePalaceCard.getBoundingClientRect().width : 120;
+            const palaceSizeRaw = cssLengthToPx(rootStyle.getPropertyValue('--notes-palace-size'), 96);
             const palaceSizePx = getDevicePixelAlignedValue(Math.max(24, palaceSizeRaw));
             const svgUrl = buildNotesPalaceDashSvg({
                 sizePx: getDevicePixelAlignedValue(palaceSizePx + dashOutsetPx * 2),
@@ -2893,15 +3002,6 @@
                 color
             });
             document.documentElement.style.setProperty('--notes-palace-dash-svg-url', svgUrl);
-        };
-        const syncNotePalaceSizeWithMainGrid = () => {
-            if (!notesPanelContainer) return;
-            const referencePalaceCard = document.querySelector('#palaceGrid .palace-card');
-            if (!referencePalaceCard) return;
-            const cardWidth = referencePalaceCard.getBoundingClientRect().width;
-            if (!Number.isFinite(cardWidth) || cardWidth <= 0) return;
-            notesPanelContainer.style.setProperty('--notes-palace-size', `${cardWidth}px`);
-            syncNotesPalaceDashStyle();
         };
         const setNotePalaceTriggerPlaceholder = (trigger) => {
             trigger.innerHTML = '';
@@ -2950,7 +3050,10 @@
             setNotePalaceTriggerPlaceholder(trigger);
             const popup = document.createElement('div');
             popup.className = 'notes-palace-popup is-hidden';
-            palaces.forEach((palaceName, palaceIndex) => {
+            /* 弹层顺序：留连/速喜/赤口 | 大安/空亡/小吉 | 不填（整行） */
+            const notesPalacePopupOrder = [1, 2, 3, 0, 5, 4];
+            notesPalacePopupOrder.forEach((palaceIndex) => {
+                const palaceName = palaces[palaceIndex];
                 const option = document.createElement('button');
                 option.type = 'button';
                 option.className = 'notes-palace-option';
@@ -3023,7 +3126,7 @@
             });
             const noPalaceOption = document.createElement('button');
             noPalaceOption.type = 'button';
-            noPalaceOption.className = 'notes-palace-option';
+            noPalaceOption.className = 'notes-palace-option notes-palace-option-full-row';
             noPalaceOption.textContent = '不填';
             noPalaceOption.addEventListener('click', (event) => {
                 event.preventDefault();
@@ -3031,7 +3134,7 @@
                 popup.classList.add('is-hidden');
                 picker.classList.remove('is-open');
             });
-            popup.insertBefore(noPalaceOption, popup.firstChild);
+            popup.appendChild(noPalaceOption);
             row.appendChild(picker);
             row.appendChild(textInput);
             row.appendChild(dragHandle);
@@ -3052,6 +3155,7 @@
             bindNoteRowReorderEvents(row, dragHandle);
             return row;
         };
+        initCustomTextareaScrollbar(specificQuestionInput);
         bindAutoResizeTextarea(specificQuestionInput, 48);
         if (addNoteRowButton && notesEntriesContainer) {
             normalizeLegacyNoteRowInputs();
@@ -3106,9 +3210,8 @@
                 }
             });
         }
-        syncNotePalaceSizeWithMainGrid();
         syncNotesPalaceDashStyle();
-        window.addEventListener('resize', syncNotePalaceSizeWithMainGrid);
+        window.addEventListener('resize', syncNotesPalaceDashStyle);
         initNotesQueryItemCustomSelect();
         manualInput.addEventListener('pointerdown', () => {
             isPointerFocusingManualInput = true;
