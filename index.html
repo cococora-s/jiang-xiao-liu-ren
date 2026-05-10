@@ -22,7 +22,6 @@
             --dark-brown: #4b3521;
             --light: #fff8ea;
             --dark: #f5e8cf;
-            --gold: #b59443;
 
             /*===小按钮颜色===*/
             --sb-bg:#cb9e2d46;
@@ -83,18 +82,11 @@
             --notes-select-border-width: 2px;                  /* 笔记输入框边框粗细（含下拉框） */
             --notes-select-border-color: #4b3521;               /* 笔记输入框边框颜色（含下拉框） */
             --notes-select-bg-color: #ffffff;                /* 笔记输入框背景色（含下拉框） */
-            --notes-handler-bg-color: #f5e8cf;                 /* 笔记条目 handler 按钮背景色 */
             --notes-drag-placeholder-bg-color: rgba(75, 53, 33, 0.05); /* 拖动时预览占位背景色 */
-            --notes-add-btn-bg-color: #f5e8cf;                 /* 笔记 + / - 按钮默认背景色 */
-            --notes-add-btn-main-color: #5a381fba;             /* 笔记 + / - 按钮默认边框/文字色 */
-            --notes-add-btn-hover-bg-color: #e0c9a795;           /* 笔记 + / - 按钮悬停背景色 */
-            --notes-add-btn-hover-border-color: #5a381f;       /* 笔记 + / - 按钮悬停边框色 */
             --notes-add-btn-strong-color: #4b3521;             /* 笔记 + / - 按钮悬停文字/按下边框文字色 */
             --notes-add-btn-active-bg-color: #e0c9a795;          /* 笔记 + / - 按钮按下/激活背景色 */
             
             /* ===== 宫位图 ===== */
-            --notes-palace-unselected-fill-color: rgba(255, 255, 255, 0); /* 宫位图未选择填充色 */
-            --notes-palace-selected-fill-color: transparent; /* 宫位图已选择填充色 */
             --notes-palace-dash-thickness: 2px; /* 宫位图虚线粗细 */
             --notes-palace-dash-gap: 0.5rem; /* 宫位图虚线稀疏程度（间隔） */
             --notes-palace-dash-outset: 0rem; /* 宫位图虚线外扩程度 */
@@ -187,13 +179,14 @@
         @media (min-aspect-ratio: 1/1) {
             /* 控制宽屏下页面根容器网格布局 */
             .page-root {
+                padding:0rem 2rem 0rem 2rem;
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 grid-template-areas:
                     "header header"
                     "time notes"
                     "main notes";
-                column-gap: var(--panel-gap);
+                column-gap: 2rem;
                 row-gap: var(--panel-gap);
                 align-items: start;
                 max-width: 96rem;
@@ -619,51 +612,28 @@
             background: #ffffff;
             border: 2px solid var(--dark-brown);
             border-radius: 0.4rem;
-            padding: 0.3rem 0.75rem 0.75rem 1rem;
+            padding: 0.75rem;
         }
-        .notes-custom-scroll-host {
-            position: relative;
-            width: 100%;
+        /* 笔记文本框统一禁用拖拽缩放手柄 */
+        textarea.notes-field-textarea {
+            resize: none !important;
         }
-        /* 具体问题输入框：隐藏系统滚动条，使用自绘滚动条 */
-        #specificQuestion {
-            height: 3rem;
-            max-height: 15rem;
-            resize: none;
-            overflow-y: auto;
-            padding-right: 1.45rem;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-        #specificQuestion::-webkit-scrollbar {
-            width: 0;
-            height: 0;
+        textarea.notes-field-textarea::-webkit-resizer,
+        .notes-entry-row textarea::-webkit-resizer {
             display: none;
         }
-        .notes-custom-scrollbar {
-            position: absolute;
-            top: 0.4rem;
-            bottom: 1rem;
-            right: 0.45rem;
-            width: 0.6rem;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.15s ease;
+        .notes-entry-row textarea::-webkit-scrollbar-corner {
+            background: transparent;
         }
-        .notes-custom-scroll-host.is-scrollable .notes-custom-scrollbar {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .notes-custom-scrollbar-thumb {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .notes-custom-scroll-host {
             width: 100%;
-            height: 0;
-            min-height: 1.35rem;
-            border-radius: 999px;
-            background: var(--dark);
-            cursor: pointer;
+        }
+        /* 具体问题输入框：无滚动条，内容超出时由 JS 自动增高 */
+        #specificQuestion {
+            min-height: 5rem;
+            height: 5rem;
+            resize: none;
+            overflow-y: hidden;
         }
         /* 下拉框 */
         .notes-field-select option {
@@ -786,11 +756,12 @@
             cursor: grabbing;
         }
         .notes-entry-row .notes-field-input {
-            height: var(--notes-palace-size, 6rem);
+            resize: none;
             white-space: pre-wrap;
             overflow-wrap: anywhere;
             word-break: break-word;
             overflow-x: hidden;
+            overflow-y: hidden;
         }
         .notes-entry-row.is-no-palace .notes-field-input {
             width: 100%;
@@ -1494,9 +1465,6 @@
                 <label for="specificQuestion" class="notes-field-label">具体问题</label>
                 <div class="notes-custom-scroll-host">
                     <textarea id="specificQuestion" class="notes-field-input notes-field-textarea" rows="1" wrap="soft"></textarea>
-                    <div class="notes-custom-scrollbar" aria-hidden="true">
-                        <div class="notes-custom-scrollbar-thumb"></div>
-                    </div>
                 </div>
             </div>
             <div class="notes-ai-row">
@@ -2080,7 +2048,7 @@
             }
             if (specificQuestionInput) {
                 specificQuestionInput.value = '';
-                autoResizeTextarea(specificQuestionInput, 48);
+                autoResizeTextarea(specificQuestionInput, getSpecificQuestionMinHeightPx());
             }
             if (notesEntriesContainer) {
                 notesEntriesContainer.innerHTML = '';
@@ -2237,6 +2205,11 @@
         const notesLibraryEmpty = document.getElementById('notesLibraryEmpty');
         const queryItemSelect = document.getElementById('queryItem');
         const specificQuestionInput = document.getElementById('specificQuestion');
+        const getSpecificQuestionMinHeightPx = () => {
+            if (!(specificQuestionInput instanceof HTMLTextAreaElement)) return 80;
+            const computedMinHeight = Number.parseFloat(window.getComputedStyle(specificQuestionInput).minHeight);
+            return Number.isFinite(computedMinHeight) ? computedMinHeight : 80;
+        };
         const askAiButton = document.getElementById('askAiButton');
         const notesPanelContainer = document.getElementById('notesPanelContainer');
         const NOTES_STORAGE_KEY = 'jiangshi_xiaoliuren_saved_notes_v1';
@@ -2246,92 +2219,96 @@
         let isNoteRowDeleteMode = false;
         let activeEditingNoteId = null;
         const noteRowAnimationTimers = new WeakMap();
-        const customTextareaScrollbarRefreshers = new WeakMap();
-        const initCustomTextareaScrollbar = (textareaEl) => {
-            if (!(textareaEl instanceof HTMLTextAreaElement)) return;
-            const host = textareaEl.closest('.notes-custom-scroll-host');
-            const bar = host?.querySelector('.notes-custom-scrollbar');
-            const thumb = bar?.querySelector('.notes-custom-scrollbar-thumb');
-            if (!host || !bar || !thumb) return;
-            let dragState = null;
-            const sync = () => {
-                const maxScroll = Math.max(0, textareaEl.scrollHeight - textareaEl.clientHeight);
-                if (maxScroll <= 0) {
-                    host.classList.remove('is-scrollable');
-                    thumb.style.height = '0';
-                    thumb.style.transform = 'translateY(0)';
-                    return;
-                }
-                host.classList.add('is-scrollable');
-                const trackHeight = bar.clientHeight;
-                if (trackHeight <= 0) return;
-                const thumbHeight = Math.max(22, Math.round((textareaEl.clientHeight / textareaEl.scrollHeight) * trackHeight));
-                const maxThumbTop = Math.max(0, trackHeight - thumbHeight);
-                const thumbTop = Math.round((textareaEl.scrollTop / maxScroll) * maxThumbTop);
-                thumb.style.height = `${thumbHeight}px`;
-                thumb.style.transform = `translateY(${thumbTop}px)`;
-            };
-            const syncWithRaf = () => window.requestAnimationFrame(sync);
-            const onDragMove = (event) => {
-                if (!dragState) return;
-                event.preventDefault();
-                const deltaY = event.clientY - dragState.startY;
-                const maxScroll = Math.max(0, textareaEl.scrollHeight - textareaEl.clientHeight);
-                const maxThumbTop = Math.max(0, dragState.trackHeight - dragState.thumbHeight);
-                if (maxScroll <= 0 || maxThumbTop <= 0) return;
-                const nextThumbTop = Math.max(0, Math.min(maxThumbTop, dragState.startThumbTop + deltaY));
-                textareaEl.scrollTop = (nextThumbTop / maxThumbTop) * maxScroll;
-            };
-            const onDragEnd = () => {
-                dragState = null;
-                window.removeEventListener('pointermove', onDragMove);
-                window.removeEventListener('pointerup', onDragEnd);
-            };
-            thumb.addEventListener('pointerdown', (event) => {
-                if (!host.classList.contains('is-scrollable')) return;
-                event.preventDefault();
-                const barRect = bar.getBoundingClientRect();
-                const thumbRect = thumb.getBoundingClientRect();
-                dragState = {
-                    startY: event.clientY,
-                    startThumbTop: thumbRect.top - barRect.top,
-                    thumbHeight: thumbRect.height,
-                    trackHeight: barRect.height
-                };
-                window.addEventListener('pointermove', onDragMove);
-                window.addEventListener('pointerup', onDragEnd);
-            });
-            bar.addEventListener('pointerdown', (event) => {
-                if (event.target === thumb || !host.classList.contains('is-scrollable')) return;
-                const rect = bar.getBoundingClientRect();
-                const thumbHeight = thumb.getBoundingClientRect().height;
-                const maxThumbTop = Math.max(0, rect.height - thumbHeight);
-                const clickedTop = event.clientY - rect.top - thumbHeight / 2;
-                const nextThumbTop = Math.max(0, Math.min(maxThumbTop, clickedTop));
-                const maxScroll = Math.max(0, textareaEl.scrollHeight - textareaEl.clientHeight);
-                textareaEl.scrollTop = maxThumbTop > 0 ? (nextThumbTop / maxThumbTop) * maxScroll : 0;
-                syncWithRaf();
-            });
-            textareaEl.addEventListener('scroll', syncWithRaf, { passive: true });
-            textareaEl.addEventListener('input', syncWithRaf);
-            window.addEventListener('resize', syncWithRaf);
-            customTextareaScrollbarRefreshers.set(textareaEl, syncWithRaf);
-            syncWithRaf();
-        };
         function autoResizeTextarea(textareaEl, minHeightPx = 0) {
             if (!(textareaEl instanceof HTMLTextAreaElement)) return;
-            textareaEl.style.height = 'auto';
+            // 不能用 auto：该 textarea 的基础样式是 height: 100%，会导致无法测到真实内容高度
+            textareaEl.style.height = '0px';
             const targetHeight = Math.max(minHeightPx, textareaEl.scrollHeight);
             textareaEl.style.height = `${targetHeight}px`;
-            const syncCustomScrollbar = customTextareaScrollbarRefreshers.get(textareaEl);
-            if (typeof syncCustomScrollbar === 'function') syncCustomScrollbar();
         }
-        function bindAutoResizeTextarea(textareaEl, minHeightPx = 0) {
+        function bindAutoResizeTextarea(
+            textareaEl,
+            minHeightPx = 0,
+            {
+                skipInitialResize = false,
+                resizeOnInput = true,
+                expandOnOverflowOnly = false,
+                resizeOnBlur = false,
+                restoreInitialHeightOnFocus = false,
+                debounceMs = 0,
+                lockMinHeight = true
+            } = {}
+        ) {
             if (!(textareaEl instanceof HTMLTextAreaElement)) return;
-            autoResizeTextarea(textareaEl, minHeightPx);
-            textareaEl.addEventListener('input', () => {
-                autoResizeTextarea(textareaEl, minHeightPx);
-            });
+            let lockedMinHeightPx = minHeightPx;
+            let initialHeightPx = null;
+            const getLockedMinHeight = () => {
+                if (!lockMinHeight) return minHeightPx;
+                const renderedHeight = Math.ceil(textareaEl.getBoundingClientRect().height || textareaEl.clientHeight || 0);
+                if (renderedHeight > lockedMinHeightPx) {
+                    lockedMinHeightPx = renderedHeight;
+                }
+                return lockedMinHeightPx;
+            };
+            const ensureInitialHeight = () => {
+                if (Number.isFinite(initialHeightPx) && initialHeightPx > 0) return initialHeightPx;
+                const renderedHeight = Math.ceil(textareaEl.getBoundingClientRect().height || textareaEl.clientHeight || 0);
+                if (renderedHeight > 0) {
+                    initialHeightPx = renderedHeight;
+                    return initialHeightPx;
+                }
+                return 0;
+            };
+            let resizeTimerId = null;
+            const runResize = () => {
+                autoResizeTextarea(textareaEl, getLockedMinHeight());
+            };
+            if (!skipInitialResize) {
+                runResize();
+            }
+            if (restoreInitialHeightOnFocus) {
+                const restoreInitialHeight = () => {
+                    const targetHeight = ensureInitialHeight();
+                    if (targetHeight > 0) {
+                        textareaEl.style.height = `${targetHeight}px`;
+                    }
+                };
+                window.requestAnimationFrame(() => {
+                    ensureInitialHeight();
+                });
+                textareaEl.addEventListener('focus', restoreInitialHeight);
+            }
+            if (resizeOnInput) {
+                textareaEl.addEventListener('input', () => {
+                    const runResizeByMode = () => {
+                        if (expandOnOverflowOnly) {
+                            const currentHeight = textareaEl.clientHeight;
+                            const requiredHeight = textareaEl.scrollHeight;
+                            if (requiredHeight <= currentHeight + 1) return;
+                        }
+                        runResize();
+                    };
+                    if (debounceMs > 0) {
+                        if (resizeTimerId !== null) window.clearTimeout(resizeTimerId);
+                        resizeTimerId = window.setTimeout(() => {
+                            resizeTimerId = null;
+                            runResizeByMode();
+                        }, debounceMs);
+                        return;
+                    }
+                    runResizeByMode();
+                });
+            }
+            if (resizeOnBlur) {
+                const runBlurResize = () => {
+                    autoResizeTextarea(textareaEl, minHeightPx);
+                    window.requestAnimationFrame(() => {
+                        autoResizeTextarea(textareaEl, minHeightPx);
+                    });
+                };
+                textareaEl.addEventListener('blur', runBlurResize);
+                textareaEl.addEventListener('focusout', runBlurResize);
+            }
         }
         const normalizeLegacyNoteRowInputs = () => {
             if (!notesEntriesContainer) return;
@@ -2341,9 +2318,18 @@
                 textArea.className = `${inputEl.className} notes-field-textarea`.trim();
                 textArea.placeholder = inputEl.placeholder || '请输入笔记内容';
                 textArea.value = inputEl.value || '';
-                textArea.rows = 3;
+                textArea.rows = 1;
                 textArea.wrap = 'soft';
                 inputEl.replaceWith(textArea);
+                bindAutoResizeTextarea(textArea, 0, {
+                    skipInitialResize: true,
+                    resizeOnInput: true,
+                    expandOnOverflowOnly: true,
+                    resizeOnBlur: true,
+                    restoreInitialHeightOnFocus: true,
+                    debounceMs: 220,
+                    lockMinHeight: false
+                });
             });
         };
         const getNotesRowsSnapshot = () => {
@@ -2678,7 +2664,7 @@
             }
             if (specificQuestionInput && typeof parsed.specificQuestion === 'string') {
                 specificQuestionInput.value = parsed.specificQuestion;
-                autoResizeTextarea(specificQuestionInput, 48);
+                autoResizeTextarea(specificQuestionInput, getSpecificQuestionMinHeightPx());
             }
             if (notesEntriesContainer) {
                 notesEntriesContainer.innerHTML = '';
@@ -3082,7 +3068,7 @@
             const textInput = document.createElement('textarea');
             textInput.className = 'notes-field-input notes-field-textarea';
             textInput.placeholder = '请输入笔记内容';
-            textInput.rows = 3;
+            textInput.rows = 1;
             textInput.wrap = 'soft';
             const dragHandle = document.createElement('button');
             dragHandle.type = 'button';
@@ -3152,11 +3138,23 @@
                     }
                 }
             }
+            bindAutoResizeTextarea(textInput, 0, {
+                skipInitialResize: true,
+                resizeOnInput: true,
+                expandOnOverflowOnly: true,
+                resizeOnBlur: true,
+                restoreInitialHeightOnFocus: true,
+                debounceMs: 220,
+                lockMinHeight: false
+            });
             bindNoteRowReorderEvents(row, dragHandle);
             return row;
         };
-        initCustomTextareaScrollbar(specificQuestionInput);
-        bindAutoResizeTextarea(specificQuestionInput, 48);
+        bindAutoResizeTextarea(specificQuestionInput, getSpecificQuestionMinHeightPx(), {
+            resizeOnInput: true,
+            resizeOnBlur: true,
+            lockMinHeight: false
+        });
         if (addNoteRowButton && notesEntriesContainer) {
             normalizeLegacyNoteRowInputs();
             addNoteRowButton.addEventListener('click', () => {
