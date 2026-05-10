@@ -17,10 +17,14 @@
             font-style: normal;
         }
         :root {
+            /* ===== 字体变量 ===== */
+            --font-brown: #5a381f;
+            --panel-top-margin: 0rem;
+
             /* ===== 页面背景变量 ===== */
             --page-bg-color: #f5e8cf;                       /* 页面背景色 */
             --page-text-color: #4b3521;                     /* 页面基础文字色 */
-            --page-title-font-size: 2.25rem;                  /* 标题字号 */
+            --page-title-font-size: 2.5rem;                  /* 标题字号 */
 
             /* ===== 面板容器变量 ===== */
             --panel-bg-color: #fff8ea;                      /* 面板背景色 */
@@ -36,13 +40,31 @@
             --action-btn-border-color: rgb(255, 255, 255);  /* 按钮边框颜色 */
             --action-btn-border-width: 0px;                   /* 按钮边框粗细 */
             --action-btn-radius: 1rem;                        /* 按钮圆角 */
+            --small-action-btn-text-size: 1.4rem;             /* 小按钮文字字号 */
+            --small-action-btn-padding: 0.7rem 1rem;          /* 小按钮内边距 */
 
             /* ===== 下拉项变量 ===== */
             --custom-select-highlight-color: #f5e8cf;         /* 下拉项高亮色 */
             --custom-select-option-line-height: 2.5rem;          /* 自定义下拉项行距（通用） */
             --custom-select-option-radius: 0.4rem;            /* 拉项圆角 */
             --custom-select-slider-height: 15rem;             /* 下拉列表高度（通用） */
-   
+ 
+            /* ===== 时间面板文字变量 ===== */
+            --solar-clock-font-size: 1.8rem;                   /* 当地时间字号 */
+            --solar-clock-letter-spacing: 0.05em;              /* 当地时间字间距 */
+            --solar-clock-line-height: 1.25;                   /* 当地时间行距 */
+            --lunar-clock-font-size: 1.45rem;                  /* 农历时间字号 */
+            --lunar-clock-letter-spacing: 0.15em;               /* 农历时间字间距 */
+            --lunar-clock-line-height: 1.25;                   /* 农历时间行距 */
+
+            /* ===== 起卦时间栏变量 ===== */
+            --datetime-picker-text-size: 1.4rem;               /* 起卦时间栏文字字号 */
+            --datetime-picker-calendar-btn-size: 1.6rem;       /* 起卦时间栏日历按钮大小 */
+            --datetime-picker-border-width: 1.5px;             /* 起卦时间栏边框粗细 */
+            --datetime-picker-box-width: 17rem;                /* 起卦时间选择栏总宽度 */
+            --datetime-title-text-size: 1.8rem;                /* “起卦时间”文字字号 */
+            --datetime-lunar-info-text-size: 1.3rem;             /* 起卦时间下方农历文字字号 */
+
             /* ===== 六宫容器变量 ===== */
             --palace-card-border-width: 2px;                  /* 六宫边框粗细 */
             --palace-card-border-color: #6c5347;            /* 六宫边框颜色 */
@@ -54,12 +76,8 @@
             --palace-zhi-font-size: 2.5rem;                    /* 地支字号 */
             --palace-name-font-size: 2.65rem;                     /* 宫位名字号 */
             --palace-marker-font-size: 1.7rem;                 /* “身/时/日”标志字号 */
-            /* ===== 起卦时间栏变量 ===== */
-            --datetime-picker-text-size: 1.4rem;               /* 起卦时间栏文字字号 */
-            --datetime-picker-calendar-btn-size: 1.6rem;       /* 起卦时间栏日历按钮大小 */
-            --datetime-picker-border-width: 1.5px;             /* 起卦时间栏边框粗细 */
-            --datetime-picker-box-width: 17rem;                /* 起卦时间选择栏总宽度 */
-            --datetime-now-button-text-size: 1.3rem;           /* “当前时间”按钮文字字号 */
+
+
 
             /* ===== 日历容器变量 ===== */
             --calendar-weekday-text-size: 1rem;                /* 星期字号 */
@@ -93,6 +111,7 @@
             --notes-palace-dash-thickness: 2px; /* 宫位图虚线粗细 */
             --notes-palace-dash-gap: 0.5rem; /* 宫位图虚线稀疏程度（间隔） */
             --notes-palace-dash-outset: 0.25rem; /* 宫位图虚线外扩程度 */
+
         
         }
         html {
@@ -105,7 +124,7 @@
         }
         @media (max-aspect-ratio: 1/1) {
             html {
-                font-size: calc(15 * 100vw / 800);
+                font-size: calc(17 * 100vw / 800);
             }
         }
 
@@ -121,22 +140,49 @@
             color: var(--page-text-color) !important;
             font-family: 'STZHONGS', serif !important;
         }
+        /* 控制通用面板容器（背景/边框/圆角） */
         .theme-panel {
             background: var(--panel-bg-color);
             border: var(--panel-border-width) solid var(--panel-border-color);
             border-radius: var(--panel-border-radius);
         }
+
+        /* ===== 通用操作按钮 ===== */
+        /* 控制主题风格按钮配色与圆角 */
+        .action-theme-button {
+            color: var(--action-btn-text-color) !important;
+            background: var(--action-btn-bg-color);
+            border: var(--action-btn-border-width) solid var(--action-btn-border-color);
+            border-radius: var(--action-btn-radius);
+            transition: background 0.2s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .action-theme-button:hover {
+            background: var(--action-btn-hover-bg-color);
+        }
+        button {
+            transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        button:active {
+            transform: scale(0.94);
+        }
+        button:disabled:active {
+            transform: scale(1);
+        }
+
+        /* ===== 页面骨架布局（从上到下） ===== */
+        /* 控制页面根容器布局 */
         .page-root {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            display: grid;
+            grid-template-columns: 1fr;
+            justify-items: center;
             width: 100%;
+            padding: 0.5rem;
             max-width: min(100%, 48rem);
-            margin: 0 auto;
-            padding: 1rem;
             box-sizing: border-box;
+            row-gap: var(--panel-gap);
         }
         @media (min-aspect-ratio: 1/1) {
+            /* 控制宽屏下页面根容器网格布局 */
             .page-root {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
@@ -145,48 +191,66 @@
                     "time notes"
                     "main notes";
                 column-gap: var(--panel-gap);
-                row-gap: 0;
+                row-gap: var(--panel-gap);
                 align-items: start;
-                justify-content: center;
                 max-width: 96rem;
                 margin-inline: auto;
             }
+            /* 控制宽屏下顶部标题区所在网格区域 */
             .page-header {
                 grid-area: header;
             }
+            /* 控制宽屏下时间面板所在网格区域 */
             .time-panel {
                 grid-area: time;
             }
+            /* 控制宽屏下排盘主面板所在网格区域 */
             .main-panel {
                 grid-area: main;
             }
+            /* 控制宽屏下笔记面板所在网格区域 */
             .notes-panel {
                 grid-area: notes;
             }
         }
-        .page-title {
-            font-size: var(--page-title-font-size) !important;
-            margin-top: 2rem;
-            margin-bottom: 1.8rem;
-            color: #5a381f !important;
+        
+        /* 控制小尺寸通用操作按钮 */
+        .small-action-button {
+            width: auto;
+            height: auto;
+            padding: var(--small-action-btn-padding);
+            font-size: var(--small-action-btn-text-size);
+            font-weight: 700;
+            line-height: 1;
+            white-space: nowrap;
         }
+
+        /* ===== 顶部标题区 ===== */
+        /* 分成三列，中间列放标题，右侧列放“我的笔记”按钮*/
+        /* 顶部标题区容器：*/
         .page-header {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
             position: relative;
             width: 100%;
+            margin-top: 2rem;
+            align-items: center;
         }
+        /* 控制页面主标题文字样式 */
+        .page-title {
+            grid-column: 2;
+            justify-self: center;
+            font-size: var(--page-title-font-size);
+            color: var(--font-brown);
+        }
+        /* “我的笔记”按钮置于标题区第三列并靠右 */
         .notes-library-open-button {
-            position: absolute;
-            align-items: right;
-            right: 0;
-            top: 32%;
-            height: 3rem;
-            padding: 0 1.15rem;
-            font-size: 1.3rem;
-            font-weight: 700;
+            grid-column: 3;
+            justify-self: end;
         }
-        .notes-library-open-button:active {
-            transform: translateY(-50%) scale(0.94);
-        }
+
+        /* ===== 笔记库浮层 ===== */
+        /* 控制笔记库浮层容器定位与尺寸 */
         .notes-library-panel {
             position: absolute;
             top: var(--notes-library-panel-top, 5.2rem);
@@ -200,6 +264,7 @@
         .notes-library-panel.is-hidden {
             display: none;
         }
+        /* 控制笔记库头部行布局 */
         .notes-library-header {
             display: flex;
             justify-content: space-between;
@@ -207,34 +272,40 @@
             gap: 0.75rem;
             margin-bottom: 0.8rem;
         }
+        /* 控制笔记库头部操作按钮组布局 */
         .notes-library-header-actions {
             display: inline-flex;
             align-items: center;
             gap: 0.45rem;
         }
+        /* 控制笔记库标题文本样式 */
         .notes-library-title {
             font-size: 1.3rem;
             font-weight: 700;
             line-height: 1;
         }
+        /* 控制笔记库“关闭”按钮尺寸 */
         .notes-library-close-button {
             height: 2rem;
             padding: 0 0.7rem;
             font-size: 1rem;
             font-weight: 700;
         }
+        /* 控制笔记库“清空所有笔记”按钮尺寸 */
         .notes-library-clear-button {
             height: 2rem;
             padding: 0 0.7rem;
             font-size: 1rem;
             font-weight: 700;
         }
+        /* 控制笔记库空状态提示样式 */
         .notes-library-empty {
             font-size: 1rem;
             opacity: 0.75;
             text-align: center;
             padding: 0.6rem 0;
         }
+        /* 控制笔记库列表容器滚动布局 */
         .notes-library-list {
             display: flex;
             flex-direction: column;
@@ -243,6 +314,7 @@
             overflow-y: auto;
             padding-right: 0.2rem;
         }
+        /* 控制笔记库单条记录卡片样式 */
         .notes-library-item {
             display: grid;
             grid-template-columns: minmax(0, 1fr) auto;
@@ -257,11 +329,13 @@
         .notes-library-item:hover {
             background: #f5e8cf;
         }
+        /* 控制笔记库记录时间文本样式 */
         .notes-library-item-time {
             font-size: 0.95rem;
             font-weight: 700;
             line-height: 1.1;
         }
+        /* 控制笔记库记录描述文本样式 */
         .notes-library-item-desc {
             font-size: 0.95rem;
             line-height: 1.2;
@@ -271,6 +345,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+        /* 控制笔记库记录“删除”按钮样式 */
         .notes-library-delete-button {
             height: 2rem;
             padding: 0 0.75rem;
@@ -278,24 +353,234 @@
             font-weight: 700;
             white-space: nowrap;
         }
+
+        /* ===== 时间面板 ===== */
+        /* 控制时间面板容器尺寸与内边距 */
         .time-panel {
-            padding: 1rem;
+            margin-top: var(--panel-top-margin);
             width: 100%;
-            max-width: 100%;
-            margin-bottom: var(--panel-gap);
             text-align: center;
+            padding: 1rem 0 1rem 0;
         }
+        #solarClock {
+            font-size: var(--solar-clock-font-size);
+            letter-spacing: var(--solar-clock-letter-spacing);
+            line-height: var(--solar-clock-line-height);
+        }
+        #lunarClock {
+            font-size: var(--lunar-clock-font-size);
+            letter-spacing: var(--lunar-clock-letter-spacing);
+            line-height: var(--lunar-clock-line-height);
+        }
+
+        /* ===== 排盘主面板（起卦时间 + 六宫） ===== */
+        /* 控制排盘主面板容器尺寸与内边距 */
         .main-panel {
-            padding:
-                1rem
-                1.3rem
-                1.3rem;
+            padding:1rem 1rem 1rem 1rem;
             width: 100%;
-            max-width: 100%;
-            position: relative;
-            overflow: hidden;
-            margin-bottom: var(--panel-gap);
         }
+        /******/
+        /* 控制排盘输入区域与结果区域间距 */
+        .form-section {
+            margin-bottom: 1.35rem;
+        }
+        
+        /* 控制起卦时间区整体纵向布局 */
+        .datetime-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        /* 控制“起卦时间”标题文字样式 */
+        .datetime-title {
+            font-size: var(--datetime-title-text-size);
+            color: var(--font-brown);
+        }
+        /* 控制起卦时间输入行的网格布局 */
+        .datetime-row {
+            display: grid;
+            width: 100%;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+        }
+        /* 控制时间输入与日历触发器外层容器 */
+        .datetime-picker-wrap {
+            grid-column: 2;
+            display: inline-grid;
+            grid-template-columns: auto auto;
+            width: auto;
+
+            border: var(--datetime-picker-border-width) solid #4b3521;
+            border-radius: 0.625rem;
+            background: #fff;
+            padding: 0.55rem 0rem 0.55rem 0.9rem;
+        }
+        /* 控制手动时间输入框尺寸伸缩 */
+        .datetime-manual-input {
+            font-size: var(--datetime-picker-text-size);
+            grid-column: 1;
+            width: 16ch;
+        }
+        .datetime-manual-input:focus,
+        .datetime-manual-input:focus-visible {
+            outline: none;
+            box-shadow: none;
+        }
+        /* 日历按钮尺寸伸缩 */
+        #dateTimePickerButton {
+            grid-column: 2;
+            justify-self: end;
+            align-self: center;
+            width: var(--datetime-picker-calendar-btn-size);
+            height: auto;
+            margin-right: 0.6rem;
+        }
+        #dateTimePickerButton svg {
+            width: 100%;
+            height: 100%;
+        }
+        /* “当前时间”按钮定位 */
+        .datetime-now-button {
+            grid-column: 3;
+            justify-self: start;
+            margin-left: 1.2rem;
+        }
+
+        /* 起卦时间下方农历信息文本样式 */
+        #selectedDateLunarInfo {
+            font-size: var(--datetime-lunar-info-text-size);
+            font-weight: 700;
+            margin-top: 0.7rem;
+        }
+
+        /* 控制“开始排盘”主按钮上边距 */
+        .action-button {
+            margin-top: 1.25rem;
+        }
+        /* 控制六宫宫格容器网格布局 */
+        .hex-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.9rem;
+        }
+        /* 控制单个宫位卡片外观与比例 */
+        .palace-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            aspect-ratio: 1/1;
+            border-width: var(--palace-card-border-width) !important;
+            border-color: var(--palace-card-border-color) !important;
+            border-radius: var(--palace-card-border-radius) !important;
+        }
+        /* 控制宫位内所有标签的绝对定位基类 */
+        .palace-slot {
+            position: absolute;
+            line-height: 1;
+            white-space: nowrap;
+        }
+        .slot-wuxing,
+        /* 控制宫位顶部徽章（五星/六神）的纵向位置 */
+        .slot-liushen {
+            top: var(--palace-badge-top-gap);
+        }
+        /* 控制宫位五星徽章的横向位置 */
+        .slot-wuxing {
+            left: var(--palace-badge-side-gap);
+        }
+        .wuxing-badge,
+        .liushen-badge,
+        /* 控制六亲/六神/五星徽章基础外观 */
+        .liuqin-badge {
+            --badge-border-color: #4b3521;
+            --badge-bg-color: transparent;
+            --badge-text-color: inherit;
+            font-size: var(--palace-badge-font-size);
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.1rem 0.35rem;
+            border: 1.5px solid var(--badge-border-color);
+            border-radius: 0.6rem;
+            line-height: 1.1;
+            background: var(--badge-bg-color);
+            color: var(--badge-text-color) !important;
+        }
+        .wuxing-badge,
+        /* 控制六神与五星徽章默认背景色 */
+        .liushen-badge {
+            --badge-bg-color: rgba(255, 248, 234, 0.9);
+        }
+        /* 控制六神徽章文字颜色 */
+        .liushen-badge { --badge-text-color: #fff8ea; }
+        /* 控制宫位六神徽章的横向位置 */
+        .slot-liushen {
+            right: var(--palace-badge-side-gap);
+        }
+        /* 控制宫位地支文本位置与字号 */
+        .slot-zhi {
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: var(--palace-zhi-font-size);
+            font-weight: 700;
+        }
+        /* 控制宫位六亲标签位置 */
+        .slot-liuqin {
+            right: var(--palace-badge-side-gap);
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        /* 控制宫位“日/时”标记位置 */
+        .slot-daytime {
+            left: 0.7rem;
+            bottom: 0.55rem;
+        }
+        /* 控制宫位“身”标记位置 */
+        .slot-body {
+            left: calc(50% - 1.1rem);
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        /* 控制“日/时/身”圆圈字样式 */
+        .circled-char {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.5em;
+            height: 1.5em;
+            border: 1.5px solid #4b3521;
+            border-radius: 9999px;
+            line-height: 1;
+        }
+        .slot-daytime,
+        /* 控制“日/时/身”标记文字排版 */
+        .slot-body {
+            display: flex;
+            align-items: center;
+            gap: 0.18rem;
+            font-size: var(--palace-marker-font-size);
+            font-weight: 700;
+        }
+        /* 控制宫位名称文本与下划线动画 */
+        .slot-palace-name {
+            right: 0.62rem;
+            bottom: 0.3rem;
+            font-size: var(--palace-name-font-size);
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-decoration: none;
+            display: inline-block;
+            padding-bottom: 0.48rem;
+            background-image: linear-gradient(var(--palace-underline-color, #4b3521), var(--palace-underline-color, #4b3521));
+            background-repeat: no-repeat;
+            background-size: 0 2px;
+            background-position: -2px calc(100% - 2px);
+            transition: background-size 0.25s ease;
+        }
+        .slot-palace-name.show-underline { background-size: 100% 2px; }
+
+        /* ===== 笔记面板（页面底部） ===== */
+        /* 控制笔记面板容器尺寸与内边距 */
         .notes-panel {
             width: 100%;
             max-width: 100%;
@@ -306,17 +591,20 @@
                 1.3rem
                 1.3rem;
         }
+        /* 控制笔记表单整体纵向布局 */
         .notes-form {
             display: flex;
             flex-direction: column;
             gap: 0.9rem;
         }
+        /* 控制笔记字段行的标签-输入网格布局 */
         .notes-field-row {
             display: grid;
             grid-template-columns: auto 1fr;
             align-items: center;
             gap: 0.75rem;
         }
+        /* 控制笔记字段标签文本样式 */
         .notes-field-label {
             font-size: var(--notes-font-size);
             font-weight: 700;
@@ -324,6 +612,7 @@
             white-space: nowrap;
         }
         .notes-field-input,
+        /* 控制笔记字段输入框/下拉框基础尺寸 */
         .notes-field-select {
             width: 100%;
             height: 3rem;
@@ -335,11 +624,13 @@
             -webkit-appearance: none;
             -moz-appearance: none;
         }
+        /* 控制笔记输入框边框与背景 */
         .notes-field-input {
             background: var(--notes-select-bg-color);
             border: var(--notes-select-border-width) solid var(--notes-select-border-color);
             border-radius: var(--notes-select-border-radius);
         }
+        /* 控制笔记多行输入框文本换行行为 */
         .notes-field-textarea {
             padding: 0.55rem 0.75rem;
             line-height: 1.35;
@@ -356,16 +647,40 @@
         .notes-field-select option {
             font-size: var(--notes-font-size);
         }
+        /* 控制笔记下拉框外层定位（用于箭头） */
         .notes-field-select-wrap {
             position: relative;
         }
         .notes-field-select-wrap.notes-custom-select-ready::after {
             display: none;
         }
+        /* 控制“求测事项”下拉框宽度 */
         .notes-query-item-wrap {
             width: 7rem;
             justify-self: start;
         }
+        /* 控制笔记下拉框可视边框与右侧留白 */
+        .notes-field-select {
+            background: var(--notes-select-bg-color);
+            border: var(--notes-select-border-width) solid var(--notes-select-border-color);
+            border-radius: var(--notes-select-border-radius);
+            padding-right: 2.1rem;
+            cursor: pointer;
+        }
+        .notes-field-select-wrap::after {
+            content: "";
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-35%);
+            width: 0;
+            height: 0;
+            border-left: 0.6rem solid transparent;
+            border-right: 0.6rem solid transparent;
+            border-top: 0.8rem solid #000;
+            pointer-events: none;
+        }
+        /* 控制“问AI”按钮外观 */
         .notes-ai-button {
             width: 100%;
             height: 3rem;
@@ -380,11 +695,21 @@
         .notes-ai-button:hover {
             background: var(--action-btn-hover-bg-color);
         }
+        /* 控制原生 select 隐藏（交由自定义下拉显示） */
+        .notes-native-select {
+            position: absolute;
+            width: 0;
+            height: 0;
+            opacity: 0;
+            pointer-events: none;
+        }
+        /* 控制笔记条目列表纵向间距 */
         .notes-entries {
             display: flex;
             flex-direction: column;
             gap: 0.6rem;
         }
+        /* 控制单条笔记行（宫位图/文本/拖拽柄）网格布局 */
         .notes-entry-row {
             display: grid;
             grid-template-columns: minmax(0, var(--notes-palace-size, 6rem)) minmax(0, 1fr) auto;
@@ -404,6 +729,7 @@
             user-select: none;
             -webkit-user-select: none;
         }
+        /* 控制拖拽排序时的占位行样式 */
         .notes-entry-placeholder {
             width: 100%;
             border: none;
@@ -417,6 +743,7 @@
         .notes-entry-row.is-no-palace .notes-palace-picker {
             display: none;
         }
+        /* 控制笔记行拖拽手柄样式 */
         .notes-entry-handle {
             width: 1.4rem;
             height: 100%;
@@ -450,6 +777,7 @@
             width: 100%;
             transform-origin: right center;
         }
+        /* 控制笔记行宫位选择器容器 */
         .notes-palace-picker {
             position: relative;
             width: 100%;
@@ -457,6 +785,7 @@
             max-width: 100%;
             aspect-ratio: auto;
         }
+        /* 控制笔记行宫位预览触发按钮 */
         .notes-palace-trigger {
             width: 100%;
             height: 100%;
@@ -492,11 +821,13 @@
         .notes-palace-trigger.is-selected::before {
             display: none;
         }
+        /* 控制宫位未选择时的占位文本 */
         .notes-palace-placeholder {
             font-size: 1.35rem;
             font-weight: 700;
             line-height: 1;
         }
+        /* 控制笔记行中的宫位预览卡片 */
         .notes-palace-preview {
             width: 100%;
             height: 100%;
@@ -505,6 +836,7 @@
             border: none !important;
             background: transparent !important;
         }
+        /* 控制宫位选择下拉弹层布局 */
         .notes-palace-popup {
             position: absolute;
             top: calc(100% + 0.3rem);
@@ -523,6 +855,7 @@
         .notes-palace-popup.is-hidden {
             display: none;
         }
+        /* 控制宫位选择项按钮样式 */
         .notes-palace-option {
             height: 2.2rem;
             border: 1px solid var(--notes-select-border-color);
@@ -535,11 +868,13 @@
         .notes-palace-option:hover {
             background: var(--custom-select-highlight-color);
         }
+        /* 控制笔记底部 + / - / 保存 按钮行布局 */
         .notes-add-row {
             display: flex;
             justify-content: center;
             gap: 6rem;
         }
+        /* 控制笔记 + / - 圆形按钮外观 */
         .notes-add-circle-button {
             width: 3rem;
             height: 3rem;
@@ -556,6 +891,7 @@
             padding-bottom: 0.2rem;
             transition: background-color 0.12s ease, border-color 0.12s ease;
         }
+        /* 控制笔记 + / - 按钮字符样式 */
         .notes-add-circle-button-label {
             display: inline-block;
             line-height: 1;
@@ -590,11 +926,8 @@
         .notes-add-circle-button.is-active .notes-add-circle-button-label {
             color: var(--notes-add-btn-strong-color) !important;
         }
+        /* 控制“保存笔记”按钮文本不换行 */
         .notes-save-button {
-            height: 3rem;
-            padding: 0 1.25rem;
-            font-size: 1.3rem;
-            font-weight: 700;
             white-space: nowrap;
         }
         .notes-entries.is-delete-mode .notes-entry-row {
@@ -617,17 +950,14 @@
         .notes-entries.is-delete-mode .notes-entry-row:hover::after {
             opacity: 1;
         }
-        .notes-native-select {
-            position: absolute;
-            width: 0;
-            height: 0;
-            opacity: 0;
-            pointer-events: none;
-        }
+
+        /* ===== 自定义下拉（笔记与日历头部共用） ===== */
+        /* 控制通用自定义下拉根容器 */
         .custom-select {
             position: relative;
             width: var(--custom-select-width, 100%);
         }
+        /* 控制通用自定义下拉触发按钮 */
         .custom-select-trigger {
             width: var(--custom-select-trigger-width, 100%);
             min-height: var(--custom-select-trigger-min-height, 0);
@@ -656,6 +986,7 @@
         .custom-select.is-open .custom-select-trigger {
             background-color: var(--custom-select-highlight-color);
         }
+        /* 控制通用自定义下拉选项列表容器 */
         .custom-select-list {
             position: absolute;
             top: calc(100% + 0.3rem);
@@ -677,6 +1008,7 @@
         .custom-select-list.is-hidden {
             display: none;
         }
+        /* 控制通用自定义下拉选项按钮 */
         .custom-select-option {
             display: block;
             width: 100%;
@@ -725,212 +1057,6 @@
             --custom-select-text-color: #4b3521;
             --custom-select-arrow-right-gap: 0.75rem;
         }
-        .notes-field-select {
-            background: var(--notes-select-bg-color);
-            border: var(--notes-select-border-width) solid var(--notes-select-border-color);
-            border-radius: var(--notes-select-border-radius);
-            padding-right: 2.1rem;
-            cursor: pointer;
-        }
-        .notes-field-select-wrap::after {
-            content: "";
-            position: absolute;
-            right: 0.75rem;
-            top: 50%;
-            transform: translateY(-35%);
-            width: 0;
-            height: 0;
-            border-left: 0.6rem solid transparent;
-            border-right: 0.6rem solid transparent;
-            border-top: 0.8rem solid #000;
-            pointer-events: none;
-        }
-        .form-section {
-            margin-bottom: 1.35rem;
-        }
-        .datetime-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .datetime-row {
-            display: grid;
-            width: 100%;
-            grid-template-columns: 1fr auto 1fr;
-            align-items: center;
-        }
-        .datetime-picker-wrap {
-            position: relative;
-            grid-column-start: 2;
-            justify-self: center;
-            width: var(--datetime-picker-box-width);
-        }
-        .datetime-picker-box {
-            display: inline-flex;
-            width: 100%;
-            box-sizing: border-box;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: var(--datetime-picker-text-size);
-            background: #fff;
-            border: var(--datetime-picker-border-width) solid #4b3521;
-            border-radius: 0.625rem;
-            padding:
-                0.55rem
-                0rem
-                0.55rem
-                0.9rem;
-        }
-        .datetime-manual-input {
-            width: auto;
-            flex: 1 1 auto;
-            min-width: 0;
-        }
-        .datetime-now-button {
-            grid-column-start: 3;
-            justify-self: start;
-            margin-left: 0.5rem;
-            flex-shrink: 0;
-            font-size: var(--datetime-now-button-text-size);
-            padding: 0.6rem 0.6rem;
-        }
-        #dateTimePickerButton {
-            width: var(--datetime-picker-calendar-btn-size);
-            height: var(--datetime-picker-calendar-btn-size);
-            margin-bottom: 0.05rem;
-            margin-right: 0.6rem;
-        }
-        #dateTimePickerButton svg {
-            width: 100%;
-            height: 100%;
-        }
-        .action-theme-button {
-            color: var(--action-btn-text-color) !important;
-            background: var(--action-btn-bg-color) !important;
-            border: var(--action-btn-border-width) solid var(--action-btn-border-color);
-            border-radius: var(--action-btn-radius) !important;
-            transition: background 0.2s ease, transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-        .action-theme-button:hover {
-            background: var(--action-btn-hover-bg-color) !important;
-        }
-        button {
-            transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-        button:active {
-            transform: scale(0.94);
-        }
-        button:disabled:active {
-            transform: scale(1);
-        }
-        .action-button {
-            margin-top: 1.25rem !important;
-        }
-        .hex-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.9rem;
-        }
-        .palace-card {
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            aspect-ratio: 1/1;
-            border-width: var(--palace-card-border-width) !important;
-            border-color: var(--palace-card-border-color) !important;
-            border-radius: var(--palace-card-border-radius) !important;
-        }
-        .palace-slot {
-            position: absolute;
-            line-height: 1;
-            white-space: nowrap;
-        }
-        .slot-wuxing,
-        .slot-liushen {
-            top: var(--palace-badge-top-gap);
-        }
-        .slot-wuxing {
-            left: var(--palace-badge-side-gap);
-        }
-        .wuxing-badge,
-        .liushen-badge,
-        .liuqin-badge {
-            --badge-border-color: #4b3521;
-            --badge-bg-color: transparent;
-            --badge-text-color: inherit;
-            font-size: var(--palace-badge-font-size);
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.1rem 0.35rem;
-            border: 1.5px solid var(--badge-border-color);
-            border-radius: 0.6rem;
-            line-height: 1.1;
-            background: var(--badge-bg-color);
-            color: var(--badge-text-color) !important;
-        }
-        .wuxing-badge,
-        .liushen-badge {
-            --badge-bg-color: rgba(255, 248, 234, 0.9);
-        }
-        .liushen-badge { --badge-text-color: #fff8ea; }
-        .slot-liushen {
-            right: var(--palace-badge-side-gap);
-        }
-        .slot-zhi {
-            left: 0.8rem;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: var(--palace-zhi-font-size);
-            font-weight: 700;
-        }
-        .slot-liuqin {
-            right: var(--palace-badge-side-gap);
-            top: 50%;
-            transform: translateY(-50%);
-        }
-        .slot-daytime {
-            left: 0.7rem;
-            bottom: 0.55rem;
-        }
-        .slot-body {
-            left: calc(50% - 1.1rem);
-            top: 50%;
-            transform: translate(-50%, -50%);
-        }
-        .circled-char {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 1.5em;
-            height: 1.5em;
-            border: 1.5px solid #4b3521;
-            border-radius: 9999px;
-            line-height: 1;
-        }
-        .slot-daytime,
-        .slot-body {
-            display: flex;
-            align-items: center;
-            gap: 0.18rem;
-            font-size: var(--palace-marker-font-size);
-            font-weight: 700;
-        }
-        .slot-palace-name {
-            right: 0.62rem;
-            bottom: 0.3rem;
-            font-size: var(--palace-name-font-size);
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-decoration: none;
-            display: inline-block;
-            padding-bottom: 0.48rem;
-            background-image: linear-gradient(var(--palace-underline-color, #4b3521), var(--palace-underline-color, #4b3521));
-            background-repeat: no-repeat;
-            background-size: 0 2px;
-            background-position: -2px calc(100% - 2px);
-            transition: background-size 0.25s ease;
-        }
-        .slot-palace-name.show-underline { background-size: 100% 2px; }
         /* ===== 日历样式（flatpickr）总览 =====
            目标：
            1) 保持当前布局与视觉不变
@@ -939,6 +1065,7 @@
         */
 
         /* ===== A. 外层容器与统一主题 ===== */
+        /* 控制日历弹层整体容器外观 */
         .flatpickr-calendar {
             transform-origin: top center !important;
             width: 25rem !important;
@@ -959,6 +1086,7 @@
         .flatpickr-weekdaycontainer,
         .flatpickr-rContainer,
         .flatpickr-days,
+        /* 控制日期网格容器背景统一 */
         .dayContainer {
             background: #fff !important;
         }
@@ -974,6 +1102,7 @@
 
         /* ===== B. 顶部（月份/年份 + 切换箭头 + 自定义下拉） ===== */
         /* 基础头部：统一字号与垂直对齐 */
+        /* 控制日历顶部当前年月区域布局 */
         .flatpickr-current-month {
             display: flex !important;
             align-items: center !important;
@@ -1007,12 +1136,14 @@
             display: none !important;
         }
 
+        /* 控制日历月份条容器高度与溢出 */
         .flatpickr-month {
             height: auto !important;
             overflow: visible !important;
         }
 
         .flatpickr-prev-month,
+        /* 控制日历左右翻月箭头按钮尺寸 */
         .flatpickr-next-month {
             width: 1rem !important;
             height: 1rem !important;
@@ -1075,16 +1206,19 @@
         }
 
         /* ===== C. 星期与日期网格（保持七列对齐） ===== */
+        /* 控制日历内部主容器宽度 */
         .flatpickr-innerContainer {
             width: 100% !important;
             display: block !important;
         }
 
+        /* 控制日历月份行高度 */
         .flatpickr-months {
             height: auto !important;
             min-height: 0 !important;
         }
 
+        /* 控制星期标题行高度与对齐 */
         .flatpickr-weekdays {
             height: calc(var(--calendar-date-cell-height) * 0.75) !important;
             margin: 0 !important;
@@ -1093,6 +1227,7 @@
             align-items: flex-start !important;
         }
 
+        /* 控制日期区域主容器尺寸 */
         .flatpickr-days {
             width: 100% !important;
             height: auto !important;
@@ -1103,6 +1238,7 @@
         }
 
         .flatpickr-weekdaycontainer,
+        /* 控制日期网格容器基础尺寸与内边距 */
         .dayContainer {
             width: 100% !important;
             max-width: 100% !important;
@@ -1115,16 +1251,19 @@
             box-sizing: border-box !important;
         }
 
+        /* 控制日期网格内容在顶部对齐 */
         .dayContainer {
             align-content: flex-start !important;
         }
 
+        /* 控制星期标题网格七列布局 */
         .flatpickr-weekdaycontainer {
             transform-origin: top center !important;
             display: grid !important;
             grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
         }
 
+        /* 控制星期标题单元格文字样式 */
         .flatpickr-weekday {
             width: 100% !important;
             min-width: 0 !important;
@@ -1133,6 +1272,7 @@
             line-height: var(--calendar-date-cell-height) !important;
         }
 
+        /* 控制日期单元格尺寸与文字样式 */
         .flatpickr-day {
             flex: 0 0 calc(100% / 7) !important;
             width: calc(100% / 7) !important;
@@ -1174,6 +1314,7 @@
         }
 
         /* ===== E. 时间面板 ===== */
+        /* 控制日历时间选择区容器样式 */
         .flatpickr-time {
             width: 100% !important;
             height: auto !important;
@@ -1241,7 +1382,7 @@
         <h1 class="page-title font-bold text-center tracking-[0.2em]">
             江氏小六壬排盘器
         </h1>
-        <button type="button" id="openNotesLibraryButton" class="notes-library-open-button action-theme-button" aria-label="打开我的笔记">
+        <button type="button" id="openNotesLibraryButton" class="notes-library-open-button small-action-button action-theme-button" aria-label="打开我的笔记">
             我的笔记
         </button>
     </div>
@@ -1259,10 +1400,10 @@
     </div>
 
     <div class="theme-panel time-panel">
-        <div id="solarClock" class="font-mono-custom font-bold text-[1.8rem] tracking-[0.05em]">
+        <div id="solarClock" class="font-mono-custom font-bold">
             0000年0月0日 00:00:00
         </div>
-        <div id="lunarClock" class="font-bold text-[1.45rem] mt-2 tracking-[0.2em] text-center whitespace-nowrap">
+        <div id="lunarClock" class="font-bold mt-2 text-center whitespace-nowrap">
             获取农历中...
         </div>
     </div>
@@ -1270,45 +1411,46 @@
     <div class="theme-panel main-panel">
         <div class="space-y-4 form-section">
             <div class="datetime-section">
-                <label class="text-[1.4rem] uppercase tracking-widest mb-2 font-bold text-center">起卦时间</label>
+                <label class="datetime-title tracking-widest mb-2 font-bold text-center">起卦时间</label>
                 <div class="datetime-row">
-                    <div id="dateTimePickerWrap" class="datetime-picker-wrap">
-                        <div class="datetime-picker-box font-mono-custom font-bold focus-within:border-[#4b3521]">
-                            <input
-                                type="text"
-                                id="dateTimeManualInput"
-                                placeholder="yyyy/mm/dd HH:mm"
-                                inputmode="numeric"
-                                maxlength="16"
-                                pattern="\d{4}/\d{2}/\d{2} \d{2}:\d{2}"
-                                class="datetime-manual-input bg-transparent outline-none font-mono-custom font-bold"
-                            >
-                            <button
-                                type="button"
-                                id="dateTimePickerButton"
-                                aria-label="打开中文日历选择起卦时间"
-                                class="relative shrink-0 inline-flex items-center justify-center rounded transition overflow-hidden"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                                    <line x1="16" y1="2" x2="16" y2="6"></line>
-                                    <line x1="8" y1="2" x2="8" y2="6"></line>
-                                    <line x1="3" y1="10" x2="21" y2="10"></line>
-                                </svg>
-                            </button>
-                        </div>
+                    <div
+                        id="dateTimePickerWrap"
+                        class="datetime-picker-wrap font-mono-custom font-bold"
+                    >
+                        <input
+                            type="text"
+                            id="dateTimeManualInput"
+                            placeholder="yyyy/mm/dd HH:mm"
+                            inputmode="numeric"
+                            maxlength="16"
+                            pattern="\d{4}/\d{2}/\d{2} \d{2}:\d{2}"
+                            class="datetime-manual-input font-mono-custom font-bold"
+                        >
+                        <button
+                            type="button"
+                            id="dateTimePickerButton"
+                            aria-label="打开中文日历选择起卦时间"
+                            class="relative shrink-0 inline-flex items-center justify-center rounded transition overflow-hidden"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                        </button>
                         <input type="hidden" id="dateTime">
                         <input type="text" id="dateTimeCalendarInput" class="hidden" tabindex="-1" aria-hidden="true">
                     </div>
                     <button
                         type="button"
                         id="dateTimeNowButton"
-                        class="datetime-now-button action-theme-button font-bold"
+                        class="datetime-now-button small-action-button action-theme-button font-bold"
                     >
                         当前时间
                     </button>
                 </div>
-                <div id="selectedDateLunarInfo" class="mt-2 text-[1rem] font-mono-custom whitespace-nowrap text-center"></div>
+                <div id="selectedDateLunarInfo" class="mt-2 font-mono-custom whitespace-nowrap text-center"></div>
             </div>
             <button onclick="startCalculation()" class="action-button action-theme-button w-full font-bold py-4 tracking-[0.5em] text-[2.2rem]">
                 开始排盘
@@ -1347,7 +1489,7 @@
             <div class="notes-add-row">
                 <button type="button" id="addNoteRowButton" class="notes-add-circle-button" aria-label="添加一行笔记"><span class="notes-add-circle-button-label">+</span></button>
                 <button type="button" id="removeNoteRowButton" class="notes-add-circle-button" aria-label="删除一行笔记" aria-pressed="false"><span class="notes-add-circle-button-label">-</span></button>
-                <button type="button" id="saveNotesButton" class="notes-save-button action-theme-button" aria-label="保存当前笔记">保存笔记</button>
+                <button type="button" id="saveNotesButton" class="notes-save-button small-action-button action-theme-button" aria-label="保存当前笔记">保存笔记</button>
             </div>
         </div>
     </div>
