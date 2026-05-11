@@ -1,0 +1,1480 @@
+        @font-face {
+            font-family: 'STZHONGS';
+            src: url('../STZHONGS.TTF') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        :root {
+            /* ===== 颜色 ===== */
+            --brown: #5a381f;
+            --dark-brown: #4b3521;
+            --light: #fff8ea;
+            --dark: #f5e8cf;
+
+            /*===小按钮颜色===*/
+            --sb-bg:#cb9e2d46;
+            --sb-font:#4b3521d8;
+            --sb-hover:#a3802846;
+
+            /*=== 大按钮颜色===*/
+            --bb-bg:#583e2cef;
+            --bb-font:#fffdf7;
+            --bb-hover:#583e2c;
+
+            --panel-top-margin: 0rem;
+
+            /* ===== 面板容器 ===== */
+            --panel-border-radius: 10px;                      /* 面板圆角 */
+            --panel-gap: 0.9rem;                              /* 面板间距 */
+
+            /* ===== 字号 ===== */
+            --page-title-font-size: 2.5rem;                  /* 标题字号 */
+
+            --border-width: 2px;
+            --border-color: var(--dark-brown);
+            --border-radius: 0.4rem;
+            
+ 
+
+            /* ===== 全局下拉 --gd-*（:root 默认值，日历头等共用） ===== */
+            --gd-option-line-height: 2.5rem;          /* 选项一行高度 */
+            --gd-option-radius: 0.4rem;              /* 选项圆角 */
+            --gd-list-max-height-default: 15rem;      /* 列表 max-height 未单独设置时的默认上限 */
+ 
+            /* ===== 起卦时间栏 ===== */
+            --datetime-picker-text-size: 1.6rem;               /* 起卦时间栏文字字号 */
+            --datetime-picker-calendar-btn-size: 1.6rem;       /* 起卦时间栏日历按钮大小 */
+            --datetime-picker-border-width: 2px;             /* 起卦时间栏边框粗细 */
+            --datetime-lunar-info-text-size: 1.6rem;           /* 起卦时间下方农历文字字号 */
+          
+            /* ===== 五星/六神/六亲 ===== */
+            --palace-badge-font-size: 2rem;                    /* 字号 */
+            --palace-badge-side-gap: 0.7rem;                   /* 左右距边缘 */
+            --palace-badge-top-gap: 0.7rem;                    /* 顶部距边缘 */
+            --palace-zhi-font-size: 2.5rem;                    /* 地支字号 */
+            --palace-name-font-size: 2.5rem;                    /* 宫位名字号 */
+            --palace-marker-font-size: 1.7rem;                 /* “身/时/日”标志字号 */
+
+            /* ===== 日历容器 ===== */
+            --calendar-date-text-size: 1.3rem;                 /* 日期字号 */
+            --calendar-base-text-size: 1.3rem;                 /* 日历通用字号 */
+            
+            /* ===== 笔记面板 ===== */
+            --notes-font-size: 1.8rem;                         /* 笔记面板字段字号 */
+            --notes-placeholder-color: rgba(75, 53, 33, 0.55); /* placeholder 颜色（需避开 body * 的 color !important） */
+            --notes-placeholder-font-size: 1.8rem;             /* placeholder 字号；可与 --notes-font-size 不同 */
+            --notes-palace-size: 13rem;                        /* 笔记宫位预览固定边长 */
+            --notes-ai-button-font-size: 2rem;               /* “问AI”按钮字号 */
+            --notes-select-border-radius: 0.4rem;                /* 笔记输入框圆角（含下拉框） */
+            --notes-select-border-width: 2px;                  /* 笔记输入框边框粗细（含下拉框） */
+            --notes-select-border-color: #4b3521;               /* 笔记输入框边框颜色（含下拉框） */
+            --notes-select-bg-color: #ffffff;                /* 笔记输入框背景色（含下拉框） */
+            --notes-drag-placeholder-bg-color: rgba(75, 53, 33, 0.05); /* 拖动时预览占位背景色 */
+            --notes-add-btn-strong-color: #4b3521;             /* 笔记 + / - 按钮悬停文字/按下边框文字色 */
+            --notes-add-btn-active-bg-color: #e0c9a795;          /* 笔记 + / - 按钮按下/激活背景色 */
+            
+            /* ===== 宫位图 ===== */
+            --notes-palace-dash-thickness: 2px; /* 宫位图虚线粗细 */
+            --notes-palace-dash-gap: 0.5rem; /* 宫位图虚线稀疏程度（间隔） */
+            --notes-palace-dash-outset: 0rem; /* 宫位图虚线外扩程度 */
+
+        
+        }
+        html {
+            font-size: 15px;
+        }
+        @media (min-aspect-ratio: 1001/1000) {
+            html {
+                font-size: calc(17 * 100vw / 1600);
+            }
+        }
+        @media (max-aspect-ratio: 1/1) {
+            html {
+                font-size: calc(17 * 100vw / 800);
+            }
+        }
+
+        body {
+            background: var(--dark);
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+            font-size: 1rem;
+            padding-inline: 0.75rem;
+        }
+        body, body * {
+            color: var(--dark-brown) !important;
+            font-family: 'STZHONGS', serif !important;
+        }
+        /* 控制通用面板容器（背景/边框/圆角） */
+        .theme-panel {
+            background: var(--light);
+            border-radius: var(--panel-border-radius);
+        }
+
+        /* ===== 通用操作按钮 ===== */
+        /* 通用动画 */
+        button {
+            transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        button:active {
+            transform: scale(0.94);
+        }
+        button:disabled:active {
+            transform: scale(1);
+        }
+        /* 大按钮 */
+        .action-theme-button {
+            color: var(--bb-font) !important;
+            background: var(--bb-bg);
+            border-radius: 1rem;
+            font-weight: 700;
+        }
+        .action-theme-button:hover {
+            background: var(--bb-hover);
+        }
+        /* 小按钮 */
+        .small-action-button {
+            width: auto;
+            height: auto;
+            padding: 1rem 1rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1;
+            white-space: nowrap;
+            border-radius: 1rem;
+            background: var(--sb-bg);
+            color: var(--sb-font)!important;
+        }
+        .small-action-button:hover {
+            background: var(--sb-hover);
+        }
+        /* 文本输入框 */
+        .notes-field-input {
+            width: 100%;
+            height: 100%;
+            text-align: top-left;
+            padding: 0.2rem 0.75rem 0.4rem 0.75rem;
+            font-size: var(--notes-font-size);
+            font-weight: 700;
+            background: #ffffff;
+            border: var(--border-width) solid var(--dark-brown);
+            border-radius: var(--border-radius);
+            outline: none;
+            resize: none;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+        textarea::placeholder,
+        input::placeholder {
+            color: #75685c78 !important;
+            font-size: var(--notes-font-size);
+        }
+        /* 下拉框 */
+        .global-dropdown {
+            position: relative;
+        }
+        /*下拉按钮*/
+        .global-dropdown-trigger {
+            position: relative;
+            width: 100%;
+            height: auto;
+            padding: 0 1.35rem 0 0.75rem;
+            border: var(--border-width) solid var(--dark-brown);
+            border-radius: var(--border-radius);
+            background-color: #ffffff;
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-align: left;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        /* 箭头样式 */
+        .global-dropdown-trigger::after {
+            content: "";
+            position: absolute;
+            right: 0.75rem;
+            top: 51%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 0.6rem solid transparent;
+            border-right: 0.6rem solid transparent;
+            border-top: 0.8rem solid var(--dark-brown);
+            pointer-events: none;
+        }
+        .global-dropdown-trigger:hover {
+            background-color: var(--dark);
+        }
+        /*下拉列表*/
+        .global-dropdown-list {
+            position: absolute;
+            top: calc(100% + 0.3rem);
+            z-index: 40;
+            width: 100%;
+            max-height: 15rem;
+            overflow-y: auto;
+            overflow-x: hidden;
+            touch-action: pan-y;
+            padding: 0.3rem;
+            border: var(--border-width) solid var(--dark-brown);
+            border-radius: var(--border-radius);
+            background: #ffffff;
+            box-sizing: border-box;
+        }
+        .global-dropdown-list.is-hidden { /* hidden状态时，隐藏下拉列表 */
+            display: none;
+        }
+        /*下拉选项*/
+        .global-dropdown-option {
+            display: block;
+            width: 100%;
+            padding: 0rem 0.5rem;
+            border-radius: var(--gd-option-radius);
+            text-align: left;
+            white-space: nowrap;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #000;
+            cursor: pointer;
+        }
+        .global-dropdown-option:hover{
+            background: var(--dark);
+        }
+        /* 滚动条容器 */
+        .global-dropdown-list::-webkit-scrollbar { 
+            width: 0.5rem;
+        }
+        /* 滚动条滑块 */
+        .global-dropdown-list::-webkit-scrollbar-thumb {
+            background:var(--dark);
+            border-radius: 999px;
+        }
+
+
+        /* ===== 页面骨架布局（从上到下） ===== */
+        /* 控制页面根容器布局 */
+        .page-root {
+            display: grid;
+            grid-template-columns: 1fr;
+            justify-items: center;
+            width: 100%;
+            padding: 0.3rem;
+            max-width: min(100%, 48rem);
+            box-sizing: border-box;
+            row-gap: var(--panel-gap);
+        }
+        .left-column-panels {
+            width: 100%;
+            display: grid;
+            row-gap: var(--panel-gap);
+        }
+        @media (min-aspect-ratio: 1/1) {
+            /* 控制宽屏下页面根容器网格布局 */
+            .page-root {
+                padding:0rem 2rem 0rem 2rem;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-template-areas:
+                    "header header"
+                    "left notes";
+                column-gap: 2rem;
+                row-gap: var(--panel-gap);
+                align-items: start;
+                max-width: 96rem;
+                margin-inline: auto;
+            }
+            /* 控制宽屏下顶部标题区所在网格区域 */
+            .page-header {
+                grid-area: header;
+            }
+            /* 控制宽屏下左侧容器所在网格区域 */
+            .left-column-panels {
+                grid-area: left;
+                align-self: start;
+            }
+            /* 控制宽屏下笔记面板所在网格区域 */
+            .notes-panel {
+                grid-area: notes;
+                align-self: start;
+            }
+        }
+        
+/* ======================== 顶部标题区 =============================== */
+        /* 分成三列，中间列放标题，右侧列放“我的笔记”按钮*/
+        /* 顶部标题区容器：*/
+        .page-header {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            position: relative;
+            width: 100%;
+            margin-top: 2rem;
+            align-items: center;
+        }
+        /* 控制页面主标题文字样式 */
+        .page-title {
+            grid-column: 2;
+            justify-self: center;
+            font-weight: 700;
+            font-size: var(--page-title-font-size);
+            color: var(--brown);
+        }
+        /* “我的笔记”按钮置于标题区第三列并靠右 */
+        .notes-library-open-button {
+            grid-column: 3;
+            justify-self: end;
+            margin-top: 0.3rem;
+        }
+
+/* ======================== 笔记库浮层 =============================== */
+        /* 控制笔记库浮层容器定位与尺寸 */
+        .notes-library-panel {
+            position: absolute;
+            top: var(--notes-library-panel-top, 5.2rem);
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(92vw, 56rem);
+            max-height: 52rem;
+            padding: 0.9rem 1rem 3rem 1rem;
+            border: var(--border-width) solid var(--border-color);
+            z-index: 1200;
+            padding: 1rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+
+        }
+        .notes-library-panel.is-hidden {
+            display: none;
+        }
+        /* 控制笔记库头部行布局 */
+        .notes-library-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.8rem;
+        }
+        /* 控制笔记库头部操作按钮组布局 */
+        .notes-library-header-actions {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            margin-left: auto;
+        }
+        /* 控制笔记库标题文本样式 */
+        .notes-library-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        /* 控制笔记库“关闭”按钮尺寸 */
+        .notes-library-clear-button {
+            margin-left: 0.75rem;
+            line-height: 0.5;
+            color: var(--bb-font)!important;
+            background: var(--bb-bg)!important;
+            &:hover {
+                background: var(--bb-hover)!important;
+            }
+            opacity: 0.9;
+        }
+        .notes-library-close-button {
+            line-height: 0.5;
+        }
+        /* 控制笔记库空状态提示样式 */
+        .notes-library-empty {
+            font-size: 1.8rem;
+            opacity: 0.75;
+            text-align: center;
+            padding: 0.6rem 0;
+        }
+        /* 控制笔记库列表容器滚动布局 */
+        .notes-library-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            max-height: calc(52rem - 8rem);
+            overflow-y: auto;
+            padding-right: 0.2rem;
+        }
+        /* 控制笔记库单条记录卡片样式 */
+        .notes-library-item {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 0.75rem;
+            align-items: center;
+            border: 2px solid var(--notes-select-border-color);
+            border-radius: var(--notes-select-border-radius);
+            background: var(--notes-select-bg-color);
+            padding: 0.55rem 0.65rem;
+            cursor: pointer;
+            opacity: 0.9;
+        }
+        .notes-library-item:hover {
+            background: #f5e8cf;
+        }
+        /* 控制笔记库记录时间文本样式 */
+        .notes-library-item-time {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+        /* 控制笔记库记录描述文本样式 */
+        .notes-library-item-desc {
+            font-size: 1.5rem;
+            margin-top: 0.2rem;
+            white-space: wrap;
+
+        }
+        /* 控制笔记库记录“删除”按钮样式 */
+        .notes-library-delete-button {
+            padding: 0 0.75rem;
+            font-size: 1.3rem;
+            line-height: 2;
+            font-weight: 700;
+            white-space: nowrap;
+            opacity: 0.9;
+        }
+
+/* ========================== 时间面板 =============================== */
+        /* 控制时间面板容器尺寸与内边距 */
+        .time-panel {
+            margin-top: var(--panel-top-margin);
+            width: 100%;
+            text-align: center;
+            padding: 1rem 0 1.6rem 0;
+        }
+        #solarClock {
+            margin-top: 0.2rem;
+            font-weight: 700;
+            font-size: 2rem;
+            letter-spacing: 0.05rem;
+        }
+        #lunarClock {
+            margin-top: 0.2rem;
+            font-weight: 700;
+            font-size: 1.7rem;
+            letter-spacing: 0.15rem;
+        }
+        
+/* ========================== 排盘设置区 =============================== */
+    .setting-panel {
+        box-sizing: border-box;
+        width: 100%;
+        padding: 1.7rem 2.5rem 0.3rem 2rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+
+        grid-template-areas:
+            "method queryItem"
+            "specificQuestion specificQuestion"
+            "time-section time-section"
+            "num-section num-section";
+        align-content: start;
+        gap: 1.5rem 2rem;
+    }
+    /* ===== 笔记字段行的标签 ===== */
+        .notes-row {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        /* 标签文本 */
+        .notes-field-label {
+            grid-column: 1;
+            font-size: var(--notes-font-size);
+            font-weight: 700;
+            line-height: 1;
+            white-space: nowrap;
+        }
+            .setting-panel > .notes-row:nth-child(1) {
+                grid-area: method;
+            }
+            .setting-panel > .notes-row:nth-child(2) {
+                grid-area: queryItem;
+            }
+            .setting-panel > .notes-row:nth-child(3) {
+                grid-area: specificQuestion;
+            }
+            /* 各种框 */
+            .dropdown-method {
+                grid-column: 2;
+                width: 100%;
+            }
+            .dropdown-query-item {
+                grid-column: 2;
+                width: 100%;
+            }
+            .dropdown-specific-question {
+                grid-column: 2;
+                width: 100%;
+            }
+            .specific-question {
+                grid-column: 2;
+                width: 100%;
+                /* 覆盖 .notes-field-input 的 height:100%；直接落在 grid 里时 100% 会贴满行高，scrollHeight 偏大，autoResize 无法缩短 */
+                height: auto;
+                min-height: 0;
+                overflow-y: hidden;
+            }
+
+       /* 控制起卦时间区整体布局 */
+       .datetime-section {
+        grid-area: time-section;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-template-rows: auto auto;
+        grid-template-areas:
+            "instruction-text datetime-controls"
+            ". lunar-info";
+        align-items: center;
+        justify-items: start;
+        /* 与 .notes-row 的 gap 一致 */
+        column-gap: 0.75rem;
+        width: 100%;
+    }
+            .datetime-controls {
+                grid-area: datetime-controls;
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 0.75rem;
+                min-width: 0;
+                width: 100%;
+            }
+            .datetime-section.is-hidden {
+                display: none;
+            }
+
+            .datetime-section > .notes-field-label {
+                grid-area: instruction-text;
+            }
+            /* 时间输入框 */
+            .datetime-picker-wrap {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: flex-start;
+                flex: 0 1 auto;
+                min-width: 0;
+                max-width: 100%;
+                border: var(--border-width) solid var(--dark-brown);
+                border-radius: var(--border-radius);
+                background: #fff;
+                padding: 0.4rem 0rem 0.1rem 1rem;
+                gap: 0.35rem;
+            }
+                    /* 时间输入框内文字；flex 缩小默认贴齐主轴起点（左），不会像 shrink-wrap 格子那样视觉上居中挤 */
+                    .datetime-manual-input {
+                        flex: 0 1 16ch;
+                        box-sizing: border-box;
+                        font-size: 1.7rem;
+                        font-weight: 700;
+                        width: 16ch;
+                        min-width: 0;
+                    }
+                    .datetime-manual-input:focus,
+                    .datetime-manual-input:focus-visible {
+                        outline: none;
+                        box-shadow: none;
+                    }
+                    /* 日历按钮 */
+                    #dateTimePickerButton {
+                        flex-shrink: 0;
+                        align-self: center;
+                        width: 2rem;
+                        margin-right: 0.6rem;
+                    }
+            /* “当前时间”按钮*/
+            .datetime-now-button {
+                line-height: 0.8;
+            }
+            /* 农历信息文本 */
+            .selected-date-lunar-info {
+                grid-area: lunar-info;
+                font-size: 1.6rem;
+                font-weight: 700;
+                margin-top: 0.4rem;
+                border-radius: var(--border-radius);
+                padding:0 0.9rem;
+                background:  #66513d18;
+            }
+
+        /* 数字起卦区（与时间区同一套 grid + flex，白框与时间选择器共用样式） */
+        .num-section {
+            width: 100%;
+            grid-area: num-section;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            align-items: center;
+            column-gap: 0.75rem;
+            margin-top: -0.8rem;
+            margin-bottom: 1rem;
+        }
+        .num-section.is-hidden {
+            display: none;
+        }
+        .num-controls {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.75rem;
+            min-width: 0;
+            width: 100%;
+        }
+        /* 占位：宽度与时间栏日历按钮 + 右边距一致 */
+        .num-picker-trailing {
+            flex-shrink: 0;
+            align-self: center;
+            width: 2rem;
+            margin-right: 0.6rem;
+            pointer-events: none;
+        }
+
+        .num-input {
+            -moz-appearance: textfield;
+            appearance: textfield;
+            line-height: 1;
+            padding: 0 0 0.1rem 0;
+            min-height: 0;
+        }
+        .num-input::-webkit-outer-spin-button,
+        .num-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .num-button {
+            line-height: 0.8;
+        }
+/* ======================== 排盘主面板 =============================== */
+        /* 控制排盘主面板容器尺寸与内边距 */
+        .main-panel {
+            padding:1rem 2rem 1rem 2rem;
+            width: 100%;
+        }
+
+        /* 开始排盘按钮*/
+        .action-button {
+            margin-top: 1rem;
+            text-align: center;
+            width: 100%;
+            padding: 0.8rem 0 0.8rem 0;
+            font-size: 2.3rem;
+            font-weight: 700;
+            letter-spacing: 0.5em;
+        }
+        /* 六宫容器 */
+        .hex-grid {
+            padding: 0.2rem;
+            margin-top:1.2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            overflow:visible
+        }
+        /* 单宫 */
+        .palace-card {
+            position: relative;
+            outline: 2px solid var(--brown);
+            outline-offset: -1px;
+            aspect-ratio: 1/1;
+        }
+        /* 控制宫位内所有标签的绝对定位基类 */
+        .palace-slot {
+            position: absolute;
+            line-height: 1;
+            white-space: nowrap;
+        }
+        /* ===== 宫内元素 ===== */
+        /* 五星 */
+        .slot-wuxing {
+            top: 0.7rem;
+            left: 0.7rem;
+            --badge-bg-color: transparent;
+        }
+        /* 六神 */
+        .slot-liushen {
+            top: 0.7rem;
+            right: 0.7rem;
+            --badge-text-color: var(--light); 
+        }
+        /* 六亲 */
+        .slot-liuqin {
+            right: 0.7rem;
+            top: 50%;
+            transform: translateY(-50%);
+            --badge-bg-color: transparent;
+            --badge-border-color: #000;
+            --badge-text-color: #000;
+        }
+        /* 六亲/六神/五星基础badge外观 */
+        .slot-wuxing,
+        .slot-liushen,
+        .slot-liuqin {
+            font-size: 2rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.3rem 0.5rem;
+            border: 1.5px solid var(--badge-border-color);
+            border-radius: 0.6rem;
+            background: var(--badge-bg-color);
+            color: var(--badge-text-color) !important;
+        }
+        /* 未排盘时不显示任何东西 */
+        .slot-wuxing:empty,
+        .slot-liushen:empty,
+        .slot-liuqin:empty {
+            padding: 0;
+            border-width: 0;
+            border-color: transparent;
+            background: transparent;
+            color: transparent !important;
+        }
+        /* 地支 */
+        .slot-zhi {
+            left: 1rem;
+            top: 49%;
+            transform: translateY(-50%);
+            font-size: var(--palace-zhi-font-size);
+            font-weight: 700;
+        }
+        
+        /* 圆圈字位置 */
+        .slot-daytime {
+            left: 0.7rem;
+            bottom: 0.7rem;
+        }
+        .slot-body {
+            left: calc(50% - 1.3rem);
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        /* 圆圈字内部文字排版 */
+        .slot-daytime,
+        .slot-body {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: var(--palace-marker-font-size);
+            font-weight: 700;
+        }
+        /* 圆圈字样式 */
+        .circled-char {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.5em;
+            height: 1.5em;
+            border: 1.5px solid #000;
+            border-radius: 9999px;
+            line-height: 1;
+        }
+        /* 宫位名称文本与下划线动画 */
+        .slot-palace-name {
+            color: #000 !important;
+            right: 0.62rem;
+            bottom: 0.5rem;
+            font-size: var(--palace-name-font-size);
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-decoration: none;
+            display: inline-block;
+            padding-bottom: 0.5rem;
+            background-image: linear-gradient(var(--palace-underline-color, var(--dark-brown)), var(--palace-underline-color, var(--dark-brown)));
+            background-repeat: no-repeat;
+            background-size: 0 2px;
+            background-position: -2px calc(100% - 2px);
+            transition: background-size 0.25s ease;
+        }
+        .slot-palace-name.show-underline { background-size: 100% 2px; }
+
+/* ======================== 笔记面板 =============================== */
+        /* 笔记面板容器 */
+        .notes-panel {
+            width: 100%;
+            margin-bottom: 1rem;
+            padding:1.1rem 2rem 1rem 2rem;
+        }
+        .notes-panel-title {
+            font-size: 2.3rem;
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: 0.08em;
+        }
+
+        /* “问AI”按钮独立行 */
+        .notes-ai-row {
+            margin-top: 0.75rem;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+            align-items: center;
+        }
+        /* “问AI”按钮外观 */
+        .notes-ai-button {
+            display: block;
+            width: 100%;
+            line-height: 1.8;
+            font-size: var(--notes-ai-button-font-size);
+            letter-spacing: 0.5em;
+        }
+
+        /* “修改AI提示词”按钮外观 */
+        .change-prompt-button {
+            width: 100%;
+            height: 100%;
+        }
+        .prompt-editor-panel {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: min(92vw, 56rem);
+            height: min(86vh, 52rem);
+            display: flex;
+            flex-direction: column;
+            overflow: auto;
+            z-index: 2100;
+            padding: 1rem;
+            border: var(--border-width) solid var(--dark-brown);
+            border-radius: 1rem;
+            background: var(--light);
+        }
+        .prompt-editor-panel.is-hidden {
+            display: none;
+        }
+        .prompt-editor-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            background: rgba(0, 0, 0, 0.103);
+        }
+        .prompt-editor-backdrop.is-hidden {
+            display: none;
+        }
+        .prompt-editor-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            padding-left: 0.4rem;
+            margin-bottom: 0.6rem;
+        }
+        .prompt-editor-textarea {
+            flex: 1 1 auto;
+            min-height: 24rem;
+            line-height: 1.45;
+            margin-bottom: 0.5rem;
+            border: var(--border-width) solid var(--dark-brown);
+            padding: 0.7rem 1rem;
+            overflow-y: auto;
+            scrollbar-width: 10rem;
+            scrollbar-color: var(--dark) transparent;
+        }
+        .prompt-editor-textarea::-webkit-scrollbar {
+            width: 10rem;
+        }
+        .prompt-editor-textarea::-webkit-scrollbar-thumb {
+            background: var(--dark);
+            border-radius: 999px;
+        }
+        .prompt-editor-actions {
+            margin-top: 0.7rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .prompt-editor-actions > button {
+            min-width: 7rem;
+            letter-spacing: 0.05rem;
+            text-align: center;
+        }
+        .prompt-editor-save-button {
+            padding: 0.7rem 1rem;
+            font-size: 1.4rem;
+        }
+
+        /* 笔记条目列表纵向间距 */
+        .notes-entries {
+            margin-top: 1.7rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        /* 单条笔记行网格布局 */
+        .notes-entry-row {
+            display: grid;
+            grid-template-columns: var(--notes-palace-size) 1fr auto;
+            gap: 0.4rem;
+            transition: transform 0.16s ease, opacity 0.16s ease;
+            touch-action: pan-y;
+        }
+        .notes-entry-row.is-dragging {
+            opacity: 0.9;
+            cursor: grabbing;
+            pointer-events: none;
+            transition: none !important;
+            will-change: left, top;
+        }
+        .notes-entries.is-row-sorting {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        /* 控制拖拽排序时的占位行样式 */
+        .notes-entry-placeholder {
+            width: 100%;
+            border: none;
+            border-radius: var(--notes-select-border-radius);
+            background: var(--notes-drag-placeholder-bg-color);
+            box-sizing: border-box;
+        }
+        .notes-entry-row.is-no-palace {
+            grid-template-columns: minmax(0, 1fr) auto;
+        }
+        .notes-entry-row.is-no-palace .notes-palace-picker {
+            display: none;
+        }
+        /* 控制笔记行拖拽手柄样式 */
+        .notes-entry-handle {
+            width: 1.4rem;
+            height: 100%;
+            border: none;
+            border-radius: 0.4rem;
+            background: var(--dark);
+            color: #00000071 !important;
+            font-size: 1.35rem;
+            font-weight: 700;
+            line-height: 1;
+            cursor: grab;
+            margin-left: -0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+        .notes-entry-handle:active {
+            cursor: grabbing;
+        }
+        .notes-entry-row .notes-field-input {
+            resize: none;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            overflow-x: hidden;
+            overflow-y: hidden;
+        }
+        .notes-entry-row.is-no-palace .notes-field-input {
+            width: 100%;
+            transform-origin: right center;
+        }
+        /* 控制笔记行宫位选择器容器 */
+        .notes-palace-picker {
+            position: relative;
+            width: var(--notes-palace-size, 6rem);
+            height: var(--notes-palace-size, 6rem);
+            max-width: 100%;
+            aspect-ratio: auto;
+        }
+        /* 宫位预览触发按钮 */
+        .notes-palace-trigger {
+            width: 100%;
+            height: 100%;
+            border: none;
+            padding: 0;
+            box-sizing: border-box;
+            /* overflow: hidden; */
+            appearance: none;
+            cursor: pointer;
+            position: relative;
+        }
+        .notes-palace-trigger.is-selected {
+            padding: 2.5px;
+        }
+        .notes-palace-trigger .notes-palace-preview {
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            display: block;
+        }
+        .notes-palace-trigger::before {
+            content: "";
+            position: absolute;
+            inset: calc(-1 * var(--notes-palace-dash-outset));
+            background-image: var(--notes-palace-dash-svg-url, none);
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+        }
+        .notes-palace-trigger.is-selected::before {
+            display: none;
+        }
+        /* 宫位未选择时的占位文本 */
+        .notes-palace-placeholder {
+            font-size: 1.35rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        /* 控制宫位选择下拉弹层布局 */
+        .notes-palace-popup {
+            position: absolute;
+            left: 0;
+            bottom: 105%;
+            z-index: 120;
+            width:26rem;
+            padding: 0.7rem;
+            border-radius: 1rem;
+            background: #583e2cef;
+
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr 1fr;
+            gap: 0.38rem;
+        }
+        .notes-palace-popup.is-hidden {
+            display: none;
+        }
+        /* 控制宫位选择项按钮样式 */
+        .notes-palace-option {
+            width: 100%;
+            padding: 1.1rem 0;
+            border-radius: 0.35rem;
+            background: #ffffff;
+            color: var(--dark-brown);
+            font-size: 1.7rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .notes-palace-option:hover {
+            background: #ede3d7;
+        }
+        /* 宫位弹层「不填」占满一行 */
+        .notes-palace-option-full-row {
+            grid-column: 1 / -1;
+        }
+
+        /* 控制笔记底部 + / - / 保存 按钮行布局 */
+        .notes-add-row {
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            flex-wrap: nowrap;
+            width: 100%;
+            gap: 0.8rem;
+        }
+        /* 控制笔记 + / - 圆形按钮外观 */
+        .notes-add-circle-button {
+            width: 3.8rem;
+            height: 3.8rem;
+            border-radius: 999px;
+            border: 1.5px solid;
+            border-color: var(--sb-font);
+            background: var(--sb-bg);
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding-bottom: 0.2rem;
+            transition: background-color 0.12s ease, border-color 0.12s ease;
+        }
+        /* 控制笔记 + / - 按钮字符样式 */
+        .notes-add-circle-button-label {
+            display: inline-block;
+            line-height: 1;
+            transform: translateY(0);
+            color: var(--sb-font) !important;
+            transition: color 0.12s ease;
+        }
+
+
+        #addNoteRowButton .notes-add-circle-button-label {
+            transform: translateY(0.12rem);
+            font-size: 4rem;
+        }
+        #removeNoteRowButton .notes-add-circle-button-label {
+            transform: translateY(-0.2rem);
+            font-size: 5rem;
+        }
+        .notes-add-circle-button:hover {
+            background: var(--sb-hover);
+        }
+        .notes-add-circle-button:active {
+            background: var(--sb-hover);
+            border-color: var(--sb-font);
+        }
+        .notes-add-circle-button:active .notes-add-circle-button-label {
+            color: var(--sb-font) !important;
+        }
+        .notes-add-circle-button.is-active {
+            background: var(--notes-add-btn-active-bg-color);
+            border-color: var(--notes-add-btn-strong-color);
+        }
+        .notes-add-circle-button.is-active .notes-add-circle-button-label {
+            color: var(--notes-add-btn-strong-color) !important;
+        }
+        /* 控制“保存笔记”按钮文本不换行 */
+        .notes-save-button {
+            white-space: nowrap;
+        }
+        #resetBoardButton {
+            background: var(--bb-bg);
+            color: var(--bb-font) !important;
+        }
+        #resetBoardButton:hover {
+            background: var(--bb-hover);
+        }
+        .notes-entries.is-delete-mode .notes-entry-row {
+            cursor: pointer;
+            position: relative;
+        }
+        .notes-entries.is-delete-mode .notes-entry-row > * {
+            pointer-events: none;
+        }
+        .notes-entries.is-delete-mode .notes-entry-row::after {
+            content: "";
+            position: absolute;
+            inset: -0.3rem;
+            border-radius: calc(var(--notes-select-border-radius) + 0.18rem);
+            background: rgba(0, 0, 0, 0.075);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.08s ease;
+        }
+        .notes-entries.is-delete-mode .notes-entry-row:hover::after {
+            opacity: 1;
+        }
+
+/* ========================== 日历样式（flatpickr）============================== */
+        /* 仅使用 Flatpickr 原生结构类名，不再依赖自定义容器/头部结构 */
+        .flatpickr-calendar {
+            --fp-calendar-width: min(25rem, calc(100vw - 2rem));
+            --fp-header-height: clamp(2.9rem, calc(var(--fp-calendar-width) * 0.12), 3.6rem);
+            --fp-weekday-height: clamp(2rem, calc(var(--fp-calendar-width) * 0.085), 2.6rem);
+            --fp-time-height: clamp(2.8rem, calc(var(--fp-calendar-width) * 0.11), 3.4rem);
+            width: min(25rem, calc(100vw - 2rem)) !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            padding-top: 0.2rem !important;
+            background: #fff;
+            border: var(--border-width) solid var(--dark-brown);
+            border-radius: var(--border-radius);
+            box-shadow: none;
+            overflow: hidden !important;
+        }
+
+        .flatpickr-calendar.with-year-select .flatpickr-month,
+        .flatpickr-calendar.with-year-select .flatpickr-months,
+        .flatpickr-calendar.with-year-select .flatpickr-current-month {
+            overflow: visible !important;
+        }
+
+        .flatpickr-calendar.with-year-select .flatpickr-months {
+            position: relative;
+            z-index: 20 !important;
+        }
+
+        .flatpickr-calendar.with-year-select .flatpickr-innerContainer {
+            position: relative;
+            z-index: 1 !important;
+        }
+
+        .flatpickr-month {
+            background: #fff;
+            color: var(--dark-brown);
+        }
+
+        /* 让星期栏与日期网格跟随日历宽度缩放，覆盖 Flatpickr 默认固定 px 宽度 */
+        .flatpickr-innerContainer,
+        .flatpickr-rContainer,
+        .flatpickr-weekdays,
+        .flatpickr-days,
+        .flatpickr-weekdaycontainer,
+        .flatpickr-days .dayContainer {
+            width: 100% !important;
+            min-width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            padding: 0  0.3rem !important;
+        }
+
+        .flatpickr-months {
+            height: var(--fp-header-height) !important;
+        }
+
+        .flatpickr-current-month {
+            font-size: 1.3rem !important;
+            font-weight: 700 !important;
+            padding-top: 0 !important;
+            height: 100% !important;
+            line-height: 1 !important;
+            white-space: nowrap !important;
+        }
+
+        .flatpickr-current-month.calendar-header {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            height: var(--fp-header-height) !important;
+            min-height: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            padding: 0 !important;
+            pointer-events: none;
+        }
+
+        .calendar-header-center {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            height: 100%;
+            position: relative;
+            z-index: 25;
+            pointer-events: auto;
+        }
+
+        .flatpickr-calendar.with-year-select .flatpickr-current-month .flatpickr-monthDropdown-months,
+        .flatpickr-calendar.with-year-select .flatpickr-current-month .numInputWrapper {
+            display: none !important;
+        }
+
+        .flatpickr-weekdays {
+            height: var(--fp-weekday-height) !important;
+        }
+
+        .flatpickr-weekdaycontainer {
+            display: grid !important;
+            grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+            align-items: center !important;
+            height: 100% !important;
+        }
+
+        .dropdown-calendar-year > .global-dropdown-trigger,
+        .dropdown-calendar-month > .global-dropdown-trigger {
+            width: 100%;
+            height: calc(var(--fp-header-height) - 0.5rem);
+            padding: 0 1.2rem 0 0.55rem;
+            border: none;
+            color: #000;
+            font-size: 1.3rem;
+            background: transparent;
+            display: inline-flex;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .dropdown-calendar-year,
+        .dropdown-calendar-month {
+            position: relative;
+            transform: translateX(0.3rem);
+        }
+        .dropdown-calendar-year {
+            width: 7.5rem;
+        }
+        .dropdown-calendar-month {
+            width: 5.5rem;
+        }
+
+        .dropdown-calendar-year > .global-dropdown-trigger:hover,
+        .dropdown-calendar-month > .global-dropdown-trigger:hover {
+            background-color: var(--dark) !important;
+        }
+
+        .dropdown-calendar-year .global-dropdown-option,
+        .dropdown-calendar-month .global-dropdown-option {
+            font-size: 1.3rem;
+            font-weight: 400 !important;
+            padding: 0.4rem 0.3rem 0.3rem 0.3rem;
+        }
+
+        .dropdown-calendar-year .global-dropdown-list,
+        .dropdown-calendar-month .global-dropdown-list {
+            z-index: 40 !important;
+        }
+
+        .flatpickr-prev-month,
+        .flatpickr-next-month {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 1rem !important;
+            height: 1rem !important;
+            padding: 1.1rem 1.3rem !important;
+            color: var(--dark-brown) !important;
+            fill: var(--dark-brown) !important;
+            font-size:3rem !important;
+            line-height: 1 !important;
+            z-index: 30 !important;
+            pointer-events: auto !important;
+        }
+
+        .flatpickr-prev-month svg,
+        .flatpickr-next-month svg {
+            width: 1.8rem !important;
+            height: 1.8rem !important;
+        }
+
+        .flatpickr-weekday {
+            color: var(--dark-brown) !important;
+            font-size: 1.2rem !important;
+        }
+
+        .flatpickr-days .dayContainer {
+            display: grid !important;
+            grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+            grid-template-rows: repeat(6, minmax(0, 1fr)) !important;
+            gap: 0 !important;
+            aspect-ratio: 7 / 6 !important;
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+        }
+
+        .flatpickr-day {
+            color: var(--dark-brown) !important;
+            font-size: var(--calendar-date-text-size) !important;
+            border-radius: 9999px !important;
+            width: 100% !important;
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            margin: 0 !important;
+            aspect-ratio: 1 / 1 !important;
+            display: grid !important;
+            place-items: center !important;
+            line-height: 1 !important;
+        }
+
+        .flatpickr-day.prevMonthDay,
+        .flatpickr-day.nextMonthDay,
+        .flatpickr-day.is-out-of-current-month {
+            visibility: hidden !important;
+            pointer-events: none !important;
+            border-color: transparent !important;
+            background: transparent !important;
+            color: transparent !important;
+        }
+
+        .flatpickr-day:hover,
+        .flatpickr-day.selected {
+            background: var(--dark) !important;
+            border-color: transparent !important;
+            box-shadow: none !important;
+        }
+
+        .flatpickr-day.today:not(.selected) {
+            border-color: transparent !important;
+            box-shadow: none !important;
+        }
+
+        .flatpickr-time {
+            border-top: 1px solid rgba(75, 53, 33, 0.15) !important;
+            height: 3rem!important;
+            max-height: none !important;
+            min-height: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            line-height: 1 !important;
+        }
+
+        .flatpickr-time .numInputWrapper,
+        .flatpickr-time .flatpickr-time-separator,
+        .flatpickr-time .flatpickr-am-pm {
+            height: 100% !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            line-height: 1 !important;
+        }
+
+        .flatpickr-time input,
+        .flatpickr-time .flatpickr-time-separator,
+        .flatpickr-time .flatpickr-am-pm {
+            font-size: var(--calendar-base-text-size) !important;
+            font-weight: 700 !important;
+        }
+
+        .flatpickr-time input {
+            caret-color: #4b3521 !important;
+            height: 100% !important;
+            line-height: 1 !important;
+            padding: 0 0.35rem !important;
+            text-align: center !important;
+            display: block !important;
+        }
+
+        /* 统一时间数字右侧上下调节按钮尺寸，覆盖 Flatpickr 默认 px 逻辑 */
+        .flatpickr-time .numInputWrapper {
+            position: relative !important;
+            box-sizing: border-box !important;
+        }
+
+        .flatpickr-time .numInputWrapper input {
+            width: 100% !important;
+            line-height: 1 !important;
+            box-sizing: border-box !important;
+            appearance: textfield !important;
+            -moz-appearance: textfield !important;
+        }
+
+        .flatpickr-time input[type="number"]::-webkit-outer-spin-button,
+        .flatpickr-time input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none !important;
+            margin: 0 !important;
+        }
+        .flatpickr-time .numInputWrapper span.arrowUp,
+        .flatpickr-time .numInputWrapper span.arrowDown {
+            position: absolute !important;
+            right: 0 !important;
+            width: 1.5rem !important;
+            height: 50% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: 0 !important;
+            background: #e6d5b9 !important;
+            border-left: 0px solid #c1b49b !important;
+            border-radius: 0.1rem !important;
+        }
+        .flatpickr-time .numInputWrapper span.arrowUp:hover,
+        .flatpickr-time .numInputWrapper span.arrowDown:hover {
+            background: #d9c4a4 !important;
+        }
+        .flatpickr-time .numInputWrapper span.arrowUp:active,
+        .flatpickr-time .numInputWrapper span.arrowDown:active {
+            background: #ccb18a !important;
+        }
+
+        .flatpickr-time .numInputWrapper span.arrowUp {
+            top: 0 !important;
+            border-bottom: 1px solid #c1b49b !important;
+        }
+        .flatpickr-time .numInputWrapper span.arrowDown {
+            bottom: 0 !important;
+        }
+
+        /* 箭头样式 */
+        .flatpickr-time .numInputWrapper span.arrowUp::after,
+        .flatpickr-time .numInputWrapper span.arrowDown::after {
+            transform: translateX(0.4rem) !important;
+            border-left-width: 0.4rem !important;
+            border-right-width: 0.4rem !important;
+        }
+        .flatpickr-time .numInputWrapper span.arrowUp::after {
+            border-bottom-width: 0.54rem !important;
+        }
+        .flatpickr-time .numInputWrapper span.arrowDown::after {
+            border-top-width: 0.54rem !important;
+        }
+
+        .flatpickr-time input:hover,
+        .flatpickr-time .numInputWrapper:focus-within,
+        .flatpickr-time input:focus,
+        .flatpickr-time .flatpickr-am-pm:hover,
+        .flatpickr-time .numInputWrapper:hover {
+            background: var(--dark) !important;
+        }
