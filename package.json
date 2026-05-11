@@ -1,0 +1,16 @@
+{
+  "name": "jiang-xiao-liu-ren",
+  "version": "1.0.0",
+  "description": "江氏小六壬排盘器 - Jiang's Xiao Liu Ren Fortune Telling Tool",
+  "type": "module",
+  "scripts": {
+    "dev": "npx serve .",
+    "start": "npx serve ."
+  },
+  "keywords": ["divination", "xiao-liu-ren", "fortune-telling"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@vercel/analytics": "^1.4.1"
+  }
+}

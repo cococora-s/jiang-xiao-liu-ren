@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Build artifacts
+dist/
+build/
+out/
+.next/
+.turbo/
+*.tsbuildinfo
+
+# Cache directories
+.vercel/
+.cache/
+.parcel-cache/
+
+# Environment variables
+.env
+.env.local
+.env*.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
