@@ -535,7 +535,7 @@
             .datetime-controls {
                 grid-area: datetime-controls;
                 display: flex;
-                flex-wrap: wrap;
+                flex-wrap: nowrap;
                 align-items: center;
                 gap: 0.75rem;
                 min-width: 0;
@@ -554,7 +554,7 @@
                 flex-direction: row;
                 align-items: center;
                 justify-content: flex-start;
-                flex: 0 1 auto;
+                flex: 1 1 0;
                 min-width: 0;
                 max-width: 100%;
                 border: var(--border-width) solid var(--dark-brown);
@@ -565,11 +565,11 @@
             }
                     /* 时间输入框内文字；flex 缩小默认贴齐主轴起点（左），不会像 shrink-wrap 格子那样视觉上居中挤 */
                     .datetime-manual-input {
-                        flex: 0 1 16ch;
+                        flex: 1 1 16ch;
                         box-sizing: border-box;
                         font-size: 1.7rem;
                         font-weight: 700;
-                        width: 16ch;
+                        width: 100%;
                         min-width: 0;
                     }
                     .datetime-manual-input:focus,
@@ -615,7 +615,7 @@
         }
         .num-controls {
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             align-items: center;
             gap: 0.75rem;
             min-width: 0;

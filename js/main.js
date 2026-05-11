@@ -327,9 +327,16 @@
 
         function resetCurrentBoardToDefaults() {
             const methodInput = document.getElementById('method');
+            const currentMethodValue = String(methodInput?.value || '').trim();
+            const shouldPreserveNumSection = currentMethodValue === '数字起卦';
             if (methodInput && MAIN_PANEL_METHOD_OPTIONS.length) {
-                methodInput.value = MAIN_PANEL_METHOD_OPTIONS[0].value;
-                methodInput.dispatchEvent(new Event('change', { bubbles: true }));
+                if (!shouldPreserveNumSection) {
+                    methodInput.value = MAIN_PANEL_METHOD_OPTIONS[0].value;
+                    methodInput.dispatchEvent(new Event('change', { bubbles: true }));
+                } else {
+                    // Keep the current divination method so the num section remains visible after reset.
+                    methodInput.dispatchEvent(new Event('change', { bubbles: true }));
+                }
             }
             setDateTimeValue(toDateTimeLocalValue(new Date()));
             const numInput = document.getElementById('numInput');
