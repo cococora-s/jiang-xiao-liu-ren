@@ -1137,13 +1137,14 @@
         };
         const DEFAULT_AI_PROMPT_TEMPLATE = [
             '# Role',
-            '你是一个精通【江氏小六壬】的专业算命师，负责根据提供的基础配置进行断卦。',
+            '你是一个精通【江氏小六壬】的专业算命师，负责根据提供的卦象进行断卦。',
             '',
             '# Task',
             '请严格按照以下逻辑进行内部推演，但**禁止**在输出中展示推演过程：',
-            '1. 取准用神，分析用神宫、时宫、日宫。',
+            '1. 以用神所在宫为核心，同时兼顾身宫和对宫。',
             '2. 研判六宫、地支、六亲、六神、五星的五行生克旺衰。',
             '3. 提取对应意象（方位、意象、职业等）关联【具体问题】。',
+            '4. 输出宫位总数不超过3个，以重要性从高到低排序。',
             '',
             '# Rules (必须严格遵守)',
             '- **禁止输出任何前言、开场白、结束语或分析推导过程。**',
@@ -1171,7 +1172,12 @@
             '  速喜：地支 <地支>，六亲 <六亲>，六神 <六神>，五星 <五星>',
             '  赤口：地支 <地支>，六亲 <六亲>，六神 <六神>，五星 <五星>',
             '  小吉：地支 <地支>，六亲 <六亲>，六神 <六神>，五星 <五星>',
-            '  空亡：地支 <地支>，六亲 <六亲>，六神 <六神>，五星 <五星>'
+            '  空亡：地支 <地支>，六亲 <六亲>，六神 <六神>，五星 <五星>',
+            '  身宫：<宫位名>',
+            '  对宫：<宫位名>',
+            '  判定规则：',
+            '  - 日时起卦：身宫=时宫<宫位名>，对宫=日宫<宫位名>',
+            '  - 数字起卦：身宫=时宫<宫位名>，对宫=数字宫<宫位名>'
         ].join('\n');
         let aiPromptTemplateCache = '';
         let aiTaskLinesOverride = null;
@@ -1191,6 +1197,36 @@
                 liushen: getPalaceSlotTextBySelector(palaceIndex, '.slot-liushen'),
                 wuxing: getPalaceSlotTextBySelector(palaceIndex, '.slot-wuxing')
             }));
+        };
+        const getPalaceNameBySlotMarker = (selector, markerText) => {
+            const marker = String(markerText || '').trim();
+            if (!marker) return '';
+            for (let palaceIndex = 0; palaceIndex < palaces.length; palaceIndex++) {
+                const node = document.querySelector(`#palace-${palaceIndex} ${selector}`);
+                const text = normalizeAiSlotText(node?.textContent || '');
+                if (text.includes(marker)) {
+                    return palaces[palaceIndex] || '';
+                }
+            }
+            return '';
+        };
+        const fillPromptPalacePlaceholders = (templateText, options = {}) => {
+            let nextText = String(templateText || '');
+            const bodyPalaceName = String(options.bodyPalaceName || '').trim() || '未填写';
+            const currentOppositePalaceName = String(options.currentOppositePalaceName || '').trim() || '未填写';
+            const dayOppositePalaceName = String(options.dayOppositePalaceName || '').trim() || '未填写';
+            const numberOppositePalaceName = String(options.numberOppositePalaceName || '').trim() || '未填写';
+            nextText = nextText.replace(/(\s*身宫：)\s*<宫位名>/m, `$1${bodyPalaceName}`);
+            nextText = nextText.replace(/(\s*对宫：)\s*<宫位名>/m, `$1${currentOppositePalaceName}`);
+            nextText = nextText.replace(
+                /(\-\s*日时起卦：身宫=时宫)<宫位名>(，对宫=日宫)<宫位名>/,
+                `$1${bodyPalaceName}$2${dayOppositePalaceName}`
+            );
+            nextText = nextText.replace(
+                /(\-\s*数字起卦：身宫=时宫)<宫位名>(，对宫=数字宫)<宫位名>/,
+                `$1${bodyPalaceName}$2${numberOppositePalaceName}`
+            );
+            return nextText;
         };
         const upsertPalacePromptLine = (templateText, palaceInfo) => {
             const line = `  ${palaceInfo.palaceName}：地支 ${palaceInfo.zhi}，六亲 ${palaceInfo.liuqin}，六神 ${palaceInfo.liushen}，五星 ${palaceInfo.wuxing}`;
@@ -1394,6 +1430,18 @@
             const palaceInfoList = getCurrentPalacePromptData();
             palaceInfoList.forEach((palaceInfo) => {
                 prompt = upsertPalacePromptLine(prompt, palaceInfo);
+            });
+            const bodyPalaceName = getPalaceNameBySlotMarker('.slot-body', '身');
+            const dayOppositePalaceName = getPalaceNameBySlotMarker('.slot-daytime', '日');
+            const numberOppositePalaceName = getPalaceNameBySlotMarker('.slot-daytime', '数');
+            const currentOppositePalaceName = divinationMethod === '数字起卦'
+                ? (numberOppositePalaceName || dayOppositePalaceName)
+                : (dayOppositePalaceName || numberOppositePalaceName);
+            prompt = fillPromptPalacePlaceholders(prompt, {
+                bodyPalaceName,
+                currentOppositePalaceName,
+                dayOppositePalaceName,
+                numberOppositePalaceName
             });
             if (notesText) {
                 prompt = `${prompt}\n\n【补充笔记】\n${notesText}`;
