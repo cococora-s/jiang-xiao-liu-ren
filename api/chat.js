@@ -15,7 +15,7 @@ function safeJsonParse(value) {
     }
 }
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
     setCorsHeaders(res);
 
     if (req.method === 'OPTIONS') {
@@ -94,4 +94,4 @@ module.exports = async function handler(req, res) {
             error: 'Internal Server Error'
         });
     }
-};
+}
