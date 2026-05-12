@@ -159,7 +159,7 @@
             /* 手机端统一收紧字距，避免大字距在小屏上显得过于分散 */
             body,
             body * {
-                letter-spacing: 0rem !important;
+                letter-spacing: -0.02rem !important;
             }
 
             input:not([type="hidden"]),
