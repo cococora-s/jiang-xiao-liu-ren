@@ -10,11 +10,12 @@
             --dark-brown: #4b3521;
             --light: #fff8ea;
             --dark: #f5e8cf;
+            --transparent-white: #ffffffb6;
 
             /*===小按钮颜色===*/
-            --sb-bg:#cb9e2d46;
-            --sb-font:#4b3521d8;
-            --sb-hover:#a3802846;
+            --sb-bg:#dfa62a46;
+            --sb-font:#4b3521eb;
+            --sb-hover:#c4942c46;
 
             /*=== 大按钮颜色===*/
             --bb-bg:#583e2cef;
@@ -27,30 +28,12 @@
             --panel-border-radius: 10px;                      /* 面板圆角 */
             --panel-gap: 0.9rem;                              /* 面板间距 */
 
-            /* ===== 字号 ===== */
-            --page-title-font-size: 2.5rem;                  /* 标题字号 */
 
             --border-width: 2px;
             --border-color: var(--dark-brown);
-            --border-radius: 0.4rem;
-            
- 
-
-            /* ===== 全局下拉 --gd-*（:root 默认值，日历头等共用） ===== */
-            --gd-option-line-height: 2.5rem;          /* 选项一行高度 */
-            --gd-option-radius: 0.4rem;              /* 选项圆角 */
-            --gd-list-max-height-default: 15rem;      /* 列表 max-height 未单独设置时的默认上限 */
- 
-            /* ===== 起卦时间栏 ===== */
-            --datetime-picker-text-size: 1.6rem;               /* 起卦时间栏文字字号 */
-            --datetime-picker-calendar-btn-size: 1.6rem;       /* 起卦时间栏日历按钮大小 */
-            --datetime-picker-border-width: 2px;             /* 起卦时间栏边框粗细 */
-            --datetime-lunar-info-text-size: 1.6rem;           /* 起卦时间下方农历文字字号 */
+            --border-radius: 0.4rem; 
           
             /* ===== 五星/六神/六亲 ===== */
-            --palace-badge-font-size: 2rem;                    /* 字号 */
-            --palace-badge-side-gap: 0.7rem;                   /* 左右距边缘 */
-            --palace-badge-top-gap: 0.7rem;                    /* 顶部距边缘 */
             --palace-zhi-font-size: 2.5rem;                    /* 地支字号 */
             --palace-name-font-size: 2.5rem;                    /* 宫位名字号 */
             --palace-marker-font-size: 1.7rem;                 /* “身/时/日”标志字号 */
@@ -61,12 +44,9 @@
             
             /* ===== 笔记面板 ===== */
             --notes-font-size: 1.8rem;                         /* 笔记面板字段字号 */
-            --notes-placeholder-color: rgba(75, 53, 33, 0.55); /* placeholder 颜色（需避开 body * 的 color !important） */
-            --notes-placeholder-font-size: 1.8rem;             /* placeholder 字号；可与 --notes-font-size 不同 */
             --notes-palace-size: 13rem;                        /* 笔记宫位预览固定边长 */
             --notes-ai-button-font-size: 2rem;               /* “问AI”按钮字号 */
             --notes-select-border-radius: 0.4rem;                /* 笔记输入框圆角（含下拉框） */
-            --notes-select-border-width: 2px;                  /* 笔记输入框边框粗细（含下拉框） */
             --notes-select-border-color: #4b3521;               /* 笔记输入框边框颜色（含下拉框） */
             --notes-select-bg-color: #ffffff;                /* 笔记输入框背景色（含下拉框） */
             --notes-drag-placeholder-bg-color: rgba(75, 53, 33, 0.05); /* 拖动时预览占位背景色 */
@@ -152,12 +132,11 @@
         /* 文本输入框 */
         .notes-field-input {
             width: 100%;
-            height: 100%;
-            text-align: top-left;
+            height: 3.5rem;
             padding: 0.2rem 0.75rem 0.4rem 0.75rem;
             font-size: var(--notes-font-size);
             font-weight: 700;
-            background: #ffffff;
+            background: var(--transparent-white);
             border: var(--border-width) solid var(--dark-brown);
             border-radius: var(--border-radius);
             outline: none;
@@ -179,7 +158,7 @@
         .global-dropdown-trigger {
             position: relative;
             width: 100%;
-            height: auto;
+            height: 3.5rem;
             padding: 0 1.35rem 0 0.75rem;
             border: var(--border-width) solid var(--dark-brown);
             border-radius: var(--border-radius);
@@ -231,7 +210,7 @@
             display: block;
             width: 100%;
             padding: 0rem 0.5rem;
-            border-radius: var(--gd-option-radius);
+            border-radius: var(--border-radius);
             text-align: left;
             white-space: nowrap;
             font-size: 1.8rem;
@@ -293,11 +272,13 @@
             .left-column-panels {
                 grid-area: left;
                 align-self: start;
+                margin-bottom: 5rem;
             }
             /* 控制宽屏下笔记面板所在网格区域 */
             .notes-panel {
                 grid-area: notes;
                 align-self: start;
+                margin-bottom: 5rem;
             }
         }
         
@@ -317,7 +298,7 @@
             grid-column: 2;
             justify-self: center;
             font-weight: 700;
-            font-size: var(--page-title-font-size);
+            font-size: 2.4rem;
             color: var(--brown);
         }
         /* “我的笔记”按钮置于标题区第三列并靠右 */
@@ -465,11 +446,11 @@
 
         grid-template-areas:
             "method queryItem"
-            "specificQuestion specificQuestion"
             "time-section time-section"
-            "num-section num-section";
+            "num-section num-section"
+            "specificQuestion specificQuestion";
         align-content: start;
-        gap: 1.5rem 2rem;
+        gap: 1.6rem 2rem;
     }
     /* ===== 笔记字段行的标签 ===== */
         .notes-row {
@@ -485,21 +466,35 @@
             font-weight: 700;
             line-height: 1;
             white-space: nowrap;
+            cursor: default;
+            user-select: none;
         }
-            .setting-panel > .notes-row:nth-child(1) {
+            .setting-panel > #method-section {
                 grid-area: method;
             }
-            .setting-panel > .notes-row:nth-child(2) {
+            .setting-panel > #query-item-section {
                 grid-area: queryItem;
             }
-            .setting-panel > .notes-row:nth-child(3) {
+            .setting-panel > #specific-question-section {
                 grid-area: specificQuestion;
+                margin-top: -1.7rem;
+                margin-bottom: 1.5rem;
             }
+            .setting-panel .dropdown-method > .global-dropdown-trigger,
+            .setting-panel .dropdown-query-item > .global-dropdown-trigger {
+                background-color: var(--transparent-white)!important;
+            }
+            .setting-panel .dropdown-method > .global-dropdown-trigger:hover,
+            .setting-panel .dropdown-query-item > .global-dropdown-trigger:hover {
+                background-color: var(--light) !important;
+            }
+            
             /* 各种框 */
             .dropdown-method {
                 grid-column: 2;
                 width: 100%;
             }
+            
             .dropdown-query-item {
                 grid-column: 2;
                 width: 100%;
@@ -509,11 +504,12 @@
                 width: 100%;
             }
             .specific-question {
+                padding-top: 0.3rem;
                 grid-column: 2;
                 width: 100%;
                 /* 覆盖 .notes-field-input 的 height:100%；直接落在 grid 里时 100% 会贴满行高，scrollHeight 偏大，autoResize 无法缩短 */
                 height: auto;
-                min-height: 0;
+                min-height: 3.5rem;
                 overflow-y: hidden;
             }
 
@@ -557,14 +553,16 @@
                 flex: 1 1 0;
                 min-width: 0;
                 max-width: 100%;
+                height: 3.5rem;
                 border: var(--border-width) solid var(--dark-brown);
                 border-radius: var(--border-radius);
-                background: #fff;
+                background: var(--transparent-white);
                 padding: 0.4rem 0rem 0.1rem 1rem;
                 gap: 0.35rem;
             }
                     /* 时间输入框内文字；flex 缩小默认贴齐主轴起点（左），不会像 shrink-wrap 格子那样视觉上居中挤 */
                     .datetime-manual-input {
+                        background-color: transparent;
                         flex: 1 1 16ch;
                         box-sizing: border-box;
                         font-size: 1.7rem;
@@ -586,17 +584,17 @@
                     }
             /* “当前时间”按钮*/
             .datetime-now-button {
-                line-height: 0.8;
+                height: 100%;
             }
             /* 农历信息文本 */
             .selected-date-lunar-info {
                 grid-area: lunar-info;
                 font-size: 1.6rem;
                 font-weight: 700;
-                margin-top: 0.4rem;
+                margin-top: 1.15rem;
                 border-radius: var(--border-radius);
                 padding:0 0.9rem;
-                background:  #66513d18;
+                background:  var(--dark);
             }
 
         /* 数字起卦区（与时间区同一套 grid + flex，白框与时间选择器共用样式） */
@@ -607,13 +605,14 @@
             grid-template-columns: auto 1fr;
             align-items: center;
             column-gap: 0.75rem;
-            margin-top: -0.8rem;
-            margin-bottom: 1rem;
+            margin-top: -0.4rem;
+            margin-bottom: 1.5rem;
         }
         .num-section.is-hidden {
             display: none;
         }
         .num-controls {
+
             display: flex;
             flex-wrap: nowrap;
             align-items: center;
@@ -623,6 +622,7 @@
         }
         /* 占位：宽度与时间栏日历按钮 + 右边距一致 */
         .num-picker-trailing {
+            height: 3.5rem;
             flex-shrink: 0;
             align-self: center;
             width: 2rem;
@@ -631,6 +631,7 @@
         }
 
         .num-input {
+
             -moz-appearance: textfield;
             appearance: textfield;
             line-height: 1;
@@ -643,7 +644,8 @@
             margin: 0;
         }
         .num-button {
-            line-height: 0.8;
+
+            height: 100%;
         }
 /* ======================== 排盘主面板 =============================== */
         /* 控制排盘主面板容器尺寸与内边距 */

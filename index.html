@@ -55,21 +55,17 @@
         </div>
         <div id="settingPanel" class="theme-panel setting-panel">
             <div id="method-section" class="notes-row">
-                <label for="methodTrigger" class="notes-field-label">起卦方法</label>
+                <span class="notes-field-label">起卦方法</span>
                 <div class="global-dropdown dropdown-method">
                     <input type="hidden" id="method" value="日时起卦">
                 </div>
             </div>
             <div id="query-item-section" class="notes-row">
-                <label for="queryItemTrigger" class="notes-field-label">求测事项</label>
+                <span class="notes-field-label">求测事项</span>
                 <div class="global-dropdown dropdown-query-item">
                     <input type="hidden" id="queryItem" value="吉凶">
                 </div>
-            </div>
-            <div id="specific-question-section" class="notes-row">
-                <label for="specificQuestion" class="notes-field-label">具体问题</label>
-                <textarea id="specificQuestion" class="specific-question notes-field-input" placeholder="(选填)"></textarea>
-            </div>
+            </div>    
             <div id="datetime-section" class="datetime-section">
                 <label class="notes-field-label">选择时间</label>
                 <div class="datetime-controls">
@@ -125,6 +121,10 @@
                     </div>
                     <button type="button" id="numRandomButton" class="small-action-button num-button">随机数字</button>
                 </div>
+            </div>
+            <div id="specific-question-section" class="notes-row">
+                <span class="notes-field-label">具体问题</span>
+                <textarea id="specificQuestion" class="specific-question notes-field-input" placeholder="(选填)"></textarea>
             </div>
         </div>
 
