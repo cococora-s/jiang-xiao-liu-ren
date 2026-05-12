@@ -158,19 +158,18 @@
         @media (hover: none) and (pointer: coarse) {
             /* 手机端统一收紧字距，避免大字距在小屏上显得过于分散 */
             body,
-            body * {
+            body *:not(input):not(select):not(textarea):not(option) {
                 letter-spacing: -0.1rem !important;
             }
 
             input:not([type="hidden"]),
             select,
             textarea,
-            .global-dropdown-trigger,
             .datetime-manual-input,
             .num-input,
             .flatpickr-time input {
                 font-size: 16px !important;
-                touch-action: manipulation;
+                letter-spacing: normal !important;
             }
         }
         /* 下拉框 */
