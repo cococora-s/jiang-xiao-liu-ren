@@ -1,0 +1,85 @@
+{
+  "version": 3.4,
+  "metadata": {
+    "name": "江氏小六壬全维度推演逻辑库",
+    "structure": "地宫-天星-人亲-神煞-纯净规则",
+    "description": "已精简生克模块，仅保留核心逻辑映射，便于程序直接遍历与计算。"
+  },
+  "labels": {
+    "name": "名称",
+    "number": "数理",
+    "element": "五行",
+    "orientation": "吉凶",
+    "tag": "核心词",
+    "desc": "基本定义",
+    "energy": "能量状态",
+    "style": "执行风格",
+    "industry": "对应行业",
+    "negative": "负面表现",
+    "relation": "六亲关系",
+    "function": "核心职能",
+    "objects": "对应事物",
+    "focus": "关注重点",
+    "direction": "方位",
+    "color": "颜色",
+    "imagery": "具体类象",
+    "disease": "身体部位/疾病",
+    "type": "神煞调性"
+  },
+  "data": {
+    "1_palaces": {
+      "label": "六宫：底盘与结局",
+      "items": {
+        "da_an": { "name": "大安", "number": [1, 5, 7], "element": "木", "orientation": "吉", "tag": "安定/守旧", "desc": "大安事事昌，求谋在东方。主稳扎稳打，静待其成。" },
+        "liu_lian": { "name": "留连", "number": [2, 8, 10], "element": "土", "orientation": "凶", "tag": "纠缠/滞留", "desc": "留连事难成，求谋日未明。主复杂多变，宜复盘补漏。" },
+        "su_xi": { "name": "速喜", "number": [3, 6, 9], "element": "火", "orientation": "大吉", "tag": "快速/喜悦", "desc": "速喜喜临门，求财向南行。主消息灵通，利于功名。" },
+        "chi_kou": { "name": "赤口", "number": [4, 7, 10], "element": "金", "orientation": "凶", "tag": "冲突/威权", "desc": "赤口主是非，官非事多磨。主压力巨大，需设防守边界。" },
+        "xiao_ji": { "name": "小吉", "number": [1, 5, 11], "element": "水", "orientation": "吉", "tag": "流动/机遇", "desc": "小吉最吉昌，贵人向北方。主贵人助力，利于交涉沟通。" },
+        "kong_wang": { "name": "空亡", "number": [6, 12, 10], "element": "土", "orientation": "大凶", "tag": "落空/反转", "desc": "空亡事不全，求谋半路艰。主防范被骗，宜静心反思。" }
+      }
+    },
+    "2_wuxing_stars": {
+      "label": "五星：能量与动能",
+      "items": {
+        "mu_xing": { "name": "木星", "element": "木", "energy": "上升期", "style": "生发扩张", "industry": "教育、文创、科研", "negative": "多思少动", "desc": "主规划与起势。代表事情处于萌芽或生长期。" },
+        "huo_xing": { "name": "火星", "element": "火", "energy": "巅峰期", "style": "爆发传播", "industry": "互联网、餐饮、演艺", "negative": "急躁冒进", "desc": "主能量扩散。代表事情进入高调期，利于宣传。" },
+        "tu_xing": { "name": "土星", "element": "土", "energy": "稳定期", "style": "承载落实", "industry": "地产、基建、传统业", "negative": "因循守旧", "desc": "主落实与积累。代表事情进入实操阶段，靠底蕴取胜。" },
+        "jin_xing": { "name": "金星", "element": "金", "energy": "收敛期", "style": "裁断变革", "industry": "金融、法律、制造", "negative": "冷酷挑剔", "desc": "主结果与边界。代表到了需要做减法、定规矩的点。" },
+        "shui_xing": { "name": "水星", "element": "水", "energy": "转化期", "style": "渗透应变", "industry": "贸易、物流、策划", "negative": "言行虚浮", "desc": "主策略与应变。代表事情多变，需通过调整来解决。" },
+        "tian_kong": { "name": "天空", "element": "空", "energy": "归零期", "style": "虚无反思", "industry": "艺术、宗教、玄学", "negative": "空谈失败", "desc": "主变量与空耗。代表事情存在盲点或暂无进展。" }
+      }
+    },
+    "3_liu_qin": {
+      "label": "六亲：人事与诉求",
+      "items": {
+        "fu_mu": { "name": "父母", "relation": "生我者", "function": "保护/授权", "objects": "文书、合同、房产、长辈", "focus": "合规性与后台支撑", "desc": "代表事情的合法性和外部支撑系统。" },
+        "xiong_di": { "name": "兄弟", "relation": "同我者", "function": "分担/竞争", "objects": "同僚、竞争者、开支", "focus": "资源分配与人际竞争", "desc": "代表平级关系，既是助力也是利益瓜分者。" },
+        "zi_sun": { "name": "子孙", "relation": "我生者", "function": "化解/产出", "objects": "产品、下属、灵感、药品", "focus": "盈利前景与危机处理", "desc": "福德之星，专门克制压力，代表生机。" },
+        "qi_cai": { "name": "妻财", "relation": "我克者", "function": "回报/欲望", "objects": "利润、物资、执行力、女性", "focus": "投入产出比与物质掌控", "desc": "代表求测者想要支配的对象和最终结果。" },
+        "guan_gui": { "name": "官鬼", "relation": "克我者", "function": "约束/风险", "objects": "官职、法律、疾病、男性", "focus": "名位提升与潜在灾祸", "desc": "双刃剑，代表事业高度的同时也伴随威胁。" },
+        "shen_gong": { "name": "身宫", "relation": "我自身", "function": "本质/感知", "objects": "本人状态、内心意愿", "focus": "主观能动性与身体能量", "desc": "判断一切生克关系的最终承受点。" }
+      }
+    },
+    "4_liu_shen": {
+      "label": "六神：神煞与类象",
+      "items": {
+        "qing_long": { "name": "青龙", "element": "木", "type": "大吉", "direction": "东", "color": "青/绿", "imagery": "贵人、喜庆、大树", "disease": "肝胆、惊风", "desc": "主喜庆、贵人、财禄。最得力的助推器。" },
+        "zhu_que": { "name": "朱雀", "element": "火", "type": "中性", "direction": "南", "color": "红/赤", "imagery": "文书、消息、口舌", "disease": "心血管、炎症", "desc": "主口舌、文书、消息。利传播也主争吵。" },
+        "gou_chen": { "name": "勾陈", "element": "土", "type": "凶", "direction": "中", "color": "黄/褐", "imagery": "旧事、牵绊、土堆", "disease": "脾胃、淤滞", "desc": "主迟滞、勾连。代表事情拖延，难以脱身。" },
+        "teng_she": { "name": "腾蛇", "element": "火", "type": "凶", "direction": "南", "color": "淡黄", "imagery": "虚惊、怪异、绳索", "disease": "神经、怪病", "desc": "主虚惊、多变、疑虑。代表心神不安。" },
+        "bai_hu": { "name": "白虎", "element": "金", "type": "大凶", "direction": "西", "color": "白", "imagery": "压力、血光、刀具", "disease": "肺部、外伤", "desc": "主压力、损耗、冲突。代表突发的灾祸。" },
+        "xuan_wu": { "name": "玄武", "element": "水", "type": "凶", "direction": "北", "color": "黑/蓝", "imagery": "阴影、隐情、盗贼", "disease": "肾脏、抑郁", "desc": "主隐情、暗动、失脱。代表背后小人。" }
+      }
+    }
+  },
+  "rules": {
+    "wuxing_interaction": {
+      "sheng": { "木": "火", "火": "土", "土": "金", "金": "水", "水": "木" },
+      "ke": { "木": "土", "土": "水", "水": "火", "火": "金", "金": "木" }
+    },
+    "liuqin_interaction": {
+      "sheng": { "父母": "兄弟", "兄弟": "子孙", "子孙": "妻财", "妻财": "官鬼", "官鬼": "父母" },
+      "ke": { "父母": "子孙", "子孙": "官鬼", "官鬼": "兄弟", "兄弟": "妻财", "妻财": "父母" }
+    }
+  }
+}

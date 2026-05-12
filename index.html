@@ -34,6 +34,7 @@
         <div id="notesLibraryList" class="notes-library-list"></div>
         <div id="notesLibraryEmpty" class="notes-library-empty">暂无笔记</div>
     </div>
+    <div id="notesLibraryBackdrop" class="notes-library-backdrop is-hidden"></div>
     <template id="notesLibraryItemTemplate">
         <div class="notes-library-item">
             <div>
@@ -165,6 +166,13 @@
             <button type="button" id="cancelPromptEditButton" class="small-action-button">取消</button>
             <button type="button" id="savePromptTaskLinesButton" class="action-theme-button prompt-editor-save-button">保存</button>
         </div>
+    </div>
+    <div id="referenceHelpBackdrop" class="reference-help-backdrop is-hidden"></div>
+    <div id="referenceHelpPanel" class="theme-panel reference-help-panel is-hidden" role="dialog" aria-modal="true" aria-label="术语解释">
+        <div class="reference-help-header">
+            <div id="referenceHelpTitle" class="reference-help-title">术语解释</div>
+        </div>
+        <div id="referenceHelpContent" class="reference-help-content"></div>
     </div>
     </div>
     <script src="js/main.js"></script>

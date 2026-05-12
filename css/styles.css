@@ -62,6 +62,8 @@
         }
         html {
             font-size: 15px;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
         }
         @media (min-aspect-ratio: 1001/1000) {
             html {
@@ -85,6 +87,8 @@
         body, body * {
             color: var(--dark-brown) !important;
             font-family: 'STZHONGS', serif !important;
+            font-stretch: 95%;
+            letter-spacing: 0.02rem;
         }
         /* 控制通用面板容器（背景/边框/圆角） */
         .theme-panel {
@@ -118,13 +122,14 @@
             width: auto;
             height: auto;
             padding: 1rem 1rem;
-            font-size: 1.5rem;
+            font-size: 1.7rem;
             font-weight: 700;
             line-height: 1;
             white-space: nowrap;
             border-radius: 1rem;
             background: var(--sb-bg);
             color: var(--sb-font)!important;
+            letter-spacing: 0.03rem;
         }
         .small-action-button:hover {
             background: var(--sb-hover);
@@ -132,7 +137,6 @@
         /* 文本输入框 */
         .notes-field-input {
             width: 100%;
-            height: 3.5rem;
             padding: 0.2rem 0.75rem 0.4rem 0.75rem;
             font-size: var(--notes-font-size);
             font-weight: 700;
@@ -149,6 +153,22 @@
         input::placeholder {
             color: #75685c78 !important;
             font-size: var(--notes-font-size);
+        }
+
+        /* 移动端表单控件防止聚焦时浏览器自动放大 */
+        @media (hover: none) and (pointer: coarse) {
+            input:not([type="hidden"]),
+            select,
+            textarea,
+            .global-dropdown-trigger,
+            .datetime-manual-input,
+            .num-input,
+            .flatpickr-time input,
+            .dropdown-calendar-year > .global-dropdown-trigger,
+            .dropdown-calendar-month > .global-dropdown-trigger {
+                font-size: 16px !important;
+                touch-action: manipulation;
+            }
         }
         /* 下拉框 */
         .global-dropdown {
@@ -300,6 +320,7 @@
             font-weight: 700;
             font-size: 2.4rem;
             color: var(--brown);
+            letter-spacing: 0.3rem;
         }
         /* “我的笔记”按钮置于标题区第三列并靠右 */
         .notes-library-open-button {
@@ -314,7 +335,8 @@
             position: absolute;
             top: var(--notes-library-panel-top, 5.2rem);
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) scale(0.96);
+            transform-origin: top center;
             width: min(92vw, 56rem);
             max-height: 52rem;
             padding: 0.9rem 1rem 3rem 1rem;
@@ -323,9 +345,30 @@
             padding: 1rem 1.5rem;
             display: flex;
             flex-direction: column;
+            pointer-events: none;
+            transition: transform 220ms cubic-bezier(0.19, 1, 0.22, 1);
 
         }
+        .notes-library-panel.is-open {
+            transform: translateX(-50%) scale(1);
+            pointer-events: auto;
+        }
         .notes-library-panel.is-hidden {
+            display: none;
+        }
+        .notes-library-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 1100;
+            background: rgba(0, 0, 0, 0.12);
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .notes-library-backdrop.is-open {
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .notes-library-backdrop.is-hidden {
             display: none;
         }
         /* 控制笔记库头部行布局 */
@@ -426,14 +469,14 @@
         #solarClock {
             margin-top: 0.2rem;
             font-weight: 700;
-            font-size: 2rem;
-            letter-spacing: 0.05rem;
+            font-size: 2.2rem;
+            letter-spacing: 0.06rem;
         }
         #lunarClock {
             margin-top: 0.2rem;
             font-weight: 700;
-            font-size: 1.7rem;
-            letter-spacing: 0.15rem;
+            font-size: 1.9rem;
+            letter-spacing: 0.1rem;
         }
         
 /* ========================== 排盘设置区 =============================== */
@@ -479,6 +522,7 @@
                 grid-area: specificQuestion;
                 margin-top: -1.7rem;
                 margin-bottom: 1.5rem;
+                height: 3.5rem;
             }
             .setting-panel .dropdown-method > .global-dropdown-trigger,
             .setting-panel .dropdown-query-item > .global-dropdown-trigger {
@@ -631,7 +675,6 @@
         }
 
         .num-input {
-
             -moz-appearance: textfield;
             appearance: textfield;
             line-height: 1;
@@ -668,6 +711,7 @@
         .hex-grid {
             padding: 0.2rem;
             margin-top:1.2rem;
+            margin-bottom: 1rem;
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             grid-template-rows: 1fr 1fr;
@@ -722,6 +766,19 @@
             border-radius: 0.6rem;
             background: var(--badge-bg-color);
             color: var(--badge-text-color) !important;
+        }
+        #mainPanel .slot-wuxing:not(:empty),
+        #mainPanel .slot-liushen:not(:empty),
+        #mainPanel .slot-liuqin:not(:empty),
+        #mainPanel .slot-palace-name {
+            cursor: pointer;
+            transition: scale 0.05s ease;
+        }
+        #mainPanel .slot-wuxing:not(:empty):hover,
+        #mainPanel .slot-liushen:not(:empty):hover,
+        #mainPanel .slot-liuqin:not(:empty):hover,
+        #mainPanel .slot-palace-name:hover {
+            scale: 1.05;
         }
         /* 未排盘时不显示任何东西 */
         .slot-wuxing:empty,
@@ -831,7 +888,7 @@
             position: fixed;
             left: 50%;
             top: 50%;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%) scale(0.96);
             width: min(92vw, 56rem);
             height: min(86vh, 52rem);
             display: flex;
@@ -842,6 +899,12 @@
             border: var(--border-width) solid var(--dark-brown);
             border-radius: 1rem;
             background: var(--light);
+            pointer-events: none;
+            transition: transform 220ms cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        .prompt-editor-panel.is-open {
+            transform: translate(-50%, -50%) scale(1);
+            pointer-events: auto;
         }
         .prompt-editor-panel.is-hidden {
             display: none;
@@ -851,10 +914,210 @@
             inset: 0;
             z-index: 2000;
             background: rgba(0, 0, 0, 0.103);
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .prompt-editor-backdrop.is-open {
+            visibility: visible;
+            pointer-events: auto;
         }
         .prompt-editor-backdrop.is-hidden {
             display: none;
         }
+        .reference-help-panel {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) scale(0.96);
+            width: min(92vw, 52rem);
+            max-height: min(86vh, 48rem);
+            z-index: 2300;
+            padding: 1rem 1.8rem 2.5rem 1.8rem;
+            border: var(--border-width) solid var(--dark-brown);
+            border-radius: 1rem;
+            background: var(--light);
+            overflow: auto;
+            pointer-events: none;
+            transition: transform 220ms cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        .reference-help-panel.is-open {
+            transform: translate(-50%, -50%) scale(1);
+            pointer-events: auto;
+        }
+        .reference-help-panel.is-hidden {
+            display: none;
+        }
+        .reference-help-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 2200;
+            background: rgba(0, 0, 0, 0.12);
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .reference-help-backdrop.is-open {
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .reference-help-backdrop.is-hidden {
+            display: none;
+        }
+        .reference-help-header {
+            display: flex;
+            align-items: center;
+            padding-bottom: 0.2rem;
+        }
+        .reference-help-title {
+            position: relative;
+            display: inline-block;
+            padding: 0.2rem 1rem 0.2rem 1rem;
+
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-brown);
+        }
+        .reference-help-title::after {
+            content: '';
+            position: absolute;
+            left: -0.2rem;
+            bottom: 0;
+            width: calc(100% + 1rem);
+            height: var(--border-width);
+            background: linear-gradient(
+                to right,
+                rgba(75, 53, 33, 0.35) 0%,
+                rgba(75, 53, 33, 0.85) 20%,
+                var(--border-color) 50%,
+                rgba(75, 53, 33, 0.85) 80%,
+                rgba(75, 53, 33, 0.35) 100%
+            );
+        }
+
+        .reference-help-content {
+            margin-top: 0.7rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+            font-size: 1.6rem;
+            color: var(--dark-brown);
+        }
+        .reference-help-entry {
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+            line-height: 1.7;
+        }
+        .reference-help-badge {
+            flex: 0 0 auto;
+            margin-top: 0.05rem;
+            padding: 0.05rem 0.6rem;
+            border: var(--border-width) solid var(--border-color);
+            border-radius: 0.55rem;
+            background: transparent;
+            font-size: 1.6rem;
+            font-weight: 700;
+            line-height: 1.35;
+            color: var(--brown);
+        }
+        .reference-help-entry-value {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+        .reference-help-paragraph {
+            margin: 0;
+            line-height: 1.7;
+        }
+        .reference-liuqin-flow-section {
+            margin-top: 1rem;
+            padding-top: 0.9rem;
+            border-top: var(--border-width) solid rgba(75, 53, 33, 0.26);
+        }
+        .reference-liuqin-flow-title {
+            margin: 0 0 0.8rem 0;
+            font-size: 1.55rem;
+            font-weight: 700;
+            color: var(--brown);
+            letter-spacing: 0.04rem;
+        }
+        .reference-liuqin-flow-chart {
+            display: grid;
+            grid-template-columns: minmax(6.4rem, 1fr) minmax(4.3rem, 0.78fr) minmax(7.2rem, 1fr) minmax(4.3rem, 0.78fr) minmax(6.4rem, 1fr);
+            grid-template-rows: auto auto;
+            grid-template-areas:
+                "incomingSheng arrowLeftSheng center arrowRightSheng outgoingSheng"
+                "incomingKe arrowLeftKe center arrowRightKe outgoingKe";
+            align-items: center;
+            column-gap: 0.45rem;
+            row-gap: 0.75rem;
+        }
+        .reference-liuqin-flow-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 3.05rem;
+            border: var(--border-width) solid var(--dark-brown);
+            border-radius: 0.22rem;
+            background: rgba(255, 255, 255, 0.5);
+            color: var(--dark-brown);
+            font-size: 1.75rem;
+            font-weight: 700;
+            line-height: 1.15;
+            text-align: center;
+            padding: 0.3rem 0.45rem;
+        }
+        .reference-liuqin-flow-item.is-center {
+            grid-area: center;
+            min-height: 6.5rem;
+            font-size: 2rem;
+            background: transparent;
+        }
+        .reference-liuqin-flow-item.is-sheng {
+            background: #aed1ab4f;
+        }
+        .reference-liuqin-flow-item.is-ke {
+            background: #dca38f6a;
+        }
+        .reference-liuqin-flow-arrow {
+            transform: translateX(0.15rem);
+            position: relative;
+            height: 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 100% 100%;
+        }
+        .reference-liuqin-flow-arrow::after {
+            position: absolute;
+            left: 44%;
+            top: 51%;
+            transform: translate(-50%, -50%);
+            font-size: 1.4rem;
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: 0.04rem;
+            text-shadow: 0 0 0.12rem rgba(255, 255, 255, 0.35);
+        }
+        .reference-liuqin-flow-arrow.is-sheng {
+            background-image: url('/arrow_green.png');
+        }
+        .reference-liuqin-flow-arrow.is-sheng::after {
+            content: '生';
+            color: var(--dark-brown);
+        }
+        .reference-liuqin-flow-arrow.is-ke {
+            background-image: url('/arrow_red.png');
+        }
+        .reference-liuqin-flow-arrow.is-ke::after {
+            content: '克';
+            color: var(--dark-brown);
+        }
+        .area-incoming-sheng { grid-area: incomingSheng; }
+        .area-arrow-left-sheng { grid-area: arrowLeftSheng; }
+        .area-arrow-right-sheng { grid-area: arrowRightSheng; }
+        .area-outgoing-sheng { grid-area: outgoingSheng; }
+        .area-incoming-ke { grid-area: incomingKe; }
+        .area-arrow-left-ke { grid-area: arrowLeftKe; }
+        .area-arrow-right-ke { grid-area: arrowRightKe; }
+        .area-outgoing-ke { grid-area: outgoingKe; }
         .prompt-editor-title {
             font-size: 1.8rem;
             font-weight: 700;
@@ -1275,10 +1538,10 @@
             transform: translateX(0.3rem);
         }
         .dropdown-calendar-year {
-            width: 7.5rem;
+            width: 7.7rem;
         }
         .dropdown-calendar-month {
-            width: 5.5rem;
+            width: 5.7rem;
         }
 
         .dropdown-calendar-year > .global-dropdown-trigger:hover,

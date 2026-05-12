@@ -40,6 +40,303 @@
             "金": "#b8860b",
             "水": "#1565c0"
         };
+        const REFERENCE_HELP_DOC_PATH = 'docs/explanation.json';
+        const REFERENCE_SLOT_CATEGORY_MAP = {
+            "slot-wuxing": "wuxing",
+            "slot-liushen": "liushen",
+            "slot-liuqin": "liuqin",
+            "slot-palace-name": "palace"
+        };
+        const REFERENCE_CATEGORY_KEY_MAP = {
+            palace: "palace",
+            palaces: "palace",
+            wuxing: "wuxing",
+            wuxing_stars: "wuxing",
+            liushen: "liushen",
+            liu_shen: "liushen",
+            liuqin: "liuqin",
+            liu_qin: "liuqin"
+        };
+        const REFERENCE_ITEM_FIELD_LABELS = {
+            number: "数字",
+            element: "五行",
+            orientation: "吉凶",
+            meaning: "主意",
+            timing: "应期",
+            character: "人物",
+            location: "方位地点",
+            imagery: "类象",
+            disease: "病象",
+            relation: "关系",
+            function: "功能",
+            objects: "对应对象",
+            focus: "核心关注",
+            positive: "正向",
+            negative: "负向",
+            style: "风格",
+            energy: "阶段",
+            industry: "行业",
+            key_factor: "关键点",
+            direction: "方向",
+            color: "颜色",
+            weather: "天气",
+            position: "位置",
+            occupation: "职业",
+            type: "属性"
+        };
+        const DEFAULT_REFERENCE_BADGE_LABEL_SET = new Set(Object.values(REFERENCE_ITEM_FIELD_LABELS));
+        let referenceBadgeLabelSet = new Set(DEFAULT_REFERENCE_BADGE_LABEL_SET);
+        const EMPTY_REFERENCE_HELP_DOC = {
+            categories: {},
+            rules: {
+                liuqinInteraction: { sheng: {}, ke: {} }
+            }
+        };
+        let referenceHelpDocCache = null;
+        let referenceHelpDocPromise = null;
+        function extractReferenceCategorySegment(rawCategoryKey) {
+            if (typeof rawCategoryKey !== 'string') return '';
+            const normalized = rawCategoryKey.trim();
+            if (!normalized) return '';
+            const numberedKeyMatch = normalized.match(/^\d+_(.+)$/);
+            return numberedKeyMatch ? numberedKeyMatch[1] : normalized;
+        }
+        function normalizeReferenceCategoryKey(rawCategoryKey) {
+            const keySegment = extractReferenceCategorySegment(rawCategoryKey);
+            return REFERENCE_CATEGORY_KEY_MAP[keySegment] || '';
+        }
+        function buildReferenceBadgeLabelSet(rawLabels) {
+            const dynamicBadgeSet = new Set(DEFAULT_REFERENCE_BADGE_LABEL_SET);
+            if (rawLabels && typeof rawLabels === 'object') {
+                Object.entries(REFERENCE_ITEM_FIELD_LABELS).forEach(([fieldKey, defaultLabel]) => {
+                    const labelValue = rawLabels[fieldKey];
+                    if (typeof labelValue === 'string' && labelValue.trim()) {
+                        dynamicBadgeSet.add(labelValue.trim());
+                    } else {
+                        dynamicBadgeSet.add(defaultLabel);
+                    }
+                });
+            }
+            return dynamicBadgeSet;
+        }
+        function normalizeReferenceInteractionMap(rawMap) {
+            const safeMap = {};
+            if (!rawMap || typeof rawMap !== 'object') return safeMap;
+            Object.entries(rawMap).forEach(([sourceLabel, targetLabel]) => {
+                const source = String(sourceLabel || '').trim();
+                const target = String(targetLabel || '').trim();
+                if (!source || !target) return;
+                safeMap[source] = target;
+            });
+            return safeMap;
+        }
+        function normalizeReferenceRules(rawRules) {
+            const liuqinRaw = rawRules?.liuqin_interaction || rawRules?.liuqinInteraction || {};
+            return {
+                liuqinInteraction: {
+                    sheng: normalizeReferenceInteractionMap(liuqinRaw.sheng),
+                    ke: normalizeReferenceInteractionMap(liuqinRaw.ke)
+                }
+            };
+        }
+        function normalizeReferenceItemDescription(rawItemValue) {
+            if (typeof rawItemValue === 'string') {
+                return rawItemValue.trim();
+            }
+            if (!rawItemValue || typeof rawItemValue !== 'object') return '';
+            const sections = [];
+            if (typeof rawItemValue.desc === 'string' && rawItemValue.desc.trim()) {
+                sections.push(rawItemValue.desc.trim());
+            } else if (typeof rawItemValue.description === 'string' && rawItemValue.description.trim()) {
+                sections.push(rawItemValue.description.trim());
+            }
+            Object.entries(REFERENCE_ITEM_FIELD_LABELS).forEach(([fieldKey, fieldLabel]) => {
+                const fieldValue = rawItemValue[fieldKey];
+                if (typeof fieldValue === 'undefined' || fieldValue === null || fieldValue === '') return;
+                const normalizedValue = Array.isArray(fieldValue) ? fieldValue.join('、') : String(fieldValue);
+                sections.push(`${fieldLabel}：${normalizedValue}`);
+            });
+            return sections.join('\n');
+        }
+        function collectReferenceItemAliases(itemKey, itemValue) {
+            const aliasSet = new Set();
+            if (typeof itemKey === 'string' && itemKey.trim()) {
+                aliasSet.add(itemKey.trim());
+            }
+            if (itemValue && typeof itemValue === 'object') {
+                if (typeof itemValue.name === 'string' && itemValue.name.trim()) {
+                    aliasSet.add(itemValue.name.trim());
+                }
+                if (typeof itemValue.element === 'string' && itemValue.element.trim()) {
+                    itemValue.element.split('/').map((part) => part.trim()).filter(Boolean).forEach((part) => {
+                        aliasSet.add(part);
+                    });
+                }
+            }
+            return Array.from(aliasSet);
+        }
+        function normalizeReferenceHelpDoc(rawDoc) {
+            const categories = {};
+            const sourceCategories = rawDoc && typeof rawDoc === 'object'
+                ? (rawDoc.categories && typeof rawDoc.categories === 'object'
+                    ? rawDoc.categories
+                    : (rawDoc.data && typeof rawDoc.data === 'object' ? rawDoc.data : null))
+                : null;
+            referenceBadgeLabelSet = buildReferenceBadgeLabelSet(rawDoc?.labels);
+            if (sourceCategories) {
+                Object.entries(sourceCategories).forEach(([categoryKey, categoryValue]) => {
+                    if (!categoryValue || typeof categoryValue !== 'object') return;
+                    const normalizedCategoryKey = normalizeReferenceCategoryKey(categoryKey);
+                    if (!normalizedCategoryKey) return;
+                    const label = typeof categoryValue.label === 'string' ? categoryValue.label : '';
+                    const safeItems = {};
+                    if (categoryValue.items && typeof categoryValue.items === 'object') {
+                        Object.entries(categoryValue.items).forEach(([itemKey, itemValue]) => {
+                            const description = normalizeReferenceItemDescription(itemValue);
+                            if (!description) return;
+                            collectReferenceItemAliases(itemKey, itemValue).forEach((alias) => {
+                                safeItems[alias] = description;
+                            });
+                        });
+                    }
+                    categories[normalizedCategoryKey] = { label, items: safeItems };
+                });
+            }
+            return {
+                categories,
+                rules: normalizeReferenceRules(rawDoc?.rules)
+            };
+        }
+        async function loadReferenceHelpDoc() {
+            if (referenceHelpDocCache) return referenceHelpDocCache;
+            if (referenceHelpDocPromise) return referenceHelpDocPromise;
+            referenceHelpDocPromise = fetch(REFERENCE_HELP_DOC_PATH, { cache: 'no-store' })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(`读取解释文档失败: HTTP ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then((rawDoc) => {
+                    referenceHelpDocCache = normalizeReferenceHelpDoc(rawDoc);
+                    return referenceHelpDocCache;
+                })
+                .catch((error) => {
+                    console.warn('加载术语解释文档失败:', error);
+                    referenceHelpDocCache = EMPTY_REFERENCE_HELP_DOC;
+                    return referenceHelpDocCache;
+                })
+                .finally(() => {
+                    referenceHelpDocPromise = null;
+                });
+            return referenceHelpDocPromise;
+        }
+        function parseReferenceHelpDescription(rawDescription) {
+            const description = String(rawDescription || '').trim();
+            if (!description) return [];
+            return description.split(/\r?\n/).map((line) => line.trim()).filter(Boolean).map((line) => {
+                const match = line.match(/^([^：:]{1,20})[：:]\s*(.*)$/);
+                if (!match) {
+                    return { text: line };
+                }
+                const badgeLabel = String(match[1] || '').trim();
+                const badgeContent = String(match[2] || '').trim();
+                if (!referenceBadgeLabelSet.has(badgeLabel)) {
+                    return { text: line };
+                }
+                return {
+                    badge: badgeLabel,
+                    content: badgeContent
+                };
+            });
+        }
+        function getInteractionIncomingLabel(targetLabel, interactionMap) {
+            if (!targetLabel || !interactionMap || typeof interactionMap !== 'object') return '';
+            const hit = Object.entries(interactionMap).find(([, target]) => target === targetLabel);
+            return hit ? String(hit[0] || '').trim() : '';
+        }
+        function createLiuqinFlowItem(label, toneClassName, areaClassName) {
+            const itemEl = document.createElement('div');
+            itemEl.className = `reference-liuqin-flow-item ${toneClassName} ${areaClassName}`;
+            itemEl.textContent = label || '—';
+            return itemEl;
+        }
+        function createLiuqinFlowArrow(toneClassName, areaClassName) {
+            const arrowEl = document.createElement('div');
+            arrowEl.className = `reference-liuqin-flow-arrow ${toneClassName} ${areaClassName}`;
+            arrowEl.setAttribute('aria-hidden', 'true');
+            return arrowEl;
+        }
+        function renderLiuqinInteractionDiagram({ label, referenceHelpDoc }) {
+            if (!referenceHelpContent || !label || !referenceHelpDoc) return;
+            const shengMap = referenceHelpDoc.rules?.liuqinInteraction?.sheng || {};
+            const keMap = referenceHelpDoc.rules?.liuqinInteraction?.ke || {};
+            const incomingSheng = getInteractionIncomingLabel(label, shengMap);
+            const outgoingSheng = String(shengMap[label] || '').trim();
+            const incomingKe = getInteractionIncomingLabel(label, keMap);
+            const outgoingKe = String(keMap[label] || '').trim();
+            if (!incomingSheng && !outgoingSheng && !incomingKe && !outgoingKe) return;
+
+            const sectionEl = document.createElement('section');
+            sectionEl.className = 'reference-liuqin-flow-section';
+
+            const titleEl = document.createElement('h3');
+            titleEl.className = 'reference-liuqin-flow-title';
+            titleEl.textContent = '六亲生克逻辑';
+            sectionEl.appendChild(titleEl);
+
+            const chartEl = document.createElement('div');
+            chartEl.className = 'reference-liuqin-flow-chart';
+
+            chartEl.appendChild(createLiuqinFlowItem(incomingSheng, 'is-sheng', 'area-incoming-sheng'));
+            chartEl.appendChild(createLiuqinFlowArrow('is-sheng', 'area-arrow-left-sheng'));
+            chartEl.appendChild(createLiuqinFlowItem(label, 'is-center', 'area-center'));
+            chartEl.appendChild(createLiuqinFlowArrow('is-sheng', 'area-arrow-right-sheng'));
+            chartEl.appendChild(createLiuqinFlowItem(outgoingSheng, 'is-sheng', 'area-outgoing-sheng'));
+
+            chartEl.appendChild(createLiuqinFlowItem(incomingKe, 'is-ke', 'area-incoming-ke'));
+            chartEl.appendChild(createLiuqinFlowArrow('is-ke', 'area-arrow-left-ke'));
+            chartEl.appendChild(createLiuqinFlowArrow('is-ke', 'area-arrow-right-ke'));
+            chartEl.appendChild(createLiuqinFlowItem(outgoingKe, 'is-ke', 'area-outgoing-ke'));
+
+            sectionEl.appendChild(chartEl);
+            referenceHelpContent.appendChild(sectionEl);
+        }
+        function renderReferenceHelpContent(rawDescription, options = {}) {
+            if (!referenceHelpContent) return;
+            const parsedLines = parseReferenceHelpDescription(rawDescription);
+            referenceHelpContent.textContent = '';
+            if (parsedLines.length) {
+            const fragment = document.createDocumentFragment();
+            parsedLines.forEach((line) => {
+                if (line.badge) {
+                    const entryEl = document.createElement('div');
+                    entryEl.className = 'reference-help-entry';
+                    const badgeEl = document.createElement('span');
+                    badgeEl.className = 'reference-help-badge';
+                    badgeEl.textContent = line.badge;
+                    const valueEl = document.createElement('span');
+                    valueEl.className = 'reference-help-entry-value';
+                    valueEl.textContent = line.content || '';
+                    entryEl.appendChild(badgeEl);
+                    entryEl.appendChild(valueEl);
+                    fragment.appendChild(entryEl);
+                    return;
+                }
+                const paragraphEl = document.createElement('p');
+                paragraphEl.className = 'reference-help-paragraph';
+                paragraphEl.textContent = line.text || '';
+                fragment.appendChild(paragraphEl);
+            });
+            referenceHelpContent.appendChild(fragment);
+            }
+            if (options.categoryKey === 'liuqin') {
+                renderLiuqinInteractionDiagram({
+                    label: options.label,
+                    referenceHelpDoc: options.referenceHelpDoc
+                });
+            }
+        }
         function colorizeGanZhiText(text) {
             return Array.from(text).map((ch) => {
                 const color = wuxingColorMap[ch];
@@ -244,17 +541,21 @@
 
         function positionCalendarCenteredBelowDateTimeRow(instance) {
             if (!instance || !instance.calendarContainer) return;
-            const anchorRow = document.querySelector('.datetime-row');
-            if (!anchorRow) return;
+            const anchorEl =
+                document.querySelector('.datetime-picker-wrap') ||
+                document.querySelector('.datetime-row');
+            if (!anchorEl) return;
             const calendarEl = instance.calendarContainer;
-            const rowRect = anchorRow.getBoundingClientRect();
+            const anchorRect = anchorEl.getBoundingClientRect();
             const calendarRect = calendarEl.getBoundingClientRect();
             const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
             const sidePadding = Math.max(8, Math.floor(viewportWidth * 0.03));
-            const centeredLeft = (viewportWidth - calendarRect.width) / 2;
+            const centeredLeft = anchorRect.left + (anchorRect.width - calendarRect.width) / 2;
             const maxLeft = Math.max(sidePadding, viewportWidth - calendarRect.width - sidePadding);
             const horizontalLeft = Math.min(Math.max(sidePadding, centeredLeft), maxLeft);
-            const verticalTop = rowRect.bottom + (window.scrollY || window.pageYOffset || 0) + 8;
+            const rootFontSize = parseFloat(window.getComputedStyle(document.documentElement).fontSize) || 16;
+            const verticalGap = rootFontSize * 0.5;
+            const verticalTop = anchorRect.bottom + (window.scrollY || window.pageYOffset || 0) + verticalGap;
 
             calendarEl.style.position = 'absolute';
             calendarEl.style.left = `${horizontalLeft + (window.scrollX || window.pageXOffset || 0)}px`;
@@ -877,6 +1178,7 @@
         const clearNotesLibraryButton = document.getElementById('clearNotesLibraryButton');
         const closeNotesLibraryButton = document.getElementById('closeNotesLibraryButton');
         const notesLibraryPanel = document.getElementById('notesLibraryPanel');
+        const notesLibraryBackdrop = document.getElementById('notesLibraryBackdrop');
         const notesLibraryList = document.getElementById('notesLibraryList');
         const notesLibraryEmpty = document.getElementById('notesLibraryEmpty');
         const notesLibraryItemTemplate = document.getElementById('notesLibraryItemTemplate');
@@ -889,6 +1191,10 @@
         const savePromptTaskLinesButton = document.getElementById('savePromptTaskLinesButton');
         const cancelPromptEditButton = document.getElementById('cancelPromptEditButton');
         const resetPromptTaskLinesButton = document.getElementById('resetPromptTaskLinesButton');
+        const referenceHelpPanel = document.getElementById('referenceHelpPanel');
+        const referenceHelpBackdrop = document.getElementById('referenceHelpBackdrop');
+        const referenceHelpTitle = document.getElementById('referenceHelpTitle');
+        const referenceHelpContent = document.getElementById('referenceHelpContent');
         const getSpecificQuestionMinHeightPx = () => {
             if (!(specificQuestionInput instanceof HTMLTextAreaElement)) return 80;
             const computedMinHeight = Number.parseFloat(window.getComputedStyle(specificQuestionInput).minHeight);
@@ -898,6 +1204,25 @@
         const notesPanelContainer = document.getElementById('notesPanelContainer');
         const NOTES_STORAGE_KEY = 'jiangshi_xiaoliuren_saved_notes_v1';
         const AI_TASK_LINES_STORAGE_KEY = 'jiangshi_xiaoliuren_ai_task_lines_v1';
+        let askAiLoadingTimer = null;
+        let askAiLoadingStep = 0;
+        const stopAskAiLoadingAnimation = () => {
+            if (typeof askAiLoadingTimer === 'number') {
+                window.clearInterval(askAiLoadingTimer);
+            }
+            askAiLoadingTimer = null;
+            askAiLoadingStep = 0;
+        };
+        const startAskAiLoadingAnimation = () => {
+            if (!askAiButton) return;
+            stopAskAiLoadingAnimation();
+            const loadingFrames = ['思考中', '思考中.', '思考中..', '思考中...'];
+            askAiButton.textContent = loadingFrames[0];
+            askAiLoadingTimer = window.setInterval(() => {
+                askAiLoadingStep = (askAiLoadingStep + 1) % loadingFrames.length;
+                askAiButton.textContent = loadingFrames[askAiLoadingStep];
+            }, 380);
+        };
         const PALACE_LAYOUT_SELECTORS = ['.slot-daytime', '.slot-body', '.slot-zhi', '.slot-liuqin', '.slot-liushen', '.slot-wuxing'];
         /** 旧版快照里用过 .palace-* 作为 key，恢复时兼容读取 */
         const PALACE_LAYOUT_LEGACY_SLOT_KEYS = {
@@ -1097,11 +1422,99 @@
             const mm = String(date.getMinutes()).padStart(2, '0');
             return `${y}/${m}/${d} ${hh}:${mm}`;
         };
+        const PANEL_CLOSE_SCALE_TARGET = 0.96;
+        const PANEL_CLOSE_SCALE_EPSILON = 0.002;
+        const PANEL_CLOSE_MAX_WAIT_MS = 500;
+        const panelHideWatcherMap = new WeakMap();
+        const clearPanelHideWatcher = (element) => {
+            if (!element) return;
+            const frameId = panelHideWatcherMap.get(element);
+            if (typeof frameId === 'number') {
+                window.cancelAnimationFrame(frameId);
+            }
+            panelHideWatcherMap.delete(element);
+        };
+        const shouldWaitForScaleClose = (element) => {
+            if (!element) return false;
+            return element.classList.contains('notes-library-panel')
+                || element.classList.contains('prompt-editor-panel')
+                || element.classList.contains('reference-help-panel');
+        };
+        const getElementScaleValue = (element) => {
+            if (!element) return 1;
+            const transformValue = window.getComputedStyle(element).transform;
+            if (!transformValue || transformValue === 'none') return 1;
+            const matrix3dMatch = transformValue.match(/^matrix3d\((.+)\)$/);
+            if (matrix3dMatch) {
+                const values = matrix3dMatch[1].split(',').map((item) => Number.parseFloat(item.trim()));
+                return Number.isFinite(values[0]) ? values[0] : 1;
+            }
+            const matrixMatch = transformValue.match(/^matrix\((.+)\)$/);
+            if (matrixMatch) {
+                const values = matrixMatch[1].split(',').map((item) => Number.parseFloat(item.trim()));
+                return Number.isFinite(values[0]) ? values[0] : 1;
+            }
+            return 1;
+        };
+        const showAnimatedElement = (element) => {
+            if (!element) return;
+            clearPanelHideWatcher(element);
+            element.classList.remove('is-hidden');
+            window.requestAnimationFrame(() => {
+                element.classList.add('is-open');
+            });
+        };
+        const hideAnimatedElement = (element) => {
+            if (!element) return;
+            clearPanelHideWatcher(element);
+            element.classList.remove('is-open');
+            if (!shouldWaitForScaleClose(element)) {
+                element.classList.add('is-hidden');
+                return;
+            }
+            const closeStartedAt = performance.now();
+            const waitForCloseScale = () => {
+                if (element.classList.contains('is-open')) {
+                    panelHideWatcherMap.delete(element);
+                    return;
+                }
+                const currentScale = getElementScaleValue(element);
+                const waitedMs = performance.now() - closeStartedAt;
+                if (currentScale <= PANEL_CLOSE_SCALE_TARGET + PANEL_CLOSE_SCALE_EPSILON || waitedMs >= PANEL_CLOSE_MAX_WAIT_MS) {
+                    element.classList.add('is-hidden');
+                    panelHideWatcherMap.delete(element);
+                    return;
+                }
+                const frameId = window.requestAnimationFrame(waitForCloseScale);
+                panelHideWatcherMap.set(element, frameId);
+            };
+            const initialFrameId = window.requestAnimationFrame(waitForCloseScale);
+            panelHideWatcherMap.set(element, initialFrameId);
+        };
         const syncNotesLibraryPanelTopWithButton = () => {
             if (!notesLibraryPanel || !openNotesLibraryButton) return;
             const buttonRect = openNotesLibraryButton.getBoundingClientRect();
             const panelTop = Math.max(12, buttonRect.bottom + window.scrollY + 0.8 * 16);
             notesLibraryPanel.style.setProperty('--notes-library-panel-top', `${panelTop}px`);
+        };
+        const closeNotesLibraryPanel = () => {
+            hideAnimatedElement(notesLibraryPanel);
+            hideAnimatedElement(notesLibraryBackdrop);
+        };
+        const openNotesLibraryPanel = () => {
+            if (!notesLibraryPanel) return;
+            renderNotesLibraryList();
+            syncNotesLibraryPanelTopWithButton();
+            showAnimatedElement(notesLibraryPanel);
+            showAnimatedElement(notesLibraryBackdrop);
+        };
+        const toggleNotesLibraryPanel = () => {
+            if (!notesLibraryPanel) return;
+            if (!notesLibraryPanel.classList.contains('is-open')) {
+                openNotesLibraryPanel();
+                return;
+            }
+            closeNotesLibraryPanel();
         };
         const getNotesLibraryFromStorage = () => {
             try {
@@ -1246,7 +1659,7 @@
         const getAiPromptTemplateText = async () => {
             if (aiPromptTemplateCache) return aiPromptTemplateCache;
             try {
-                const response = await fetch('/prompt.txt', { cache: 'no-store' });
+                const response = await fetch('/docs/prompt.txt', { cache: 'no-store' });
                 if (response.ok) {
                     const text = await response.text();
                     if (text && text.trim()) {
@@ -1255,7 +1668,7 @@
                     }
                 }
             } catch (error) {
-                console.warn('读取 prompt.txt 失败，使用默认模板:', error);
+                console.warn('读取 docs/prompt.txt 失败，使用默认模板:', error);
             }
             aiPromptTemplateCache = DEFAULT_AI_PROMPT_TEMPLATE;
             return aiPromptTemplateCache;
@@ -1379,18 +1792,58 @@
         };
         const closePromptEditorPanel = () => {
             if (!promptEditorPanel) return;
-            promptEditorPanel.classList.add('is-hidden');
-            promptEditorBackdrop?.classList.add('is-hidden');
+            hideAnimatedElement(promptEditorPanel);
+            hideAnimatedElement(promptEditorBackdrop);
         };
         const openPromptEditorPanel = async () => {
             if (!(promptTaskLinesInput instanceof HTMLTextAreaElement) || !promptEditorPanel) return;
             const taskLines = await getPromptTaskLinesForEditor();
             promptTaskLinesInput.value = formatPromptTaskLinesForEditor(taskLines);
-            promptEditorPanel.classList.remove('is-hidden');
-            promptEditorBackdrop?.classList.remove('is-hidden');
+            showAnimatedElement(promptEditorPanel);
+            showAnimatedElement(promptEditorBackdrop);
             autoResizeTextarea(promptTaskLinesInput, 0);
             promptTaskLinesInput.focus();
             promptTaskLinesInput.setSelectionRange(promptTaskLinesInput.value.length, promptTaskLinesInput.value.length);
+        };
+        const closeReferenceHelpPanel = () => {
+            if (!referenceHelpPanel) return;
+            hideAnimatedElement(referenceHelpPanel);
+            hideAnimatedElement(referenceHelpBackdrop);
+        };
+        const openReferenceHelpPanel = async ({ categoryKey, label }) => {
+            if (!referenceHelpPanel || !label) return;
+            const referenceHelpDoc = await loadReferenceHelpDoc();
+            const categoryConfig = referenceHelpDoc.categories?.[categoryKey];
+            const description = categoryConfig?.items?.[label] || '';
+            if (!description) return;
+            if (referenceHelpTitle) {
+                referenceHelpTitle.textContent = `${label} · 术语解释`;
+            }
+            renderReferenceHelpContent(description, {
+                categoryKey,
+                label,
+                referenceHelpDoc
+            });
+            showAnimatedElement(referenceHelpPanel);
+            showAnimatedElement(referenceHelpBackdrop);
+        };
+        const bindMainPanelReferenceHelpInteraction = () => {
+            const mainPanel = document.getElementById('mainPanel');
+            if (!mainPanel) return;
+            mainPanel.addEventListener('click', async (event) => {
+                const target = event.target;
+                if (!(target instanceof Element)) return;
+                const slot = target.closest('.slot-wuxing, .slot-liushen, .slot-liuqin, .slot-palace-name');
+                if (!(slot instanceof HTMLElement)) return;
+                const categoryClass = Object.keys(REFERENCE_SLOT_CATEGORY_MAP).find((className) => slot.classList.contains(className));
+                if (!categoryClass) return;
+                const label = String(slot.textContent || '').trim();
+                if (!label) return;
+                await openReferenceHelpPanel({
+                    categoryKey: REFERENCE_SLOT_CATEGORY_MAP[categoryClass],
+                    label
+                });
+            });
         };
         const savePromptTaskLinesFromEditor = () => {
             if (!(promptTaskLinesInput instanceof HTMLTextAreaElement)) return;
@@ -1531,7 +1984,20 @@
             notesEntriesContainer.appendChild(fallbackRow);
             resizeNoteRowTextarea(fallbackRow);
         };
+        const hasCalculatedPalaceLayout = () => {
+            return palaces.some((_, palaceIndex) => {
+                const zhi = getPalaceSlotTextBySelector(palaceIndex, '.slot-zhi', '');
+                const liuqin = getPalaceSlotTextBySelector(palaceIndex, '.slot-liuqin', '');
+                const liushen = getPalaceSlotTextBySelector(palaceIndex, '.slot-liushen', '');
+                const wuxing = getPalaceSlotTextBySelector(palaceIndex, '.slot-wuxing', '');
+                return Boolean(zhi || liuqin || liushen || wuxing);
+            });
+        };
         const requestAiAnswer = async () => {
+            if (!hasCalculatedPalaceLayout()) {
+                window.alert('当前还没有排盘盘面，请先点击“开始排盘”后再问AI。');
+                return;
+            }
             const queryItem = (queryItemSelect?.value || '').trim();
             const specificQuestion = (specificQuestionInput?.value || '').trim();
             if (!queryItem && !specificQuestion) {
@@ -1542,7 +2008,7 @@
             if (askAiButton) {
                 askAiButton.disabled = true;
                 askAiButton.dataset.originalLabel = askAiButton.textContent || '问AI';
-                askAiButton.textContent = '思考中...';
+                startAskAiLoadingAnimation();
             }
             try {
                 const response = await fetch('/api/chat', {
@@ -1569,6 +2035,7 @@
                 window.alert(`问AI失败：${error?.message || '未知错误'}`);
             } finally {
                 if (askAiButton) {
+                    stopAskAiLoadingAnimation();
                     askAiButton.disabled = false;
                     askAiButton.textContent = askAiButton.dataset.originalLabel || '问AI';
                 }
@@ -1639,7 +2106,7 @@
                 item.classList.add('notes-library-item');
                 item.addEventListener('click', () => {
                     applyNotesSnapshot(noteItem);
-                    if (notesLibraryPanel) notesLibraryPanel.classList.add('is-hidden');
+                    closeNotesLibraryPanel();
                 });
                 const timeEl = item.querySelector('.notes-library-item-time') || document.createElement('div');
                 if (!timeEl.classList.contains('notes-library-item-time')) {
@@ -2169,16 +2636,29 @@
                     closePromptEditorPanel();
                 });
             }
+            if (referenceHelpBackdrop) {
+                referenceHelpBackdrop.addEventListener('click', () => {
+                    closeReferenceHelpPanel();
+                });
+            }
+            document.addEventListener('pointerdown', () => {
+                if (referenceHelpPanel && !referenceHelpPanel.classList.contains('is-hidden')) {
+                    closeReferenceHelpPanel();
+                }
+            });
             if (openNotesLibraryButton && notesLibraryPanel) {
                 openNotesLibraryButton.addEventListener('click', () => {
-                    renderNotesLibraryList();
-                    syncNotesLibraryPanelTopWithButton();
-                    notesLibraryPanel.classList.toggle('is-hidden');
+                    toggleNotesLibraryPanel();
                 });
             }
             if (closeNotesLibraryButton && notesLibraryPanel) {
                 closeNotesLibraryButton.addEventListener('click', () => {
-                    notesLibraryPanel.classList.add('is-hidden');
+                    closeNotesLibraryPanel();
+                });
+            }
+            if (notesLibraryBackdrop) {
+                notesLibraryBackdrop.addEventListener('click', () => {
+                    closeNotesLibraryPanel();
                 });
             }
             if (clearNotesLibraryButton) {
@@ -2195,7 +2675,7 @@
                     const clickedInsideLibrary = notesLibraryPanel.contains(event.target);
                     const clickedLibraryTrigger = openNotesLibraryButton?.contains(event.target);
                     if (!clickedInsideLibrary && !clickedLibraryTrigger) {
-                        notesLibraryPanel.classList.add('is-hidden');
+                        closeNotesLibraryPanel();
                     }
                 }
                 if (promptEditorPanel && !promptEditorPanel.classList.contains('is-hidden')) {
@@ -2206,10 +2686,18 @@
                     }
                 }
             });
+            document.addEventListener('keydown', (event) => {
+                if (event.key !== 'Escape') return;
+                if (referenceHelpPanel && !referenceHelpPanel.classList.contains('is-hidden')) {
+                    closeReferenceHelpPanel();
+                }
+            });
         }
         syncNotesPalaceDashStyle();
         window.addEventListener('resize', syncNotesPalaceDashStyle);
         initMainPanelCustomDropdowns();
+        loadReferenceHelpDoc();
+        bindMainPanelReferenceHelpInteraction();
         manualInput.addEventListener('pointerdown', () => {
             isPointerFocusingManualInput = true;
         });
