@@ -87,7 +87,6 @@
         body, body * {
             color: var(--dark-brown) !important;
             font-family: 'STZHONGS', serif !important;
-            font-stretch: 95%;
             letter-spacing: 0.02rem;
         }
         /* 控制通用面板容器（背景/边框/圆角） */
@@ -157,6 +156,12 @@
 
         /* 移动端表单控件防止聚焦时浏览器自动放大 */
         @media (hover: none) and (pointer: coarse) {
+            /* 手机端统一收紧字距，避免大字距在小屏上显得过于分散 */
+            body,
+            body * {
+                letter-spacing: 0rem !important;
+            }
+
             input:not([type="hidden"]),
             select,
             textarea,
