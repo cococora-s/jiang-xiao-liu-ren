@@ -1097,14 +1097,14 @@
             text-shadow: 0 0 0.12rem rgba(255, 255, 255, 0.35);
         }
         .reference-liuqin-flow-arrow.is-sheng {
-            background-image: url('/arrow_green.png');
+            background-image: url('/image/arrow_green.png');
         }
         .reference-liuqin-flow-arrow.is-sheng::after {
             content: '生';
             color: var(--dark-brown);
         }
         .reference-liuqin-flow-arrow.is-ke {
-            background-image: url('/arrow_red.png');
+            background-image: url('/image/arrow_red.png');
         }
         .reference-liuqin-flow-arrow.is-ke::after {
             content: '克';

@@ -1,9 +1,11 @@
 # 江氏小六壬排盘器
 
 <a href="https://xiaoliuren.cc" style="font-size: 1.35em; text-decoration: underline;">在线链接</a>
-
-<p>Vibe Coding 做的，目前只有日时起卦和数字起卦，之后将更新其它起卦方法。<br />自动排盘，标注了六宫、六神、地支及五星的五行属性，方便判断生克。</p>
-<img width="1378" height="1155" alt="image" src="https://github.com/user-attachments/assets/50747973-ed08-4849-9c21-55ac1268439c" />
+<ul style="line-height: 1.75; margin: 0; padding-left: 0; list-style-position: inside;">
+<li style="margin-bottom: 0.5em; font-size: 1.2em;">Vibe Coding 做的，主要用来练习解卦</li>
+<li style="margin-bottom: 0.5em; font-size: 1.2em;">注：AI解释仅供参考。试了几个案例，简单的盘面还行，一遇到复杂的盘面AI就经常左右脑互搏，还不如自己看盘hhh，也许prompt什么的还能再优化一下。
+</ul>
+<img width="689" height="577" alt="image" src="https://github.com/user-attachments/assets/50747973-ed08-4849-9c21-55ac1268439c" />
 
 <ul>
   <li>
@@ -14,8 +16,8 @@
     </ul>
     <table>
       <tr>     
-        <td><img width="710" height="351" alt="image" src="https://github.com/user-attachments/assets/c44584b0-68dc-4d8d-9a5e-f4d39ad6c0c5" /></td>
-        <td><img width="666" height="384" alt="image" src="https://github.com/user-attachments/assets/74b11b80-573d-4a20-90e9-3b52144975b6" /></td>
+        <td><img width="568" height="281" alt="image" src="https://github.com/user-attachments/assets/c44584b0-68dc-4d8d-9a5e-f4d39ad6c0c5" /></td>
+        <td><img width="533" height="307" alt="image" src="https://github.com/user-attachments/assets/74b11b80-573d-4a20-90e9-3b52144975b6" /></td>
       </tr>
     </table>
   </li>
@@ -53,3 +55,36 @@
     <img width="352" height="452" alt="image" src="https://github.com/user-attachments/assets/8fd24853-0d52-406c-8c5d-674f58ec4f38" />
   </li>
 </ul>
+
+<h2>开发日志</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th align="left">日期</th>
+      <th align="left">说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2026/5/12</td>
+      <td>更新数字起卦；更新术语解释功能；优化布局；迭代 AI 提示词</td>
+    </tr>
+    <tr>
+      <td>2026/5/11</td>
+      <td>整体代码/布局梳理；更新 AI 提示词调整功能</td>
+    </tr>
+    <tr>
+      <td>2026/5/10</td>
+      <td>接入 AI 解卦；更新笔记面板；更新保存笔记功能；横竖屏排版优化</td>
+    </tr>
+    <tr>
+      <td>2026/5/9</td>
+      <td>静态页面落地；实现日时起卦、基础排盘功能</td>
+    </tr>
+    <tr>
+      <td>2026/5/8</td>
+      <td>初始化仓库</td>
+    </tr>
+  </tbody>
+</table>

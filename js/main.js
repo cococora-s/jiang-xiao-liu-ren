@@ -1101,12 +1101,12 @@
         };
         const MAIN_PANEL_QUERY_ITEM_OPTIONS = [
             { value: '吉凶', label: '吉凶' },
+            { value: '寻物', label: '寻物' },
             { value: '感情', label: '感情' },
+            { value: '考试', label: '考试' },
             { value: '事业', label: '事业' },
             { value: '财运', label: '财运' },
-            { value: '健康', label: '健康' },
-            { value: '学业', label: '学业' },
-            { value: '其他', label: '其他' }
+            { value: '健康', label: '健康' }
         ];
         const MAIN_PANEL_METHOD_OPTIONS = [
             { value: '日时起卦', label: '日时起卦' },
