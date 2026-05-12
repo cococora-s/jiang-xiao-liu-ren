@@ -177,14 +177,7 @@
                 text-size-adjust: 100%;
             }
 
-            input:not([type="hidden"]):focus,
-            select:focus,
-            textarea:focus,
-            .datetime-manual-input:focus,
-            .num-input:focus,
-            .flatpickr-time input:focus {
-                font-size: 16px !important;
-            }
+
         }
         /* 下拉框 */
         .global-dropdown {
