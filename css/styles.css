@@ -522,7 +522,9 @@
                 grid-area: specificQuestion;
                 margin-top: -1.7rem;
                 margin-bottom: 1.5rem;
-                height: 3.5rem;
+                min-height: 3.5rem;
+                height: auto;
+                align-items: center;
             }
             .setting-panel .dropdown-method > .global-dropdown-trigger,
             .setting-panel .dropdown-query-item > .global-dropdown-trigger {
@@ -635,10 +637,12 @@
                 grid-area: lunar-info;
                 font-size: 1.6rem;
                 font-weight: 700;
+                white-space: nowrap;
                 margin-top: 1.15rem;
                 border-radius: var(--border-radius);
                 padding:0 0.9rem;
                 background:  var(--dark);
+                width: 100%;
             }
 
         /* 数字起卦区（与时间区同一套 grid + flex，白框与时间选择器共用样式） */
