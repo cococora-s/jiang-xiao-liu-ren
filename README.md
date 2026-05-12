@@ -3,6 +3,7 @@
 <a href="https://xiaoliuren.cc" style="font-size: 1.35em; text-decoration: underline;">在线链接</a>
 
 <p>Vibe Coding 做的，目前只有日时起卦和数字起卦，之后将更新其它起卦方法。<br />自动排盘，标注了六宫、六神、地支及五星的五行属性，方便判断生克。</p>
+<img width="1378" height="1155" alt="image" src="https://github.com/user-attachments/assets/50747973-ed08-4849-9c21-55ac1268439c" />
 
 <ul>
   <li>
@@ -12,9 +13,9 @@
       <li style="margin-bottom: 0.5em;"><b>数字起卦</b></li>
     </ul>
     <table>
-      <tr>
-        <td><img width="354" height="630" alt="image" src="https://github.com/user-attachments/assets/b516a266-265a-41fd-bdb0-d594f9fcc68b" /></td>
-        <td><img width="354" height="526" alt="image" src="https://github.com/user-attachments/assets/5486d9af-9315-4b04-a898-ce94fac66fa4" /></td>
+      <tr>     
+        <td><img width="710" height="351" alt="image" src="https://github.com/user-attachments/assets/c44584b0-68dc-4d8d-9a5e-f4d39ad6c0c5" /></td>
+        <td><img width="666" height="384" alt="image" src="https://github.com/user-attachments/assets/74b11b80-573d-4a20-90e9-3b52144975b6" /></td>
       </tr>
     </table>
   </li>
@@ -25,8 +26,8 @@
     </ul>
     <table>
       <tr>
-        <td><img width="355.5" height="465" alt="image" src="https://github.com/user-attachments/assets/6fdce9b2-4449-4ca7-9c2f-f4c7a8e4b304" /></td>
-        <td><img width="355" height="474" alt="image" src="https://github.com/user-attachments/assets/2dd53b08-7f84-47c2-b3d5-b3b120f92e88" /></td>
+        <td><img width="340" height="465" alt="image" src="https://github.com/user-attachments/assets/6fdce9b2-4449-4ca7-9c2f-f4c7a8e4b304" /></td>
+        <td><img width="340" height="474" alt="image" src="https://github.com/user-attachments/assets/2dd53b08-7f84-47c2-b3d5-b3b120f92e88" /></td>
       </tr>
     </table>
   </li>
