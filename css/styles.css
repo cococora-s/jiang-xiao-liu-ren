@@ -168,9 +168,7 @@
             .global-dropdown-trigger,
             .datetime-manual-input,
             .num-input,
-            .flatpickr-time input,
-            .dropdown-calendar-year > .global-dropdown-trigger,
-            .dropdown-calendar-month > .global-dropdown-trigger {
+            .flatpickr-time input {
                 font-size: 16px !important;
                 touch-action: manipulation;
             }
