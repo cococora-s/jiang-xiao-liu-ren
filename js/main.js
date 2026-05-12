@@ -2738,7 +2738,9 @@
             }
             segmentInputBuffer = (segmentInputBuffer + digit).slice(0, segment.len);
             const parts = getSegmentValuesFromInput(input.value);
-            const previewValue = (segmentInputBuffer + segmentPreviousValue.slice(segmentInputBuffer.length)).slice(0, segment.len);
+            // While typing a segment, avoid reusing previous trailing digits (e.g. 1 -> 11).
+            // Keep entered prefix visible and fill the rest with neutral zeros.
+            const previewValue = (segmentInputBuffer + '0'.repeat(segment.len - segmentInputBuffer.length)).slice(0, segment.len);
             parts[segment.key] = previewValue;
             input.value = buildDateTimeTextFromParts(parts);
             input.setSelectionRange(segment.start, segment.end);
@@ -2820,15 +2822,9 @@
                 return;
             }
             if (event.ctrlKey || event.metaKey || event.altKey || event.isComposing) return;
-
-            const digit = normalizeDigitKeyChar(key);
-            if (!digit) {
-                if (key.length === 1) event.preventDefault();
-                return;
-            }
-
-            event.preventDefault();
-            applySegmentDigitInput(input, digit);
+            // Digit entry is handled in beforeinput to avoid duplicate processing
+            // on mobile virtual keyboards where keydown + beforeinput both fire.
+            if (key.length === 1) return;
         });
         manualInput.addEventListener('paste', (event) => {
             const text = (event.clipboardData || window.clipboardData).getData('text');

@@ -156,6 +156,10 @@
 
         /* 移动端表单控件防止聚焦时浏览器自动放大 */
         @media (hover: none) and (pointer: coarse) {
+            html {
+                -webkit-text-size-adjust: 100%;
+                text-size-adjust: 100%;
+            }
             /* 手机端统一收紧字距，避免大字距在小屏上显得过于分散 */
             body,
             body *:not(input):not(select):not(textarea):not(option) {
@@ -168,8 +172,18 @@
             .datetime-manual-input,
             .num-input,
             .flatpickr-time input {
-                font-size: 16px !important;
                 letter-spacing: normal !important;
+                -webkit-text-size-adjust: 100%;
+                text-size-adjust: 100%;
+            }
+
+            input:not([type="hidden"]):focus,
+            select:focus,
+            textarea:focus,
+            .datetime-manual-input:focus,
+            .num-input:focus,
+            .flatpickr-time input:focus {
+                font-size: 16px !important;
             }
         }
         /* 下拉框 */
