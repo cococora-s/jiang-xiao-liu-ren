@@ -1,9 +1,4 @@
-        @font-face {
-            font-family: 'STZHONGS';
-            src: url('../STZHONGS.TTF') format('truetype');
-            font-weight: normal;
-            font-style: normal;
-        }
+        @import url("https://chinese-fonts-cdn.konghayao.deno.net/packages/hwmct/dist/%E6%B1%87%E6%96%87%E6%98%8E%E6%9C%9D%E4%BD%93/result.css");
         :root {
             /* ===== 颜色 ===== */
             --brown: #5a381f;
@@ -86,7 +81,7 @@
         }
         body, body * {
             color: var(--dark-brown) !important;
-            font-family: 'STZHONGS', serif !important;
+            font-family: "Huiwen-mincho", serif !important;
             letter-spacing: 0.02rem;
         }
         /* 控制通用面板容器（背景/边框/圆角） */
