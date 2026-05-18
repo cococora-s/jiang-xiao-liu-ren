@@ -7,10 +7,15 @@
     "dev": "npx serve .",
     "start": "npx serve ."
   },
-  "keywords": ["divination", "xiao-liu-ren", "fortune-telling"],
+  "keywords": [
+    "divination",
+    "xiao-liu-ren",
+    "fortune-telling"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@vercel/analytics": "^1.4.1"
+    "@vercel/analytics": "^1.4.1",
+    "@vercel/speed-insights": "^2.0.0"
   }
 }
