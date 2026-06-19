@@ -2164,9 +2164,9 @@
                 if (!reply) {
                     throw new Error('AI 返回为空，请稍后重试');
                 }
-                appendAiReplyRowsToNotes(reply);
                 clearPalaceSpecifications();
                 setPalaceSpecifyMode(false);
+                appendAiReplyRowsToNotes(reply);
             } catch (error) {
                 console.error('问AI失败:', error);
                 window.alert(`问AI失败：${error?.message || '未知错误'}`);
@@ -2563,6 +2563,7 @@
             }
             const previewCard = sourceCard.cloneNode(true);
             previewCard.removeAttribute('id');
+            previewCard.classList.remove('is-specified');
             previewCard.classList.add('notes-palace-preview');
             trigger.innerHTML = '';
             trigger.appendChild(previewCard);
