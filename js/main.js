@@ -627,18 +627,6 @@
         }
 
         function resetCurrentBoardToDefaults() {
-            const methodInput = document.getElementById('method');
-            const currentMethodValue = String(methodInput?.value || '').trim();
-            const shouldPreserveNumSection = currentMethodValue === '数字起卦';
-            if (methodInput && MAIN_PANEL_METHOD_OPTIONS.length) {
-                if (!shouldPreserveNumSection) {
-                    methodInput.value = MAIN_PANEL_METHOD_OPTIONS[0].value;
-                    methodInput.dispatchEvent(new Event('change', { bubbles: true }));
-                } else {
-                    // Keep the current divination method so the num section remains visible after reset.
-                    methodInput.dispatchEvent(new Event('change', { bubbles: true }));
-                }
-            }
             setDateTimeValue(toDateTimeLocalValue(new Date()));
             const numInput = document.getElementById('numInput');
             if (numInput instanceof HTMLInputElement) {
@@ -936,6 +924,9 @@
         function clearCurrentPageNotesContent(options = {}) {
             const { preserveQuestionFields = false } = options;
             activeEditingNoteId = null;
+            if (hasInitializedNotesPanel) {
+                refreshSaveNotesButtonLabel();
+            }
             if (!preserveQuestionFields && queryItemSelect) {
                 queryItemSelect.value = MAIN_PANEL_QUERY_ITEM_OPTIONS[0].value;
                 queryItemSelect.dispatchEvent(new Event('change', { bubbles: true }));
@@ -1410,6 +1401,18 @@
                     slot.innerHTML = String(raw || '');
                 });
             });
+            layoutSnapshot.palacesLayout.forEach((palaceState) => {
+                if (!palaceState || !Number.isFinite(palaceState.index)) return;
+                const palaceIndex = palaceState.index;
+                const card = document.getElementById(`palace-${palaceIndex}`);
+                if (!card) return;
+                const liuQinText = (card.querySelector('.slot-liuqin')?.textContent || '').trim();
+                const liuShenText = (card.querySelector('.slot-liushen')?.textContent || '').trim();
+                const wuXingText = (card.querySelector('.slot-wuxing')?.textContent || '').trim();
+                setLiuQinLabel(palaceIndex, liuQinText);
+                setLiuShenLabel(palaceIndex, liuShenText);
+                setWuXingLabel(palaceIndex, wuXingText);
+            });
             setPalaceNameUnderlineVisible(Boolean(layoutSnapshot.underlineVisible));
         };
         const formatLibraryTimestamp = (value) => {
@@ -1537,6 +1540,19 @@
                 console.error('写入笔记库失败:', error);
                 return false;
             }
+        };
+        const SAVE_NOTES_BUTTON_LABEL_SAVE = '保存笔记';
+        const SAVE_NOTES_BUTTON_LABEL_UPDATE = '更新笔记';
+        const isCurrentNoteInLibrary = () => {
+            if (!activeEditingNoteId) return false;
+            return getNotesLibraryFromStorage().some((item) => item?.id === activeEditingNoteId);
+        };
+        const getSaveNotesButtonDefaultLabel = () => (
+            isCurrentNoteInLibrary() ? SAVE_NOTES_BUTTON_LABEL_UPDATE : SAVE_NOTES_BUTTON_LABEL_SAVE
+        );
+        const refreshSaveNotesButtonLabel = () => {
+            if (!saveNotesButton) return;
+            saveNotesButton.textContent = getSaveNotesButtonDefaultLabel();
         };
         const buildCurrentNotesSnapshot = (noteId = null) => {
             const dateTimeValue = document.getElementById('dateTime')?.value || '';
@@ -2085,6 +2101,7 @@
                 });
             }
             activeEditingNoteId = restoredNoteId;
+            refreshSaveNotesButtonLabel();
             setNoteRowDeleteMode(false);
             closeAllNotePalaceSelectors();
             refreshAllNotePalacePreviews();
@@ -2142,6 +2159,7 @@
                     latestLibrary.splice(noteIndex, 1);
                     if (activeEditingNoteId && deletedNote?.id === activeEditingNoteId) {
                         activeEditingNoteId = null;
+                        refreshSaveNotesButtonLabel();
                     }
                     if (!persistNotesLibraryToStorage(latestLibrary)) return;
                     renderNotesLibraryList();
@@ -2174,10 +2192,9 @@
         };
         const showSaveNotesFeedback = (saved) => {
             if (!saveNotesButton) return;
-            const originalText = '保存笔记';
             saveNotesButton.textContent = saved ? '已保存' : '保存失败';
             window.setTimeout(() => {
-                saveNotesButton.textContent = originalText;
+                refreshSaveNotesButtonLabel();
             }, 1000);
         };
         const setNoteRowDeleteMode = (enabled) => {
@@ -2665,6 +2682,7 @@
                 clearNotesLibraryButton.addEventListener('click', () => {
                     if (!persistNotesLibraryToStorage([])) return;
                     activeEditingNoteId = null;
+                    refreshSaveNotesButtonLabel();
                     renderNotesLibraryList();
                 });
             }
