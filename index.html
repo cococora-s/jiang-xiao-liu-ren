@@ -35,6 +35,12 @@
         <div id="notesLibraryEmpty" class="notes-library-empty">暂无笔记</div>
     </div>
     <div id="notesLibraryBackdrop" class="notes-library-backdrop is-hidden"></div>
+    <div id="palaceSpecifyBackdrop" class="palace-specify-backdrop is-hidden" aria-hidden="true">
+        <div class="palace-specify-shade palace-specify-shade-top"></div>
+        <div class="palace-specify-shade palace-specify-shade-left"></div>
+        <div class="palace-specify-shade palace-specify-shade-right"></div>
+        <div class="palace-specify-shade palace-specify-shade-bottom"></div>
+    </div>
     <template id="notesLibraryItemTemplate">
         <div class="notes-library-item">
             <div>
@@ -140,10 +146,16 @@
     </div>
 
     <div id="notesPanelContainer" class="theme-panel notes-panel">
-        <div class="notes-panel-title">断卦笔记</div>
+        <div class="notes-panel-header">
+            <div class="notes-panel-header-side"></div>
+            <div class="notes-panel-title">断卦笔记</div>
+            <div class="notes-panel-header-side notes-panel-header-side--end">
+                <button type="button" id="changePrompt" class="small-action-button change-prompt-button">修改AI提示词</button>
+            </div>
+        </div>
         <div class="notes-ai-row">
             <button type="button" id="askAiButton" class="notes-ai-button action-theme-button">问AI</button>
-            <button type="button" id="changePrompt" class="small-action-button change-prompt-button">修改AI提示词</button>
+            <button type="button" id="specifyPalaceButton" class="small-action-button specify-palace-button">指定解读宫位</button>
         </div>
         <div id="notesEntriesContainer" class="notes-entries" style="margin-bottom: 2rem;"></div>
         <div class="notes-add-row">

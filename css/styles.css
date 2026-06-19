@@ -375,6 +375,25 @@
         .notes-library-backdrop.is-hidden {
             display: none;
         }
+        /* 指定宫位：四向遮罩（样式与笔记库背景一致，宫格区域镂空） */
+        .palace-specify-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 1100;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .palace-specify-backdrop.is-open {
+            visibility: visible;
+        }
+        .palace-specify-backdrop.is-hidden {
+            display: none;
+        }
+        .palace-specify-shade {
+            position: fixed;
+            background: rgba(0, 0, 0, 0.12);
+            pointer-events: auto;
+        }
         /* 控制笔记库头部行布局 */
         .notes-library-header {
             display: flex;
@@ -732,6 +751,33 @@
             outline-offset: -1px;
             aspect-ratio: 1/1;
         }
+        /* 指定宫位：选中遮罩 */
+        .palace-card.is-specified::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.12);
+            pointer-events: none;
+            z-index: 2;
+        }
+        /* 指定宫位：选择模式下可点击 */
+        #mainPanel.is-palace-specify-mode .palace-card {
+            cursor: pointer;
+        }
+        /* 指定宫位：选择模式下禁用 badge/文字 hover 放大 */
+        #mainPanel.is-palace-specify-mode .slot-wuxing:not(:empty),
+        #mainPanel.is-palace-specify-mode .slot-liushen:not(:empty),
+        #mainPanel.is-palace-specify-mode .slot-liuqin:not(:empty),
+        #mainPanel.is-palace-specify-mode .slot-palace-name {
+            cursor: inherit;
+            transition: none;
+        }
+        #mainPanel.is-palace-specify-mode .slot-wuxing:not(:empty):hover,
+        #mainPanel.is-palace-specify-mode .slot-liushen:not(:empty):hover,
+        #mainPanel.is-palace-specify-mode .slot-liuqin:not(:empty):hover,
+        #mainPanel.is-palace-specify-mode .slot-palace-name:hover {
+            scale: 1;
+        }
         /* 控制宫位内所有标签的绝对定位基类 */
         .palace-slot {
             position: absolute;
@@ -863,6 +909,18 @@
             margin-bottom: 1rem;
             padding:1.1rem 2rem 1rem 2rem;
         }
+        .notes-panel-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            align-items: center;
+        }
+        .notes-panel-header-side {
+            min-width: 0;
+        }
+        .notes-panel-header-side--end {
+            display: flex;
+            justify-content: center;
+        }
         .notes-panel-title {
             font-size: 2.3rem;
             font-weight: 700;
@@ -887,10 +945,15 @@
             letter-spacing: 0.5em;
         }
 
-        /* “修改AI提示词”按钮外观 */
-        .change-prompt-button {
+        /* “修改AI提示词”“指定宫位”按钮外观 */
+        .change-prompt-button,
+        .specify-palace-button {
             width: 100%;
             height: 100%;
+        }
+        .specify-palace-button.is-active,
+        .specify-palace-button.is-active:hover {
+            background: var(--sb-hover);
         }
         .prompt-editor-panel {
             position: fixed;

@@ -618,6 +618,8 @@
             clearPalaceLayoutTexts();
             setPalaceNameUnderlineVisible(false);
             refreshAllNotePalacePreviews();
+            clearPalaceSpecifications();
+            setPalaceSpecifyMode(false);
         }
 
         function ensureDefaultCurrentDateTime() {
@@ -1192,6 +1194,112 @@
             return Number.isFinite(computedMinHeight) ? computedMinHeight : 80;
         };
         const askAiButton = document.getElementById('askAiButton');
+        const specifyPalaceButton = document.getElementById('specifyPalaceButton');
+        const mainPanel = document.getElementById('mainPanel');
+        const palaceGrid = document.getElementById('palaceGrid');
+        const palaceSpecifyBackdrop = document.getElementById('palaceSpecifyBackdrop');
+        let palaceSpecifyBackdropResizeHandler = null;
+        let isPalaceSpecifyMode = false;
+        const specifiedPalaceIndices = new Set();
+        const getPalaceIndexFromCard = (cardEl) => {
+            if (!(cardEl instanceof HTMLElement)) return null;
+            const match = cardEl.id.match(/^palace-(\d+)$/);
+            if (!match) return null;
+            const palaceIndex = Number(match[1]);
+            return Number.isFinite(palaceIndex) ? palaceIndex : null;
+        };
+        const refreshPalaceSpecifyVisuals = () => {
+            document.querySelectorAll('.palace-card').forEach((card) => {
+                const palaceIndex = getPalaceIndexFromCard(card);
+                if (palaceIndex === null) return;
+                card.classList.toggle('is-specified', specifiedPalaceIndices.has(palaceIndex));
+            });
+        };
+        const syncPalaceSpecifyBackdrop = () => {
+            if (!palaceSpecifyBackdrop || !palaceGrid || !isPalaceSpecifyMode) return;
+            const shades = palaceSpecifyBackdrop.querySelectorAll('.palace-specify-shade');
+            if (shades.length < 4) return;
+            const [topShade, leftShade, rightShade, bottomShade] = shades;
+            const rect = palaceGrid.getBoundingClientRect();
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const applyShadeRect = (shadeEl, top, left, width, height) => {
+                shadeEl.style.top = `${top}px`;
+                shadeEl.style.left = `${left}px`;
+                shadeEl.style.width = `${Math.max(0, width)}px`;
+                shadeEl.style.height = `${Math.max(0, height)}px`;
+            };
+            applyShadeRect(topShade, 0, 0, viewportWidth, rect.top);
+            applyShadeRect(leftShade, rect.top, 0, rect.left, rect.height);
+            applyShadeRect(rightShade, rect.top, rect.right, viewportWidth - rect.right, rect.height);
+            applyShadeRect(bottomShade, rect.bottom, 0, viewportWidth, viewportHeight - rect.bottom);
+        };
+        const clearPalaceSpecifyBackdropStyles = () => {
+            if (!palaceSpecifyBackdrop) return;
+            palaceSpecifyBackdrop.querySelectorAll('.palace-specify-shade').forEach((shadeEl) => {
+                shadeEl.style.top = '';
+                shadeEl.style.left = '';
+                shadeEl.style.width = '';
+                shadeEl.style.height = '';
+            });
+        };
+        const bindPalaceSpecifyBackdropSync = () => {
+            if (palaceSpecifyBackdropResizeHandler) return;
+            palaceSpecifyBackdropResizeHandler = () => {
+                syncPalaceSpecifyBackdrop();
+            };
+            window.addEventListener('resize', palaceSpecifyBackdropResizeHandler);
+            window.addEventListener('scroll', palaceSpecifyBackdropResizeHandler, true);
+        };
+        const unbindPalaceSpecifyBackdropSync = () => {
+            if (!palaceSpecifyBackdropResizeHandler) return;
+            window.removeEventListener('resize', palaceSpecifyBackdropResizeHandler);
+            window.removeEventListener('scroll', palaceSpecifyBackdropResizeHandler, true);
+            palaceSpecifyBackdropResizeHandler = null;
+        };
+        const setPalaceSpecifyMode = (active) => {
+            isPalaceSpecifyMode = Boolean(active);
+            mainPanel?.classList.toggle('is-palace-specify-mode', isPalaceSpecifyMode);
+            specifyPalaceButton?.classList.toggle('is-active', isPalaceSpecifyMode);
+            if (specifyPalaceButton) {
+                specifyPalaceButton.setAttribute('aria-pressed', isPalaceSpecifyMode ? 'true' : 'false');
+            }
+            if (palaceSpecifyBackdrop) {
+                if (isPalaceSpecifyMode) {
+                    palaceSpecifyBackdrop.classList.remove('is-hidden');
+                    syncPalaceSpecifyBackdrop();
+                    window.requestAnimationFrame(() => {
+                        syncPalaceSpecifyBackdrop();
+                        palaceSpecifyBackdrop.classList.add('is-open');
+                    });
+                    bindPalaceSpecifyBackdropSync();
+                } else {
+                    palaceSpecifyBackdrop.classList.remove('is-open');
+                    palaceSpecifyBackdrop.classList.add('is-hidden');
+                    clearPalaceSpecifyBackdropStyles();
+                    unbindPalaceSpecifyBackdropSync();
+                }
+            }
+        };
+        const togglePalaceSpecification = (palaceIndex) => {
+            if (!Number.isFinite(palaceIndex)) return;
+            if (specifiedPalaceIndices.has(palaceIndex)) {
+                specifiedPalaceIndices.delete(palaceIndex);
+            } else {
+                specifiedPalaceIndices.add(palaceIndex);
+            }
+            refreshPalaceSpecifyVisuals();
+        };
+        const clearPalaceSpecifications = () => {
+            specifiedPalaceIndices.clear();
+            refreshPalaceSpecifyVisuals();
+        };
+        const getSpecifiedPalaceNames = () => {
+            return [...specifiedPalaceIndices]
+                .sort((a, b) => a - b)
+                .map((palaceIndex) => palaces[palaceIndex])
+                .filter(Boolean);
+        };
         const notesPanelContainer = document.getElementById('notesPanelContainer');
         const NOTES_STORAGE_KEY = 'jiangshi_xiaoliuren_saved_notes_v1';
         const AI_TASK_LINES_STORAGE_KEY = 'jiangshi_xiaoliuren_ai_task_lines_v1';
@@ -1580,11 +1688,12 @@
             '1. 以用神所在宫为核心，同时兼顾身宫和对宫。',
             '2. 研判六宫、地支、六亲、六神、五星的五行生克旺衰。',
             '3. 提取对应意象（方位、意象、职业等）关联【具体问题】。',
-            '4. 输出宫位总数不超过3个，以重要性从高到低排序。',
             '',
             '# Rules (必须严格遵守)',
             '- **禁止输出任何前言、开场白、结束语或分析推导过程。**',
             '- **禁止使用“好的”、“根据以上信息”等废话。**',
+            '- **如果【指定宫位】不为空，则必须只解读【指定宫位】，并按重要性从高到低排序输出。**',
+            '- **如果【指定宫位】为空，则自动选取宫位进行解读，输出宫位总数不超过3个，以重要性从高到低排序。**',
             '- **输出必须仅包含宫位解释和最终结论。**',
             '- 严格执行下方指定的【Output Format】。',
             '',
@@ -1613,7 +1722,9 @@
             '  对宫：<宫位名>',
             '  判定规则：',
             '  - 日时起卦：身宫=时宫<宫位名>，对宫=日宫<宫位名>',
-            '  - 数字起卦：身宫=时宫<宫位名>，对宫=数字宫<宫位名>'
+            '  - 数字起卦：身宫=时宫<宫位名>，对宫=数字宫<宫位名>',
+            '',
+            '【指定宫位】：<宫位名1>、<宫位名2>、<宫位名3>...'
         ].join('\n');
         let aiPromptTemplateCache = '';
         let aiTaskLinesOverride = null;
@@ -1844,11 +1955,22 @@
             showAnimatedElement(referenceHelpBackdrop);
         };
         const bindMainPanelReferenceHelpInteraction = () => {
-            const mainPanel = document.getElementById('mainPanel');
             if (!mainPanel) return;
             mainPanel.addEventListener('click', async (event) => {
                 const target = event.target;
                 if (!(target instanceof Element)) return;
+                if (isPalaceSpecifyMode) {
+                    const palaceCard = target.closest('.palace-card');
+                    if (palaceCard instanceof HTMLElement) {
+                        const palaceIndex = getPalaceIndexFromCard(palaceCard);
+                        if (palaceIndex !== null) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            togglePalaceSpecification(palaceIndex);
+                            return;
+                        }
+                    }
+                }
                 const slot = target.closest('.slot-wuxing, .slot-liushen, .slot-liuqin, .slot-palace-name');
                 if (!(slot instanceof HTMLElement)) return;
                 const categoryClass = Object.keys(REFERENCE_SLOT_CATEGORY_MAP).find((className) => slot.classList.contains(className));
@@ -1887,14 +2009,6 @@
             const divinationMethod =
                 String(document.getElementById('method')?.value || '').trim() ||
                 MAIN_PANEL_METHOD_OPTIONS[0].value;
-            const notesRows = getNotesRowsSnapshot();
-            const notesText = notesRows
-                .map((row, index) => {
-                    const content = String(row?.text || '').trim();
-                    return content ? `${index + 1}. ${content}` : '';
-                })
-                .filter(Boolean)
-                .join('\n');
             let prompt = await getAiPromptTemplateText();
             ensurePromptTaskLinesOverrideLoaded();
             if (Array.isArray(aiTaskLinesOverride) && aiTaskLinesOverride.length) {
@@ -1919,9 +2033,14 @@
                 dayOppositePalaceName,
                 numberOppositePalaceName
             });
-            if (notesText) {
-                prompt = `${prompt}\n\n【补充笔记】\n${notesText}`;
-            }
+            const specifiedPalaceNames = getSpecifiedPalaceNames();
+            const specifiedPalaceText = specifiedPalaceNames.length
+                ? specifiedPalaceNames.join('、')
+                : '';
+            prompt = prompt.replace(
+                /【指定宫位】：.*$/m,
+                `【指定宫位】：${specifiedPalaceText}`
+            );
             return prompt.trim();
         };
         const AI_PALACE_NAME_TO_INDEX = {
@@ -2046,6 +2165,8 @@
                     throw new Error('AI 返回为空，请稍后重试');
                 }
                 appendAiReplyRowsToNotes(reply);
+                clearPalaceSpecifications();
+                setPalaceSpecifyMode(false);
             } catch (error) {
                 console.error('问AI失败:', error);
                 window.alert(`问AI失败：${error?.message || '未知错误'}`);
@@ -2626,6 +2747,17 @@
             if (askAiButton) {
                 askAiButton.addEventListener('click', () => {
                     requestAiAnswer();
+                });
+            }
+            if (specifyPalaceButton) {
+                specifyPalaceButton.addEventListener('click', () => {
+                    setPalaceSpecifyMode(!isPalaceSpecifyMode);
+                });
+            }
+            if (palaceSpecifyBackdrop) {
+                palaceSpecifyBackdrop.addEventListener('click', () => {
+                    if (!isPalaceSpecifyMode) return;
+                    setPalaceSpecifyMode(false);
                 });
             }
             if (changePromptButton) {
