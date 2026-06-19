@@ -15,6 +15,7 @@
     <div class="page-root">
 
     <div class="page-header">
+        <button type="button" id="openDevLogButton" class="dev-log-open-button small-action-button">开发日志</button>
         <h1 class="page-title">
             江氏小六壬排盘器
         </h1>
@@ -185,6 +186,52 @@
             <div id="referenceHelpTitle" class="reference-help-title">术语解释</div>
         </div>
         <div id="referenceHelpContent" class="reference-help-content"></div>
+    </div>
+    <div id="devLogBackdrop" class="reference-help-backdrop dev-log-backdrop is-hidden"></div>
+    <div id="devLogPanel" class="theme-panel reference-help-panel dev-log-panel is-hidden" role="dialog" aria-modal="true" aria-label="开发日志">
+        <div class="reference-help-header">
+            <div class="reference-help-title">开发日志</div>
+        </div>
+        <div class="reference-help-content dev-log-content">
+            <table class="dev-log-table">
+                <thead>
+                    <tr>
+                        <th align="left">日期</th>
+                        <th align="left">说明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2026/6/20</td>
+                        <td>修复bug；更新指定宫位解释功能</td>
+                    </tr>
+                    <tr>
+                        <td>2026/5/18</td>
+                        <td>更新字体，优化加载速度</td>
+                    </tr>
+                    <tr>
+                        <td>2026/5/12</td>
+                        <td>更新数字起卦；更新术语解释功能；优化布局；迭代 AI 提示词</td>
+                    </tr>
+                    <tr>
+                        <td>2026/5/11</td>
+                        <td>整体代码/布局梳理；更新 AI 提示词调整功能</td>
+                    </tr>
+                    <tr>
+                        <td>2026/5/10</td>
+                        <td>接入 AI 解卦；更新笔记面板；更新保存笔记功能；横竖屏排版优化</td>
+                    </tr>
+                    <tr>
+                        <td>2026/5/9</td>
+                        <td>静态页面落地；实现日时起卦、基础排盘功能</td>
+                    </tr>
+                    <tr>
+                        <td>2026/5/8</td>
+                        <td>初始化仓库</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
     </div>
     <script src="js/main.js"></script>

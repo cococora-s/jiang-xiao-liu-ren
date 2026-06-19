@@ -1188,6 +1188,9 @@
         const referenceHelpBackdrop = document.getElementById('referenceHelpBackdrop');
         const referenceHelpTitle = document.getElementById('referenceHelpTitle');
         const referenceHelpContent = document.getElementById('referenceHelpContent');
+        const devLogPanel = document.getElementById('devLogPanel');
+        const devLogBackdrop = document.getElementById('devLogBackdrop');
+        const openDevLogButton = document.getElementById('openDevLogButton');
         const getSpecificQuestionMinHeightPx = () => {
             if (!(specificQuestionInput instanceof HTMLTextAreaElement)) return 80;
             const computedMinHeight = Number.parseFloat(window.getComputedStyle(specificQuestionInput).minHeight);
@@ -1549,7 +1552,8 @@
             if (!element) return false;
             return element.classList.contains('notes-library-panel')
                 || element.classList.contains('prompt-editor-panel')
-                || element.classList.contains('reference-help-panel');
+                || element.classList.contains('reference-help-panel')
+                || element.classList.contains('dev-log-panel');
         };
         const getElementScaleValue = (element) => {
             if (!element) return 1;
@@ -1936,6 +1940,16 @@
             if (!referenceHelpPanel) return;
             hideAnimatedElement(referenceHelpPanel);
             hideAnimatedElement(referenceHelpBackdrop);
+        };
+        const openDevLogPanel = () => {
+            if (!devLogPanel) return;
+            showAnimatedElement(devLogPanel);
+            showAnimatedElement(devLogBackdrop);
+        };
+        const closeDevLogPanel = () => {
+            if (!devLogPanel) return;
+            hideAnimatedElement(devLogPanel);
+            hideAnimatedElement(devLogBackdrop);
         };
         const openReferenceHelpPanel = async ({ categoryKey, label }) => {
             if (!referenceHelpPanel || !label) return;
@@ -2791,6 +2805,16 @@
                     closeReferenceHelpPanel();
                 });
             }
+            if (openDevLogButton) {
+                openDevLogButton.addEventListener('click', () => {
+                    openDevLogPanel();
+                });
+            }
+            if (devLogBackdrop) {
+                devLogBackdrop.addEventListener('click', () => {
+                    closeDevLogPanel();
+                });
+            }
             document.addEventListener('pointerdown', () => {
                 if (referenceHelpPanel && !referenceHelpPanel.classList.contains('is-hidden')) {
                     closeReferenceHelpPanel();
@@ -2836,11 +2860,21 @@
                         closePromptEditorPanel();
                     }
                 }
+                if (devLogPanel && !devLogPanel.classList.contains('is-hidden')) {
+                    const clickedInsideDevLog = devLogPanel.contains(event.target);
+                    const clickedDevLogTrigger = openDevLogButton?.contains(event.target);
+                    if (!clickedInsideDevLog && !clickedDevLogTrigger) {
+                        closeDevLogPanel();
+                    }
+                }
             });
             document.addEventListener('keydown', (event) => {
                 if (event.key !== 'Escape') return;
                 if (referenceHelpPanel && !referenceHelpPanel.classList.contains('is-hidden')) {
                     closeReferenceHelpPanel();
+                }
+                if (devLogPanel && !devLogPanel.classList.contains('is-hidden')) {
+                    closeDevLogPanel();
                 }
             });
         }
