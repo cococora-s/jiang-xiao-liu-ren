@@ -400,6 +400,26 @@
             background: rgba(0, 0, 0, 0.12);
             pointer-events: auto;
         }
+        .palace-specify-hint {
+            position: fixed;
+            z-index: 1;
+            transform: translateX(-50%) translateY(-27%);
+            background-color: rgba(91, 66, 48, 1);
+            border-radius: var(--border-radius);
+            padding: 0.5rem 1rem;
+            text-align: center;
+            pointer-events: none;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #fff !important;
+            letter-spacing: 0.08em;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .palace-specify-backdrop.is-open .palace-specify-hint {
+            opacity: 1;
+        }
         /* 控制笔记库头部行布局 */
         .notes-library-header {
             display: flex;
@@ -938,7 +958,7 @@
         .notes-ai-row {
             margin-top: 0.75rem;
             display: grid;
-            grid-template-columns: 1fr auto;
+            grid-template-columns: auto auto 1fr;
             gap: 1rem;
             align-items: center;
         }

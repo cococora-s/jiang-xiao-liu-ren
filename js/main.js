@@ -1201,6 +1201,7 @@
         const mainPanel = document.getElementById('mainPanel');
         const palaceGrid = document.getElementById('palaceGrid');
         const palaceSpecifyBackdrop = document.getElementById('palaceSpecifyBackdrop');
+        const palaceSpecifyHint = document.getElementById('palaceSpecifyHint');
         let palaceSpecifyBackdropResizeHandler = null;
         let isPalaceSpecifyMode = false;
         const specifiedPalaceIndices = new Set();
@@ -1236,6 +1237,13 @@
             applyShadeRect(leftShade, rect.top, 0, rect.left, rect.height);
             applyShadeRect(rightShade, rect.top, rect.right, viewportWidth - rect.right, rect.height);
             applyShadeRect(bottomShade, rect.bottom, 0, viewportWidth, viewportHeight - rect.bottom);
+            if (palaceSpecifyHint) {
+                const hintGap = 12;
+                const hintHeight = palaceSpecifyHint.offsetHeight || 32;
+                const hintTop = Math.max(8, rect.top - hintGap - hintHeight);
+                palaceSpecifyHint.style.top = `${hintTop}px`;
+                palaceSpecifyHint.style.left = `${rect.left + rect.width / 2}px`;
+            }
         };
         const clearPalaceSpecifyBackdropStyles = () => {
             if (!palaceSpecifyBackdrop) return;
@@ -1245,6 +1253,10 @@
                 shadeEl.style.width = '';
                 shadeEl.style.height = '';
             });
+            if (palaceSpecifyHint) {
+                palaceSpecifyHint.style.top = '';
+                palaceSpecifyHint.style.left = '';
+            }
         };
         const bindPalaceSpecifyBackdropSync = () => {
             if (palaceSpecifyBackdropResizeHandler) return;
