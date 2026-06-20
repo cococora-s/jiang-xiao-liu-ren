@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "npx serve .",
-    "start": "npx serve ."
+    "start": "npx serve .",
+    "sync-readme": "node scripts/sync-readme.mjs"
   },
   "keywords": [
     "divination",

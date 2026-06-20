@@ -404,7 +404,7 @@
             position: fixed;
             z-index: 1;
             transform: translateX(-50%) translateY(-27%);
-            background-color: rgba(91, 66, 48, 1);
+            background-color: #564131;
             border-radius: var(--border-radius);
             padding: 0.5rem 1rem;
             text-align: center;
@@ -794,14 +794,16 @@
         #mainPanel.is-palace-specify-mode .slot-wuxing:not(:empty),
         #mainPanel.is-palace-specify-mode .slot-liushen:not(:empty),
         #mainPanel.is-palace-specify-mode .slot-liuqin:not(:empty),
-        #mainPanel.is-palace-specify-mode .slot-palace-name {
+        #mainPanel.is-palace-specify-mode .slot-palace-name,
+        #mainPanel.is-palace-specify-mode .slot-zhi:not(:empty) {
             cursor: inherit;
             transition: none;
         }
         #mainPanel.is-palace-specify-mode .slot-wuxing:not(:empty):hover,
         #mainPanel.is-palace-specify-mode .slot-liushen:not(:empty):hover,
         #mainPanel.is-palace-specify-mode .slot-liuqin:not(:empty):hover,
-        #mainPanel.is-palace-specify-mode .slot-palace-name:hover {
+        #mainPanel.is-palace-specify-mode .slot-palace-name:hover,
+        #mainPanel.is-palace-specify-mode .slot-zhi:not(:empty):hover {
             scale: 1;
         }
         /* 控制宫位内所有标签的绝对定位基类 */
@@ -850,14 +852,16 @@
         #mainPanel .slot-wuxing:not(:empty),
         #mainPanel .slot-liushen:not(:empty),
         #mainPanel .slot-liuqin:not(:empty),
-        #mainPanel .slot-palace-name {
+        #mainPanel .slot-palace-name,
+        #mainPanel .slot-zhi:not(:empty) {
             cursor: pointer;
             transition: scale 0.05s ease;
         }
         #mainPanel .slot-wuxing:not(:empty):hover,
         #mainPanel .slot-liushen:not(:empty):hover,
         #mainPanel .slot-liuqin:not(:empty):hover,
-        #mainPanel .slot-palace-name:hover {
+        #mainPanel .slot-palace-name:hover,
+        #mainPanel .slot-zhi:not(:empty):hover {
             scale: 1.05;
         }
         /* 未排盘时不显示任何东西 */
@@ -1120,8 +1124,7 @@
         .reference-help-title {
             position: relative;
             display: inline-block;
-            padding: 0.2rem 1rem 0.2rem 1rem;
-
+            padding: 0.5rem 0.5rem 0.2rem 0.5rem;
             font-size: 2rem;
             font-weight: 700;
             color: var(--dark-brown);
@@ -1131,7 +1134,7 @@
             position: absolute;
             left: -0.2rem;
             bottom: 0;
-            width: calc(100% + 1rem);
+            width: calc(100% + 0.5rem);
             height: var(--border-width);
             background: linear-gradient(
                 to right,
@@ -1247,14 +1250,14 @@
             text-shadow: 0 0 0.12rem rgba(255, 255, 255, 0.35);
         }
         .reference-liuqin-flow-arrow.is-sheng {
-            background-image: url('/image/arrow_green.png');
+            background-image: url('/assets/images/arrow-green.png');
         }
         .reference-liuqin-flow-arrow.is-sheng::after {
             content: '生';
             color: var(--dark-brown);
         }
         .reference-liuqin-flow-arrow.is-ke {
-            background-image: url('/image/arrow_red.png');
+            background-image: url('/assets/images/arrow-red.png');
         }
         .reference-liuqin-flow-arrow.is-ke::after {
             content: '克';

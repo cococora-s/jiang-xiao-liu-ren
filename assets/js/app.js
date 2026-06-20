@@ -1,3 +1,8 @@
+        /* 江氏小六壬排盘器 — 应用入口脚本 */
+
+        /* =============================================================================
+         * 常量与配置
+         * ============================================================================= */
         const palaces = ["大安", "留连", "速喜", "赤口", "小吉", "空亡"];
         const zhiOrder = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"];
         const palaceWuxingMap = ["木", "水", "火", "金", "木", "土"];
@@ -40,12 +45,14 @@
             "金": "#b8860b",
             "水": "#1565c0"
         };
-        const REFERENCE_HELP_DOC_PATH = 'docs/explanation.json';
+        const REFERENCE_HELP_DOC_PATH = 'data/explanation.json';
+        const DEV_LOG_DOC_PATH = 'data/changelog.json';
         const REFERENCE_SLOT_CATEGORY_MAP = {
             "slot-wuxing": "wuxing",
             "slot-liushen": "liushen",
             "slot-liuqin": "liuqin",
-            "slot-palace-name": "palace"
+            "slot-palace-name": "palace",
+            "slot-zhi": "zhi"
         };
         const REFERENCE_CATEGORY_KEY_MAP = {
             palace: "palace",
@@ -55,7 +62,9 @@
             liushen: "liushen",
             liu_shen: "liushen",
             liuqin: "liuqin",
-            liu_qin: "liuqin"
+            liu_qin: "liuqin",
+            zhi: "zhi",
+            dizhi: "zhi"
         };
         const REFERENCE_ITEM_FIELD_LABELS = {
             number: "数字",
@@ -86,14 +95,37 @@
         };
         const DEFAULT_REFERENCE_BADGE_LABEL_SET = new Set(Object.values(REFERENCE_ITEM_FIELD_LABELS));
         let referenceBadgeLabelSet = new Set(DEFAULT_REFERENCE_BADGE_LABEL_SET);
+        const DEFAULT_ZHI_COMBINATION_RULES = {
+            liuhe: [
+                { branches: ['子', '丑'], text: '子丑（合化土）' },
+                { branches: ['寅', '亥'], text: '寅亥（合化木）' },
+                { branches: ['卯', '戌'], text: '卯戌（合化火）' },
+                { branches: ['辰', '酉'], text: '辰酉（合化金）' },
+                { branches: ['巳', '申'], text: '巳申（合化水）' },
+                { branches: ['午', '未'], text: '午未（合化土）' }
+            ],
+            sanhe: [
+                { branches: ['申', '子', '辰'], text: '申子辰（合水局）' },
+                { branches: ['亥', '卯', '未'], text: '亥卯未（合木局）' },
+                { branches: ['寅', '午', '戌'], text: '寅午戌（合火局）' },
+                { branches: ['巳', '酉', '丑'], text: '巳酉丑（合金局）' }
+            ]
+        };
         const EMPTY_REFERENCE_HELP_DOC = {
             categories: {},
             rules: {
-                liuqinInteraction: { sheng: {}, ke: {} }
+                liuqinInteraction: { sheng: {}, ke: {} },
+                zhiCombination: DEFAULT_ZHI_COMBINATION_RULES
             }
         };
         let referenceHelpDocCache = null;
         let referenceHelpDocPromise = null;
+        let devLogDocCache = null;
+        let devLogDocPromise = null;
+
+        /* =============================================================================
+         * 术语解释
+         * ============================================================================= */
         function extractReferenceCategorySegment(rawCategoryKey) {
             if (typeof rawCategoryKey !== 'string') return '';
             const normalized = rawCategoryKey.trim();
@@ -130,12 +162,37 @@
             });
             return safeMap;
         }
+        function normalizeZhiCombinationList(rawList) {
+            if (!Array.isArray(rawList)) return [];
+            return rawList.map((item) => {
+                if (typeof item === 'string') {
+                    const text = item.trim();
+                    if (!text) return null;
+                    const branches = Array.from(text.match(/[子丑寅卯辰巳午未申酉戌亥]/g) || []);
+                    return branches.length ? { branches, text } : null;
+                }
+                if (!item || typeof item !== 'object') return null;
+                const text = String(item.text || '').trim();
+                const branches = Array.isArray(item.branches)
+                    ? item.branches.map((branch) => String(branch || '').trim()).filter(Boolean)
+                    : Array.from(text.match(/[子丑寅卯辰巳午未申酉戌亥]/g) || []);
+                if (!text || !branches.length) return null;
+                return { branches, text };
+            }).filter(Boolean);
+        }
         function normalizeReferenceRules(rawRules) {
             const liuqinRaw = rawRules?.liuqin_interaction || rawRules?.liuqinInteraction || {};
+            const zhiRaw = rawRules?.zhi_combination || rawRules?.zhiCombination || {};
+            const liuhe = normalizeZhiCombinationList(zhiRaw.liuhe || zhiRaw.liu_he);
+            const sanhe = normalizeZhiCombinationList(zhiRaw.sanhe || zhiRaw.san_he);
             return {
                 liuqinInteraction: {
                     sheng: normalizeReferenceInteractionMap(liuqinRaw.sheng),
                     ke: normalizeReferenceInteractionMap(liuqinRaw.ke)
+                },
+                zhiCombination: {
+                    liuhe: liuhe.length ? liuhe : DEFAULT_ZHI_COMBINATION_RULES.liuhe,
+                    sanhe: sanhe.length ? sanhe : DEFAULT_ZHI_COMBINATION_RULES.sanhe
                 }
             };
         }
@@ -231,6 +288,85 @@
                 });
             return referenceHelpDocPromise;
         }
+        async function loadDevLogDoc() {
+            if (devLogDocCache) return devLogDocCache;
+            if (devLogDocPromise) return devLogDocPromise;
+            devLogDocPromise = fetch(DEV_LOG_DOC_PATH, { cache: 'no-store' })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(`读取开发日志失败: HTTP ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then((rawDoc) => {
+                    const entries = Array.isArray(rawDoc?.entries)
+                        ? rawDoc.entries
+                            .map((entry) => ({
+                                date: String(entry?.date || '').trim(),
+                                description: String(entry?.description || '').trim()
+                            }))
+                            .filter((entry) => entry.date && entry.description)
+                        : [];
+                    devLogDocCache = { entries };
+                    return devLogDocCache;
+                })
+                .catch((error) => {
+                    console.warn('加载开发日志失败:', error);
+                    devLogDocCache = { entries: [] };
+                    return devLogDocCache;
+                })
+                .finally(() => {
+                    devLogDocPromise = null;
+                });
+            return devLogDocPromise;
+        }
+
+        /* =============================================================================
+         * 开发日志
+         * ============================================================================= */
+        function renderDevLogContent(container, entries) {
+            if (!container) return;
+            container.replaceChildren();
+            const table = document.createElement('table');
+            table.className = 'dev-log-table';
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            ['日期', '说明'].forEach((label) => {
+                const th = document.createElement('th');
+                th.setAttribute('align', 'left');
+                th.textContent = label;
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+            const tbody = document.createElement('tbody');
+            if (entries.length === 0) {
+                const row = document.createElement('tr');
+                const cell = document.createElement('td');
+                cell.colSpan = 2;
+                cell.textContent = '暂无开发日志';
+                row.appendChild(cell);
+                tbody.appendChild(row);
+            } else {
+                entries.forEach(({ date, description }) => {
+                    const row = document.createElement('tr');
+                    const dateCell = document.createElement('td');
+                    dateCell.textContent = date;
+                    const descriptionCell = document.createElement('td');
+                    descriptionCell.textContent = description;
+                    row.append(dateCell, descriptionCell);
+                    tbody.appendChild(row);
+                });
+            }
+            table.appendChild(tbody);
+            container.appendChild(table);
+        }
+        async function refreshDevLogPanel() {
+            const devLogContent = document.getElementById('devLogContent');
+            if (!devLogContent) return;
+            const devLogDoc = await loadDevLogDoc();
+            renderDevLogContent(devLogContent, devLogDoc.entries);
+        }
         function parseReferenceHelpDescription(rawDescription) {
             const description = String(rawDescription || '').trim();
             if (!description) return [];
@@ -302,6 +438,39 @@
             sectionEl.appendChild(chartEl);
             referenceHelpContent.appendChild(sectionEl);
         }
+        function createReferenceHelpEntry(badgeLabel, content) {
+            const entryEl = document.createElement('div');
+            entryEl.className = 'reference-help-entry';
+            const badgeEl = document.createElement('span');
+            badgeEl.className = 'reference-help-badge';
+            badgeEl.textContent = badgeLabel;
+            const valueEl = document.createElement('span');
+            valueEl.className = 'reference-help-entry-value';
+            valueEl.innerHTML = colorizeGanZhiText(content, { boldZhi: true });
+            entryEl.appendChild(badgeEl);
+            entryEl.appendChild(valueEl);
+            return entryEl;
+        }
+        function getZhiCombinationEntriesForLabel(label, combinationList) {
+            if (!label || !Array.isArray(combinationList)) return [];
+            return combinationList.filter((item) => item.branches.includes(label));
+        }
+        function renderZhiCombinationSection({ label, referenceHelpDoc }) {
+            if (!referenceHelpContent || !label) return;
+            const rules = referenceHelpDoc?.rules?.zhiCombination || DEFAULT_ZHI_COMBINATION_RULES;
+            const liuheEntries = getZhiCombinationEntriesForLabel(label, rules.liuhe);
+            const sanheEntries = getZhiCombinationEntriesForLabel(label, rules.sanhe);
+            if (!liuheEntries.length && !sanheEntries.length) return;
+
+            const fragment = document.createDocumentFragment();
+            liuheEntries.forEach((entry) => {
+                fragment.appendChild(createReferenceHelpEntry('六合', entry.text));
+            });
+            sanheEntries.forEach((entry) => {
+                fragment.appendChild(createReferenceHelpEntry('三合', entry.text));
+            });
+            referenceHelpContent.appendChild(fragment);
+        }
         function renderReferenceHelpContent(rawDescription, options = {}) {
             if (!referenceHelpContent) return;
             const parsedLines = parseReferenceHelpDescription(rawDescription);
@@ -336,15 +505,29 @@
                     referenceHelpDoc: options.referenceHelpDoc
                 });
             }
+            if (options.categoryKey === 'zhi') {
+                renderZhiCombinationSection({
+                    label: options.label,
+                    referenceHelpDoc: options.referenceHelpDoc
+                });
+            }
         }
-        function colorizeGanZhiText(text) {
+        function colorizeGanZhiText(text, options = {}) {
+            const boldZhi = Boolean(options.boldZhi);
             return Array.from(text).map((ch) => {
                 const color = wuxingColorMap[ch];
                 if (!color) return ch;
-                return `<span style="color: ${color} !important;">${ch}</span>`;
+                const styles = [`color: ${color} !important`];
+                if (boldZhi && zhiOrder.includes(ch)) {
+                    styles.push('font-weight: 700');
+                }
+                return `<span style="${styles.join('; ')};">${ch}</span>`;
             }).join('');
         }
 
+        /* =============================================================================
+         * 时钟与日期时间
+         * ============================================================================= */
         function updateClock() {
             const now = new Date();
 
@@ -651,6 +834,9 @@
             setDateTimeValue(toDateTimeLocalValue(date));
         }
 
+        /* =============================================================================
+         * 盘面渲染与排盘算法
+         * ============================================================================= */
         function setPalaceText(index, selector, text) {
             const el = document.getElementById(`palace-${index}`);
             if (!el) return;
@@ -858,6 +1044,9 @@
             return arranged;
         }
 
+        /* =============================================================================
+         * 排盘入口
+         * ============================================================================= */
         function startCalculation() {
             const methodValue = String(document.getElementById('method')?.value || '').trim();
             const manualInput = document.getElementById('dateTimeManualInput');
@@ -923,6 +1112,9 @@
         initGrid();
         ensureDefaultCurrentDateTime();
 
+        /* =============================================================================
+         * 起卦设置与下拉组件
+         * ============================================================================= */
         function clearCurrentPageNotesContent(options = {}) {
             const { preserveQuestionFields = false } = options;
             activeEditingNoteId = null;
@@ -1315,6 +1507,9 @@
                 .map((palaceIndex) => palaces[palaceIndex])
                 .filter(Boolean);
         };
+        /* =============================================================================
+         * 断卦笔记与笔记库
+         * ============================================================================= */
         const notesPanelContainer = document.getElementById('notesPanelContainer');
         const NOTES_STORAGE_KEY = 'jiangshi_xiaoliuren_saved_notes_v1';
         const AI_TASK_LINES_STORAGE_KEY = 'jiangshi_xiaoliuren_ai_task_lines_v1';
@@ -1695,6 +1890,9 @@
                 notesRows: getNotesRowsSnapshot()
             };
         };
+        /* =============================================================================
+         * AI 解卦
+         * ============================================================================= */
         const DEFAULT_AI_PROMPT_TEMPLATE = [
             '# Role',
             '你是一个精通【江氏小六壬】的专业算命师，负责根据提供的卦象进行断卦。',
@@ -1802,7 +2000,7 @@
         const getAiPromptTemplateText = async () => {
             if (aiPromptTemplateCache) return aiPromptTemplateCache;
             try {
-                const response = await fetch('/docs/prompt.txt', { cache: 'no-store' });
+                const response = await fetch('/data/ai-prompt.txt', { cache: 'no-store' });
                 if (response.ok) {
                     const text = await response.text();
                     if (text && text.trim()) {
@@ -1811,7 +2009,7 @@
                     }
                 }
             } catch (error) {
-                console.warn('读取 docs/prompt.txt 失败，使用默认模板:', error);
+                console.warn('读取 data/ai-prompt.txt 失败，使用默认模板:', error);
             }
             aiPromptTemplateCache = DEFAULT_AI_PROMPT_TEMPLATE;
             return aiPromptTemplateCache;
@@ -1968,15 +2166,20 @@
             const referenceHelpDoc = await loadReferenceHelpDoc();
             const categoryConfig = referenceHelpDoc.categories?.[categoryKey];
             const description = categoryConfig?.items?.[label] || '';
-            if (!description) return;
             if (referenceHelpTitle) {
-                referenceHelpTitle.textContent = `${label} · 术语解释`;
+                referenceHelpTitle.textContent = label;
             }
             renderReferenceHelpContent(description, {
                 categoryKey,
                 label,
                 referenceHelpDoc
             });
+            if (!description && referenceHelpContent && !referenceHelpContent.textContent.trim()) {
+                const placeholderEl = document.createElement('p');
+                placeholderEl.className = 'reference-help-paragraph reference-help-placeholder';
+                placeholderEl.textContent = '暂无解释内容。';
+                referenceHelpContent.appendChild(placeholderEl);
+            }
             showAnimatedElement(referenceHelpPanel);
             showAnimatedElement(referenceHelpBackdrop);
         };
@@ -1997,7 +2200,7 @@
                         }
                     }
                 }
-                const slot = target.closest('.slot-wuxing, .slot-liushen, .slot-liuqin, .slot-palace-name');
+                const slot = target.closest('.slot-wuxing, .slot-liushen, .slot-liuqin, .slot-palace-name, .slot-zhi');
                 if (!(slot instanceof HTMLElement)) return;
                 const categoryClass = Object.keys(REFERENCE_SLOT_CATEGORY_MAP).find((className) => slot.classList.contains(className));
                 if (!categoryClass) return;
@@ -2890,6 +3093,9 @@
                 }
             });
         }
+        /* =============================================================================
+         * 初始化与事件绑定
+         * ============================================================================= */
         syncNotesPalaceDashStyle();
         window.addEventListener('resize', syncNotesPalaceDashStyle);
         initMainPanelCustomDropdowns();
@@ -3266,5 +3472,6 @@
             syncNotesLibraryPanelTopWithButton();
             renderNotesLibraryList();
             clearCurrentPageNotesContent();
+            refreshDevLogPanel();
         };
         window.addEventListener('resize', syncNotesLibraryPanelTopWithButton);

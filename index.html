@@ -4,64 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>江氏小六壬排盘器</title>
+    <!-- 第三方依赖 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/zh.js"></script>
-    <link rel="stylesheet" href="css/styles.css">
+    <!-- 应用样式 -->
+    <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
     <div class="page-root">
 
+    <!-- 页头 -->
     <div class="page-header">
         <button type="button" id="openDevLogButton" class="dev-log-open-button small-action-button">开发日志</button>
-        <h1 class="page-title">
-            江氏小六壬排盘器
-        </h1>
-        <button type="button" id="openNotesLibraryButton" class="notes-library-open-button small-action-button">
-            我的笔记
-        </button>
+        <h1 class="page-title">江氏小六壬排盘器</h1>
+        <button type="button" id="openNotesLibraryButton" class="notes-library-open-button small-action-button">我的笔记</button>
     </div>
 
-    <div id="notesLibraryPanel" class="theme-panel notes-library-panel is-hidden">
-        <div class="notes-library-header">
-            <span class="notes-library-title">我的笔记</span>
-            <button type="button" id="clearNotesLibraryButton" class="small-action-button notes-library-clear-button">清空所有笔记</button>
-            <div class="notes-library-header-actions">
-                <button type="button" id="closeNotesLibraryButton" class="small-action-button notes-library-close-button">关闭</button>
-            </div>
-        </div>
-        <div id="notesLibraryList" class="notes-library-list"></div>
-        <div id="notesLibraryEmpty" class="notes-library-empty">暂无笔记</div>
-    </div>
-    <div id="notesLibraryBackdrop" class="notes-library-backdrop is-hidden"></div>
-    <div id="palaceSpecifyBackdrop" class="palace-specify-backdrop is-hidden" aria-hidden="true">
-        <div id="palaceSpecifyHint" class="palace-specify-hint" aria-live="polite">请手动指定AI解读宫位（默认为AI自动选择）</div>
-        <div class="palace-specify-shade palace-specify-shade-top"></div>
-        <div class="palace-specify-shade palace-specify-shade-left"></div>
-        <div class="palace-specify-shade palace-specify-shade-right"></div>
-        <div class="palace-specify-shade palace-specify-shade-bottom"></div>
-    </div>
-    <template id="notesLibraryItemTemplate">
-        <div class="notes-library-item">
-            <div>
-                <div class="notes-library-item-time"></div>
-                <div class="notes-library-item-desc"></div>
-            </div>
-            <button type="button" class="notes-library-delete-button action-theme-button">删除</button>
-        </div>
-    </template>
-
+    <!-- 主内容区：时钟 / 起卦设置 / 排盘盘面 -->
     <div class="left-column-panels">
         <div id="timePanel" class="theme-panel time-panel">
-            <div id="solarClock">
-                0000年0月0日 00:00:00
-            </div>
-            <div id="lunarClock">
-                获取农历中...
-            </div>
+            <div id="solarClock">0000年0月0日 00:00:00</div>
+            <div id="lunarClock">获取农历中...</div>
         </div>
+
         <div id="settingPanel" class="theme-panel setting-panel">
             <div id="method-section" class="notes-row">
                 <span class="notes-field-label">起卦方法</span>
@@ -74,7 +42,7 @@
                 <div class="global-dropdown dropdown-query-item">
                     <input type="hidden" id="queryItem" value="吉凶">
                 </div>
-            </div>    
+            </div>
             <div id="datetime-section" class="datetime-section">
                 <label class="notes-field-label">选择时间</label>
                 <div class="datetime-controls">
@@ -88,11 +56,7 @@
                             pattern="\d{4}/\d{2}/\d{2} \d{2}:\d{2}"
                             class="datetime-manual-input"
                         >
-                        <button
-                            type="button"
-                            id="dateTimePickerButton"
-                            class="datetime-picker-button"
-                        >
+                        <button type="button" id="dateTimePickerButton" class="datetime-picker-button">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                                 <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -103,13 +67,7 @@
                         <input type="hidden" id="dateTime">
                         <input type="text" id="dateTimeCalendarInput" class="hidden" tabindex="-1" aria-hidden="true">
                     </div>
-                    <button
-                        type="button"
-                        id="dateTimeNowButton"
-                        class="datetime-now-button small-action-button"
-                    >
-                        当前时间
-                    </button>
+                    <button type="button" id="dateTimeNowButton" class="datetime-now-button small-action-button">当前时间</button>
                 </div>
                 <div id="selectedDateLunarInfo" class="selected-date-lunar-info"></div>
             </div>
@@ -138,15 +96,12 @@
         </div>
 
         <div id="mainPanel" class="theme-panel main-panel">
-         
-            <button onclick="startCalculation()" class="action-button action-theme-button">
-                开始排盘
-            </button>
-            <div id="palaceGrid" class="hex-grid">
-            </div>
+            <button onclick="startCalculation()" class="action-button action-theme-button">开始排盘</button>
+            <div id="palaceGrid" class="hex-grid"></div>
         </div>
     </div>
 
+    <!-- 断卦笔记面板 -->
     <div id="notesPanelContainer" class="theme-panel notes-panel">
         <div class="notes-panel-header">
             <div class="notes-panel-header-side"></div>
@@ -166,6 +121,42 @@
             <button type="button" id="resetBoardButton" class="small-action-button notes-save-button">重置盘面</button>
         </div>
     </div>
+
+    <!-- HTML 模板 -->
+    <template id="notesLibraryItemTemplate">
+        <div class="notes-library-item">
+            <div>
+                <div class="notes-library-item-time"></div>
+                <div class="notes-library-item-desc"></div>
+            </div>
+            <button type="button" class="notes-library-delete-button action-theme-button">删除</button>
+        </div>
+    </template>
+
+    <!-- 浮层：笔记库 -->
+    <div id="notesLibraryPanel" class="theme-panel notes-library-panel is-hidden">
+        <div class="notes-library-header">
+            <span class="notes-library-title">我的笔记</span>
+            <button type="button" id="clearNotesLibraryButton" class="small-action-button notes-library-clear-button">清空所有笔记</button>
+            <div class="notes-library-header-actions">
+                <button type="button" id="closeNotesLibraryButton" class="small-action-button notes-library-close-button">关闭</button>
+            </div>
+        </div>
+        <div id="notesLibraryList" class="notes-library-list"></div>
+        <div id="notesLibraryEmpty" class="notes-library-empty">暂无笔记</div>
+    </div>
+    <div id="notesLibraryBackdrop" class="notes-library-backdrop is-hidden"></div>
+
+    <!-- 浮层：指定解读宫位 -->
+    <div id="palaceSpecifyBackdrop" class="palace-specify-backdrop is-hidden" aria-hidden="true">
+        <div id="palaceSpecifyHint" class="palace-specify-hint" aria-live="polite">请手动指定AI解读宫位（默认为AI自动选择）</div>
+        <div class="palace-specify-shade palace-specify-shade-top"></div>
+        <div class="palace-specify-shade palace-specify-shade-left"></div>
+        <div class="palace-specify-shade palace-specify-shade-right"></div>
+        <div class="palace-specify-shade palace-specify-shade-bottom"></div>
+    </div>
+
+    <!-- 浮层：AI 提示词编辑 -->
     <div id="promptEditorBackdrop" class="prompt-editor-backdrop is-hidden"></div>
     <div id="promptEditorPanel" class="theme-panel prompt-editor-panel is-hidden" role="dialog" aria-modal="true" aria-label="修改AI提示词">
         <div class="prompt-editor-title">AI提示词</div>
@@ -180,6 +171,8 @@
             <button type="button" id="savePromptTaskLinesButton" class="action-theme-button prompt-editor-save-button">保存</button>
         </div>
     </div>
+
+    <!-- 浮层：术语解释 -->
     <div id="referenceHelpBackdrop" class="reference-help-backdrop is-hidden"></div>
     <div id="referenceHelpPanel" class="theme-panel reference-help-panel is-hidden" role="dialog" aria-modal="true" aria-label="术语解释">
         <div class="reference-help-header">
@@ -187,54 +180,21 @@
         </div>
         <div id="referenceHelpContent" class="reference-help-content"></div>
     </div>
+
+    <!-- 浮层：开发日志 -->
     <div id="devLogBackdrop" class="reference-help-backdrop dev-log-backdrop is-hidden"></div>
     <div id="devLogPanel" class="theme-panel reference-help-panel dev-log-panel is-hidden" role="dialog" aria-modal="true" aria-label="开发日志">
         <div class="reference-help-header">
             <div class="reference-help-title">开发日志</div>
         </div>
-        <div class="reference-help-content dev-log-content">
-            <table class="dev-log-table">
-                <thead>
-                    <tr>
-                        <th align="left">日期</th>
-                        <th align="left">说明</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>2026/6/20</td>
-                        <td>修复bug；更新指定宫位解释功能</td>
-                    </tr>
-                    <tr>
-                        <td>2026/5/18</td>
-                        <td>更新字体，优化加载速度</td>
-                    </tr>
-                    <tr>
-                        <td>2026/5/12</td>
-                        <td>更新数字起卦；更新术语解释功能；优化布局；迭代 AI 提示词</td>
-                    </tr>
-                    <tr>
-                        <td>2026/5/11</td>
-                        <td>整体代码/布局梳理；更新 AI 提示词调整功能</td>
-                    </tr>
-                    <tr>
-                        <td>2026/5/10</td>
-                        <td>接入 AI 解卦；更新笔记面板；更新保存笔记功能；横竖屏排版优化</td>
-                    </tr>
-                    <tr>
-                        <td>2026/5/9</td>
-                        <td>静态页面落地；实现日时起卦、基础排盘功能</td>
-                    </tr>
-                    <tr>
-                        <td>2026/5/8</td>
-                        <td>初始化仓库</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <div id="devLogContent" class="reference-help-content dev-log-content"></div>
     </div>
+
     </div>
-    <script src="js/main.js"></script>
+
+    <!-- 应用脚本 -->
+    <script src="assets/js/app.js"></script>
+    <!-- Vercel Analytics -->
     <script>
         window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
     </script>

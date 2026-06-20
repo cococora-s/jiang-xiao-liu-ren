@@ -58,6 +58,7 @@
 
 <h2>开发日志</h2>
 
+<!-- changelog:start -->
 <table>
   <thead>
     <tr>
@@ -68,7 +69,7 @@
   <tbody>
     <tr>
       <td>2026/6/20</td>
-      <td>修复bug；更新指定宫位解释功能</td>
+      <td>修复bug；更新指定宫位AI解读功能；更新三合六合提示功能</td>
     </tr>
     <tr>
       <td>2026/5/18</td>
@@ -96,3 +97,4 @@
     </tr>
   </tbody>
 </table>
+<!-- changelog:end -->
