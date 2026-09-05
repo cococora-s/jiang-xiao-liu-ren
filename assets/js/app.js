@@ -45,8 +45,34 @@
             "金": "#b8860b",
             "水": "#1565c0"
         };
-        const REFERENCE_HELP_DOC_PATH = 'data/explanation.json';
-        const DEV_LOG_DOC_PATH = 'data/changelog.json';
+        const I18N = window.AppI18n || {
+            t: (key) => key,
+            tTerm: (term) => String(term || ''),
+            formatTermTitle: (term) => String(term || ''),
+            getLang: () => 'zh',
+            setLang: () => 'zh',
+            onLangChange: () => {},
+            applyStaticDom: () => {},
+            canonicalFromDisplay: (text) => String(text || '').trim(),
+            getPalaceIndexByName: () => null,
+            getQueryItemLabel: (value) => value,
+            getMethodLabel: (value) => value,
+            formatCalendarYear: (year) => `${year}年`,
+            getCalendarMonthNames: () => ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+            formatSolarDateTime: () => '',
+            formatLunarDateTime: () => '',
+            getListJoin: () => '、',
+            getDataPath: (kind) => {
+                if (kind === 'explanation') return 'data/explanation.json';
+                if (kind === 'changelog') return 'data/changelog.json';
+                return '/data/ai-prompt.txt';
+            }
+        };
+        const t = (key, vars) => I18N.t(key, vars);
+        const tTerm = (term) => I18N.tTerm(term);
+        const getReferenceHelpDocPath = () => I18N.getDataPath('explanation');
+        const getDevLogDocPath = () => I18N.getDataPath('changelog');
+        const getAiPromptDocPath = () => I18N.getDataPath('aiPrompt');
         const REFERENCE_SLOT_CATEGORY_MAP = {
             "slot-wuxing": "wuxing",
             "slot-liushen": "liushen",
@@ -95,27 +121,36 @@
         };
         const DEFAULT_REFERENCE_BADGE_LABEL_SET = new Set(Object.values(REFERENCE_ITEM_FIELD_LABELS));
         let referenceBadgeLabelSet = new Set(DEFAULT_REFERENCE_BADGE_LABEL_SET);
-        const DEFAULT_ZHI_COMBINATION_RULES = {
-            liuhe: [
-                { branches: ['子', '丑'], text: '子丑（合化土）' },
-                { branches: ['寅', '亥'], text: '寅亥（合化木）' },
-                { branches: ['卯', '戌'], text: '卯戌（合化火）' },
-                { branches: ['辰', '酉'], text: '辰酉（合化金）' },
-                { branches: ['巳', '申'], text: '巳申（合化水）' },
-                { branches: ['午', '未'], text: '午未（合化土）' }
-            ],
-            sanhe: [
-                { branches: ['申', '子', '辰'], text: '申子辰（合水局）' },
-                { branches: ['亥', '卯', '未'], text: '亥卯未（合木局）' },
-                { branches: ['寅', '午', '戌'], text: '寅午戌（合火局）' },
-                { branches: ['巳', '酉', '丑'], text: '巳酉丑（合金局）' }
-            ]
-        };
+        function getReferenceItemFieldLabels() {
+            const labels = {};
+            Object.keys(REFERENCE_ITEM_FIELD_LABELS).forEach((fieldKey) => {
+                labels[fieldKey] = t(`refField.${fieldKey}`);
+            });
+            return labels;
+        }
+        function getDefaultZhiCombinationRules() {
+            return {
+                liuhe: [
+                    { branches: ['子', '丑'], text: t('zhi.liuhe.子丑') },
+                    { branches: ['寅', '亥'], text: t('zhi.liuhe.寅亥') },
+                    { branches: ['卯', '戌'], text: t('zhi.liuhe.卯戌') },
+                    { branches: ['辰', '酉'], text: t('zhi.liuhe.辰酉') },
+                    { branches: ['巳', '申'], text: t('zhi.liuhe.巳申') },
+                    { branches: ['午', '未'], text: t('zhi.liuhe.午未') }
+                ],
+                sanhe: [
+                    { branches: ['申', '子', '辰'], text: t('zhi.sanhe.申子辰') },
+                    { branches: ['亥', '卯', '未'], text: t('zhi.sanhe.亥卯未') },
+                    { branches: ['寅', '午', '戌'], text: t('zhi.sanhe.寅午戌') },
+                    { branches: ['巳', '酉', '丑'], text: t('zhi.sanhe.巳酉丑') }
+                ]
+            };
+        }
         const EMPTY_REFERENCE_HELP_DOC = {
             categories: {},
             rules: {
                 liuqinInteraction: { sheng: {}, ke: {} },
-                zhiCombination: DEFAULT_ZHI_COMBINATION_RULES
+                zhiCombination: getDefaultZhiCombinationRules()
             }
         };
         let referenceHelpDocCache = null;
@@ -139,8 +174,9 @@
         }
         function buildReferenceBadgeLabelSet(rawLabels) {
             const dynamicBadgeSet = new Set(DEFAULT_REFERENCE_BADGE_LABEL_SET);
+            Object.values(getReferenceItemFieldLabels()).forEach((label) => dynamicBadgeSet.add(label));
             if (rawLabels && typeof rawLabels === 'object') {
-                Object.entries(REFERENCE_ITEM_FIELD_LABELS).forEach(([fieldKey, defaultLabel]) => {
+                Object.entries(getReferenceItemFieldLabels()).forEach(([fieldKey, defaultLabel]) => {
                     const labelValue = rawLabels[fieldKey];
                     if (typeof labelValue === 'string' && labelValue.trim()) {
                         dynamicBadgeSet.add(labelValue.trim());
@@ -191,8 +227,8 @@
                     ke: normalizeReferenceInteractionMap(liuqinRaw.ke)
                 },
                 zhiCombination: {
-                    liuhe: liuhe.length ? liuhe : DEFAULT_ZHI_COMBINATION_RULES.liuhe,
-                    sanhe: sanhe.length ? sanhe : DEFAULT_ZHI_COMBINATION_RULES.sanhe
+                    liuhe: liuhe.length ? liuhe : getDefaultZhiCombinationRules().liuhe,
+                    sanhe: sanhe.length ? sanhe : getDefaultZhiCombinationRules().sanhe
                 }
             };
         }
@@ -207,10 +243,10 @@
             } else if (typeof rawItemValue.description === 'string' && rawItemValue.description.trim()) {
                 sections.push(rawItemValue.description.trim());
             }
-            Object.entries(REFERENCE_ITEM_FIELD_LABELS).forEach(([fieldKey, fieldLabel]) => {
+            Object.entries(getReferenceItemFieldLabels()).forEach(([fieldKey, fieldLabel]) => {
                 const fieldValue = rawItemValue[fieldKey];
                 if (typeof fieldValue === 'undefined' || fieldValue === null || fieldValue === '') return;
-                const normalizedValue = Array.isArray(fieldValue) ? fieldValue.join('、') : String(fieldValue);
+                const normalizedValue = Array.isArray(fieldValue) ? fieldValue.join(I18N.getListJoin()) : String(fieldValue);
                 sections.push(`${fieldLabel}：${normalizedValue}`);
             });
             return sections.join('\n');
@@ -223,6 +259,9 @@
             if (itemValue && typeof itemValue === 'object') {
                 if (typeof itemValue.name === 'string' && itemValue.name.trim()) {
                     aliasSet.add(itemValue.name.trim());
+                }
+                if (typeof itemValue.nameZh === 'string' && itemValue.nameZh.trim()) {
+                    aliasSet.add(itemValue.nameZh.trim());
                 }
                 if (typeof itemValue.element === 'string' && itemValue.element.trim()) {
                     itemValue.element.split('/').map((part) => part.trim()).filter(Boolean).forEach((part) => {
@@ -267,7 +306,7 @@
         async function loadReferenceHelpDoc() {
             if (referenceHelpDocCache) return referenceHelpDocCache;
             if (referenceHelpDocPromise) return referenceHelpDocPromise;
-            referenceHelpDocPromise = fetch(REFERENCE_HELP_DOC_PATH, { cache: 'no-store' })
+            referenceHelpDocPromise = fetch(getReferenceHelpDocPath(), { cache: 'no-store' })
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error(`读取解释文档失败: HTTP ${response.status}`);
@@ -291,7 +330,7 @@
         async function loadDevLogDoc() {
             if (devLogDocCache) return devLogDocCache;
             if (devLogDocPromise) return devLogDocPromise;
-            devLogDocPromise = fetch(DEV_LOG_DOC_PATH, { cache: 'no-store' })
+            devLogDocPromise = fetch(getDevLogDocPath(), { cache: 'no-store' })
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error(`读取开发日志失败: HTTP ${response.status}`);
@@ -394,7 +433,7 @@
         function createLiuqinFlowItem(label, toneClassName, areaClassName) {
             const itemEl = document.createElement('div');
             itemEl.className = `reference-liuqin-flow-item ${toneClassName} ${areaClassName}`;
-            itemEl.textContent = label || '—';
+            itemEl.textContent = tTerm(label) || '—';
             return itemEl;
         }
         function createLiuqinFlowArrow(toneClassName, areaClassName) {
@@ -418,7 +457,7 @@
 
             const titleEl = document.createElement('h3');
             titleEl.className = 'reference-liuqin-flow-title';
-            titleEl.textContent = '六亲生克逻辑';
+            titleEl.textContent = t('help.liuqinFlow');
             sectionEl.appendChild(titleEl);
 
             const chartEl = document.createElement('div');
@@ -457,17 +496,17 @@
         }
         function renderZhiCombinationSection({ label, referenceHelpDoc }) {
             if (!referenceHelpContent || !label) return;
-            const rules = referenceHelpDoc?.rules?.zhiCombination || DEFAULT_ZHI_COMBINATION_RULES;
+            const rules = referenceHelpDoc?.rules?.zhiCombination || getDefaultZhiCombinationRules();
             const liuheEntries = getZhiCombinationEntriesForLabel(label, rules.liuhe);
             const sanheEntries = getZhiCombinationEntriesForLabel(label, rules.sanhe);
             if (!liuheEntries.length && !sanheEntries.length) return;
 
             const fragment = document.createDocumentFragment();
             liuheEntries.forEach((entry) => {
-                fragment.appendChild(createReferenceHelpEntry('六合', entry.text));
+                fragment.appendChild(createReferenceHelpEntry(t('help.liuhe'), entry.text));
             });
             sanheEntries.forEach((entry) => {
-                fragment.appendChild(createReferenceHelpEntry('三合', entry.text));
+                fragment.appendChild(createReferenceHelpEntry(t('help.sanhe'), entry.text));
             });
             referenceHelpContent.appendChild(fragment);
         }
@@ -530,18 +569,9 @@
          * ============================================================================= */
         function updateClock() {
             const now = new Date();
-
-            const solarStr = now.getFullYear() + '年' + 
-                (now.getMonth() + 1) + '月' + 
-                now.getDate() + '日 ' + 
-                String(now.getHours()).padStart(2, '0') + ':' + 
-                String(now.getMinutes()).padStart(2, '0') + ':' + 
-                String(now.getSeconds()).padStart(2, '0');
-            document.getElementById('solarClock').innerText = solarStr;
-
+            document.getElementById('solarClock').innerText = I18N.formatSolarDateTime(now);
             const lunar = Lunar.fromDate(now);
-            const lunarStr = `${lunar.getYearInGanZhi()}年 ${lunar.getMonthInGanZhi()}月 ${lunar.getDayInGanZhi()}日 ${lunar.getTimeInGanZhi()}时 ${lunar.getMonthInChinese()}月${lunar.getDayInChinese()}`;
-            document.getElementById('lunarClock').innerHTML = colorizeGanZhiText(lunarStr);
+            document.getElementById('lunarClock').innerHTML = colorizeGanZhiText(I18N.formatLunarDateTime(lunar));
         }
 
         function initGrid() {
@@ -559,7 +589,7 @@
                     <span class="palace-slot slot-liuqin"></span>
                     <span class="palace-slot slot-daytime"></span>
                     <span class="palace-slot slot-body"></span>
-                    <span class="palace-slot slot-palace-name" style="--palace-underline-color: ${underlineColor};">${palaceName}</span>
+                    <span class="palace-slot slot-palace-name" data-term="${palaceName}" style="--palace-underline-color: ${underlineColor};">${tTerm(palaceName)}</span>
                 </div>
             `;
             }).join('');
@@ -705,7 +735,7 @@
                 manualInput.setCustomValidity('');
                 return date;
             }
-            manualInput.setCustomValidity('请输入有效时间，格式为 yyyy/mm/dd HH:mm');
+            manualInput.setCustomValidity(t('datetime.invalid'));
             if (report) manualInput.reportValidity();
             return null;
         }
@@ -718,8 +748,7 @@
                 return;
             }
             const lunar = Lunar.fromDate(date);
-            const lunarText = `${lunar.getYearInGanZhi()}年 ${lunar.getMonthInGanZhi()}月 ${lunar.getDayInGanZhi()}日 ${lunar.getTimeInGanZhi()}时 ${lunar.getMonthInChinese()}月${lunar.getDayInChinese()}`;
-            lunarInfoEl.innerHTML = colorizeGanZhiText(lunarText);
+            lunarInfoEl.innerHTML = colorizeGanZhiText(I18N.formatLunarDateTime(lunar));
         }
 
         function positionCalendarCenteredBelowDateTimeRow(instance) {
@@ -854,7 +883,7 @@
                 slot.innerHTML = '';
                 return;
             }
-            slot.innerHTML = texts.map((text) => `<span class="circled-char">${text}</span>`).join('');
+            slot.innerHTML = texts.map((text) => `<span class="circled-char" data-term="${text}">${text}</span>`).join('');
         }
 
         function setZhiLabel(index, zhi) {
@@ -863,7 +892,13 @@
             const color = wuxingColorMap[zhi] || '#4b3521';
             const slot = el.querySelector('.slot-zhi');
             if (!slot) return;
-            slot.innerHTML = zhi ? `<span style="color: ${color} !important;">${zhi}</span>` : '';
+            if (zhi) {
+                slot.dataset.term = zhi;
+                slot.innerHTML = `<span style="color: ${color} !important;">${zhi}</span>`;
+            } else {
+                delete slot.dataset.term;
+                slot.innerHTML = '';
+            }
         }
 
         function setLiuQinLabel(index, liuQin) {
@@ -907,11 +942,13 @@
         function setBadgeLabel(slot, text, styles = {}) {
             if (!slot) return;
             if (!text) {
+                delete slot.dataset.term;
                 slot.textContent = '';
                 clearBadgeSlotVars(slot);
                 return;
             }
-            slot.textContent = text;
+            slot.dataset.term = text;
+            slot.textContent = tTerm(text);
             if (styles.borderColor) slot.style.setProperty('--badge-border-color', styles.borderColor);
             else slot.style.removeProperty('--badge-border-color');
             if (styles.backgroundColor) slot.style.setProperty('--badge-bg-color', styles.backgroundColor);
@@ -1072,7 +1109,7 @@
                 const rawNum = String(numInputEl?.value || '').trim();
                 const parsedNum = Number(rawNum);
                 if (!Number.isInteger(parsedNum) || parsedNum < 1) {
-                    window.alert('请输入有效数字（正整数）后再排盘。');
+                    window.alert(t('alert.invalidNumber'));
                     if (numInputEl && typeof numInputEl.focus === 'function') {
                         numInputEl.focus();
                     }
@@ -1122,7 +1159,7 @@
                 refreshSaveNotesButtonLabel();
             }
             if (!preserveQuestionFields && queryItemSelect) {
-                queryItemSelect.value = MAIN_PANEL_QUERY_ITEM_OPTIONS[0].value;
+                queryItemSelect.value = QUERY_ITEM_VALUES[0];
                 queryItemSelect.dispatchEvent(new Event('change', { bubbles: true }));
             }
             if (!preserveQuestionFields && specificQuestionInput) {
@@ -1235,9 +1272,10 @@
                     });
                 }
             };
+            let currentOptions = options.slice();
             const setValue = (value) => {
-                const fallback = options[0];
-                const matched = options.find((item) => item.value === value) || fallback;
+                const fallback = currentOptions[0];
+                const matched = currentOptions.find((item) => item.value === value) || fallback;
                 if (!matched) return;
                 triggerLabel.textContent = matched.label.trim() ? matched.label : emptyLabel;
                 optionButtons.forEach((button, buttonValue) => {
@@ -1246,7 +1284,16 @@
                     button.setAttribute('aria-selected', selected ? 'true' : 'false');
                 });
             };
-            options.forEach((item) => {
+            const updateOptions = (nextOptions) => {
+                currentOptions = Array.isArray(nextOptions) ? nextOptions.slice() : [];
+                currentOptions.forEach((item) => {
+                    const button = optionButtons.get(item.value);
+                    if (button) button.textContent = item.label.trim() ? item.label : emptyLabel;
+                });
+                const selected = [...optionButtons.entries()].find(([, button]) => button.classList.contains('is-selected'));
+                if (selected) setValue(selected[0]);
+            };
+            currentOptions.forEach((item) => {
                 const optionButton = document.createElement('button');
                 optionButton.type = 'button';
                 optionButton.className = 'global-dropdown-option';
@@ -1282,22 +1329,20 @@
             }
             root.appendChild(trigger);
             root.appendChild(list);
-            return { root, setValue, closeList };
+            return { root, setValue, updateOptions, closeList };
         };
-        const MAIN_PANEL_QUERY_ITEM_OPTIONS = [
-            { value: '吉凶', label: '吉凶' },
-            { value: '寻物', label: '寻物' },
-            { value: '感情', label: '感情' },
-            { value: '考试', label: '考试' },
-            { value: '事业', label: '事业' },
-            { value: '财运', label: '财运' },
-            { value: '健康', label: '健康' }
-        ];
-        const MAIN_PANEL_METHOD_OPTIONS = [
-            { value: '日时起卦', label: '日时起卦' },
-            { value: '数字起卦', label: '数字起卦' }
-        ];
+        const QUERY_ITEM_VALUES = ['吉凶', '寻物', '感情', '考试', '事业', '财运', '健康'];
+        const METHOD_VALUES = ['日时起卦', '数字起卦'];
+        const getQueryItemOptions = () => QUERY_ITEM_VALUES.map((value) => ({
+            value,
+            label: I18N.getQueryItemLabel(value)
+        }));
+        const getMethodOptions = () => METHOD_VALUES.map((value) => ({
+            value,
+            label: I18N.getMethodLabel(value)
+        }));
         let queryItemCustomSelectApi = null;
+        let methodCustomSelectApi = null;
         const initMainPanelCustomDropdowns = () => {
             const mountInWrap = (hiddenInputId, rootClassName, options, triggerId) => {
                 const hiddenInput = document.getElementById(hiddenInputId);
@@ -1326,7 +1371,7 @@
             queryItemCustomSelectApi = mountInWrap(
                 'queryItem',
                 'dropdown-query-item',
-                MAIN_PANEL_QUERY_ITEM_OPTIONS,
+                getQueryItemOptions(),
                 'queryItemTrigger'
             );
             const queryHidden = document.getElementById('queryItem');
@@ -1335,7 +1380,7 @@
                     queryItemCustomSelectApi.setValue(queryHidden.value);
                 });
             }
-            mountInWrap('method', 'dropdown-method', MAIN_PANEL_METHOD_OPTIONS, 'methodTrigger');
+            methodCustomSelectApi = mountInWrap('method', 'dropdown-method', getMethodOptions(), 'methodTrigger');
             const syncDivinationMethodSections = () => {
                 const v = String(document.getElementById('method')?.value || '').trim();
                 const datetimeSection = document.getElementById('datetime-section');
@@ -1525,7 +1570,8 @@
         const startAskAiLoadingAnimation = () => {
             if (!askAiButton) return;
             stopAskAiLoadingAnimation();
-            const loadingFrames = ['思考中', '思考中.', '思考中..', '思考中...'];
+            const thinking = t('ai.thinking');
+            const loadingFrames = [thinking, `${thinking}.`, `${thinking}..`, `${thinking}...`];
             askAiButton.textContent = loadingFrames[0];
             askAiLoadingTimer = window.setInterval(() => {
                 askAiLoadingStep = (askAiLoadingStep + 1) % loadingFrames.length;
@@ -1645,7 +1691,7 @@
             legacyInputs.forEach((inputEl) => {
                 const textArea = document.createElement('textarea');
                 textArea.className = inputEl.className.trim();
-                textArea.placeholder = inputEl.placeholder || '请输入笔记内容';
+                textArea.placeholder = inputEl.placeholder || t('notes.placeholder');
                 textArea.value = inputEl.value || '';
                 textArea.rows = 1;
                 textArea.wrap = 'soft';
@@ -1682,6 +1728,15 @@
                 };
             });
         };
+        const getSlotCanonicalTerm = (slot) => {
+            if (!slot) return '';
+            if (slot.dataset.term) return slot.dataset.term;
+            const circledTerms = [...slot.querySelectorAll('[data-term], .circled-char')]
+                .map((el) => el.dataset.term || I18N.canonicalFromDisplay(el.textContent))
+                .filter(Boolean);
+            if (circledTerms.length) return circledTerms.join(',');
+            return I18N.canonicalFromDisplay(slot.textContent || '');
+        };
         const getPalaceLayoutSnapshot = () => {
             const palacesLayout = [];
             for (let index = 0; index < 6; index += 1) {
@@ -1690,7 +1745,14 @@
                 const slots = {};
                 PALACE_LAYOUT_SELECTORS.forEach((selector) => {
                     const slot = card.querySelector(selector);
-                    if (slot) slots[selector] = slot.innerHTML || '';
+                    if (!slot) return;
+                    slots[selector] = {
+                        html: slot.innerHTML || '',
+                        term: slot.dataset.term || '',
+                        markerTerms: [...slot.querySelectorAll('.circled-char')].map((el) => (
+                            el.dataset.term || I18N.canonicalFromDisplay(el.textContent)
+                        )).filter(Boolean)
+                    };
                 });
                 palacesLayout.push({ index, slots });
             }
@@ -1716,7 +1778,25 @@
                     if (raw === undefined) return;
                     const slot = card.querySelector(selector);
                     if (!slot) return;
-                    slot.innerHTML = String(raw || '');
+                    if (typeof raw === 'string') {
+                        slot.innerHTML = raw;
+                        if (!slot.dataset.term) {
+                            const inferred = I18N.canonicalFromDisplay(slot.textContent || '');
+                            if (inferred) slot.dataset.term = inferred;
+                        }
+                        slot.querySelectorAll('.circled-char').forEach((el) => {
+                            if (!el.dataset.term) el.dataset.term = I18N.canonicalFromDisplay(el.textContent);
+                        });
+                        return;
+                    }
+                    if (raw && typeof raw === 'object') {
+                        if (Array.isArray(raw.markerTerms) && raw.markerTerms.length) {
+                            setCircledPalaceText(palaceState.index, selector, raw.markerTerms);
+                            return;
+                        }
+                        if (raw.term) slot.dataset.term = raw.term;
+                        if (typeof raw.html === 'string') slot.innerHTML = raw.html;
+                    }
                 });
             });
             layoutSnapshot.palacesLayout.forEach((palaceState) => {
@@ -1724,9 +1804,11 @@
                 const palaceIndex = palaceState.index;
                 const card = document.getElementById(`palace-${palaceIndex}`);
                 if (!card) return;
-                const liuQinText = (card.querySelector('.slot-liuqin')?.textContent || '').trim();
-                const liuShenText = (card.querySelector('.slot-liushen')?.textContent || '').trim();
-                const wuXingText = (card.querySelector('.slot-wuxing')?.textContent || '').trim();
+                const liuQinText = getSlotCanonicalTerm(card.querySelector('.slot-liuqin'));
+                const liuShenText = getSlotCanonicalTerm(card.querySelector('.slot-liushen'));
+                const wuXingText = getSlotCanonicalTerm(card.querySelector('.slot-wuxing'));
+                const zhiText = getSlotCanonicalTerm(card.querySelector('.slot-zhi'));
+                if (zhiText) setZhiLabel(palaceIndex, zhiText);
                 setLiuQinLabel(palaceIndex, liuQinText);
                 setLiuShenLabel(palaceIndex, liuShenText);
                 setWuXingLabel(palaceIndex, wuXingText);
@@ -1735,7 +1817,7 @@
         };
         const formatLibraryTimestamp = (value) => {
             const date = new Date(value);
-            if (!Number.isFinite(date.getTime())) return '未知时间';
+            if (!Number.isFinite(date.getTime())) return t('library.unknownTime');
             const y = date.getFullYear();
             const m = String(date.getMonth() + 1).padStart(2, '0');
             const d = String(date.getDate()).padStart(2, '0');
@@ -1860,14 +1942,12 @@
                 return false;
             }
         };
-        const SAVE_NOTES_BUTTON_LABEL_SAVE = '保存笔记';
-        const SAVE_NOTES_BUTTON_LABEL_UPDATE = '更新笔记';
         const isCurrentNoteInLibrary = () => {
             if (!activeEditingNoteId) return false;
             return getNotesLibraryFromStorage().some((item) => item?.id === activeEditingNoteId);
         };
         const getSaveNotesButtonDefaultLabel = () => (
-            isCurrentNoteInLibrary() ? SAVE_NOTES_BUTTON_LABEL_UPDATE : SAVE_NOTES_BUTTON_LABEL_SAVE
+            isCurrentNoteInLibrary() ? t('notes.update') : t('notes.save')
         );
         const refreshSaveNotesButtonLabel = () => {
             if (!saveNotesButton) return;
@@ -1940,15 +2020,67 @@
             '',
             '【指定宫位】：<宫位名1>、<宫位名2>、<宫位名3>...'
         ].join('\n');
-        let aiPromptTemplateCache = '';
+        const DEFAULT_AI_PROMPT_TEMPLATE_EN = [
+            '# Role',
+            'You are an expert reader of Jiang-style Xiao Liu Ren. Interpret the chart provided below.',
+            '',
+            '# Task',
+            'Reason internally with the following logic, but **do not** show the reasoning in the output:',
+            '1. Focus on the yong-shen palace, while also weighing the body palace and the opposite palace.',
+            '2. Judge generation, control, and strength among the six palaces, earthly branches, six relatives, six spirits, and five stars.',
+            '3. Extract images (direction, imagery, vocation, etc.) and relate them to the specific question.',
+            '',
+            '# Rules (must follow)',
+            '- **Do not output any preamble, greeting, closing, or analysis process.**',
+            '- **Do not use filler such as "Sure" or "Based on the information above".**',
+            '- **If Specified Palaces is not empty, read only those palaces, in descending order of importance. Do not output any palace outside that list.**',
+            '- **If Specified Palaces is empty, choose palaces automatically. Output at most 3 palaces, sorted by importance descending.**',
+            '- **Output must contain only palace readings and a final conclusion.**',
+            '- Follow the Output Format below exactly.',
+            '- Keep the original Chinese palace names (大安, 留连, 速喜, 赤口, 小吉, 空亡) in the output labels.',
+            '- Write the readings and conclusion in English.',
+            '',
+            '# Output Format',
+            '<宫位名1>：<reading for that palace>',
+            '<宫位名2>：<reading for that palace>',
+            '(and so on, only key palaces that speak to the matter)',
+            'Conclusion：<one sharp sentence on the asked topic>',
+            '',
+            '---',
+            '# Input Data',
+            '【占问之事】：',
+            '  求测事项：<求测事项>',
+            '  具体问题：<具体问题>',
+            '',
+            '【起卦方式】：<起卦方式>',
+            '',
+            '【六宫卦象基础配置】：',
+            '  大安：地支 <地支>，六亲 <六亲>，六神 <六神>，五星 <五星>',
+            '  留连：地支 <地支>，六亲 <六亲>，六神 <六神>，五星 <五星>',
+            '  速喜：地支 <地支>，六亲 <六亲>，六神 <六神>，五星 <五星>',
+            '  赤口：地支 <地支>，六亲 <六亲>，六神 <六神>，五星 <五星>',
+            '  小吉：地支 <地支>，六亲 <六亲>，六神 <六神>，五星 <五星>',
+            '  空亡：地支 <地支>，六亲 <六亲>，六神 <六神>，五星 <五星>',
+            '  身宫：<宫位名>',
+            '  对宫：<宫位名>',
+            '  判定规则：',
+            '  - 日时起卦：身宫=时宫<宫位名>，对宫=日宫<宫位名>',
+            '  - 数字起卦：身宫=时宫<宫位名>，对宫=数字宫<宫位名>',
+            '',
+            '【指定宫位】：<宫位名1>、<宫位名2>、<宫位名3>...'
+        ].join('\n');
+        let aiPromptTemplateCacheByLang = { zh: '', en: '' };
         let aiTaskLinesOverride = null;
         const normalizeAiSlotText = (value) => {
             return String(value || '').replace(/\s+/g, ' ').trim();
         };
-        const getPalaceSlotTextBySelector = (palaceIndex, selector, fallback = '未填写') => {
+        const getPalaceSlotTextBySelector = (palaceIndex, selector, fallback) => {
+            const emptyFallback = fallback === undefined ? t('ai.unfilled') : fallback;
             const node = document.querySelector(`#palace-${palaceIndex} ${selector}`);
+            const term = normalizeAiSlotText(node?.dataset?.term || '');
+            if (term) return term;
             const text = normalizeAiSlotText(node?.textContent || '');
-            return text || fallback;
+            return text || emptyFallback;
         };
         const getCurrentPalacePromptData = () => {
             return palaces.map((palaceName, palaceIndex) => ({
@@ -1964,8 +2096,13 @@
             if (!marker) return '';
             for (let palaceIndex = 0; palaceIndex < palaces.length; palaceIndex++) {
                 const node = document.querySelector(`#palace-${palaceIndex} ${selector}`);
-                const text = normalizeAiSlotText(node?.textContent || '');
-                if (text.includes(marker)) {
+                if (!node) continue;
+                const circledHasMarker = [...node.querySelectorAll('.circled-char')].some((el) => {
+                    const term = normalizeAiSlotText(el.dataset.term || el.textContent || '');
+                    return term.includes(marker);
+                });
+                const text = normalizeAiSlotText(node.textContent || '');
+                if (circledHasMarker || text.includes(marker)) {
                     return palaces[palaceIndex] || '';
                 }
             }
@@ -1973,10 +2110,11 @@
         };
         const fillPromptPalacePlaceholders = (templateText, options = {}) => {
             let nextText = String(templateText || '');
-            const bodyPalaceName = String(options.bodyPalaceName || '').trim() || '未填写';
-            const currentOppositePalaceName = String(options.currentOppositePalaceName || '').trim() || '未填写';
-            const dayOppositePalaceName = String(options.dayOppositePalaceName || '').trim() || '未填写';
-            const numberOppositePalaceName = String(options.numberOppositePalaceName || '').trim() || '未填写';
+            const unfilled = t('ai.unfilled');
+            const bodyPalaceName = String(options.bodyPalaceName || '').trim() || unfilled;
+            const currentOppositePalaceName = String(options.currentOppositePalaceName || '').trim() || unfilled;
+            const dayOppositePalaceName = String(options.dayOppositePalaceName || '').trim() || unfilled;
+            const numberOppositePalaceName = String(options.numberOppositePalaceName || '').trim() || unfilled;
             nextText = nextText.replace(/(\s*身宫：)\s*<宫位名>/m, `$1${bodyPalaceName}`);
             nextText = nextText.replace(/(\s*对宫：)\s*<宫位名>/m, `$1${currentOppositePalaceName}`);
             nextText = nextText.replace(
@@ -1997,22 +2135,26 @@
             }
             return `${templateText}\n${line}`;
         };
+        const getDefaultAiPromptTemplate = () => (
+            I18N.getLang() === 'en' ? DEFAULT_AI_PROMPT_TEMPLATE_EN : DEFAULT_AI_PROMPT_TEMPLATE
+        );
         const getAiPromptTemplateText = async () => {
-            if (aiPromptTemplateCache) return aiPromptTemplateCache;
+            const lang = I18N.getLang();
+            if (aiPromptTemplateCacheByLang[lang]) return aiPromptTemplateCacheByLang[lang];
             try {
-                const response = await fetch('/data/ai-prompt.txt', { cache: 'no-store' });
+                const response = await fetch(getAiPromptDocPath(), { cache: 'no-store' });
                 if (response.ok) {
                     const text = await response.text();
                     if (text && text.trim()) {
-                        aiPromptTemplateCache = text;
-                        return aiPromptTemplateCache;
+                        aiPromptTemplateCacheByLang[lang] = text;
+                        return aiPromptTemplateCacheByLang[lang];
                     }
                 }
             } catch (error) {
-                console.warn('读取 data/ai-prompt.txt 失败，使用默认模板:', error);
+                console.warn('读取 AI 提示词失败，使用默认模板:', error);
             }
-            aiPromptTemplateCache = DEFAULT_AI_PROMPT_TEMPLATE;
-            return aiPromptTemplateCache;
+            aiPromptTemplateCacheByLang[lang] = getDefaultAiPromptTemplate();
+            return aiPromptTemplateCacheByLang[lang];
         };
         const normalizePromptTaskLineInput = (line) => {
             return String(line || '').replace(/^\s*\d+\.\s*/, '').trim();
@@ -2087,9 +2229,13 @@
                 ...lines.slice(range.sectionEnd)
             ].join('\n');
         };
+        const getAiTaskLinesStorageKey = () => `${AI_TASK_LINES_STORAGE_KEY}_${I18N.getLang()}`;
         const getSavedPromptTaskLines = () => {
             try {
-                const raw = localStorage.getItem(AI_TASK_LINES_STORAGE_KEY);
+                let raw = localStorage.getItem(getAiTaskLinesStorageKey());
+                if (!raw && I18N.getLang() === 'zh') {
+                    raw = localStorage.getItem(AI_TASK_LINES_STORAGE_KEY);
+                }
                 if (!raw) return [];
                 const parsed = JSON.parse(raw);
                 if (!Array.isArray(parsed)) return [];
@@ -2106,7 +2252,7 @@
                 ? taskLines.map((line) => normalizePromptTaskLineInput(line)).filter(Boolean)
                 : [];
             try {
-                localStorage.setItem(AI_TASK_LINES_STORAGE_KEY, JSON.stringify(sanitizedLines));
+                localStorage.setItem(getAiTaskLinesStorageKey(), JSON.stringify(sanitizedLines));
                 return true;
             } catch (error) {
                 console.warn('保存 AI Task 行配置失败:', error);
@@ -2114,8 +2260,12 @@
             }
         };
         const getDefaultPromptTaskLines = () => {
-            const templateTaskLines = extractPromptTaskLines(DEFAULT_AI_PROMPT_TEMPLATE);
-            return templateTaskLines.length ? templateTaskLines : ['取准用神并分析关键宫位'];
+            const templateTaskLines = extractPromptTaskLines(getDefaultAiPromptTemplate());
+            return templateTaskLines.length ? templateTaskLines : [
+                t('ai.defaultTask.1'),
+                t('ai.defaultTask.2'),
+                t('ai.defaultTask.3')
+            ];
         };
         const ensurePromptTaskLinesOverrideLoaded = () => {
             if (aiTaskLinesOverride !== null) return;
@@ -2167,7 +2317,7 @@
             const categoryConfig = referenceHelpDoc.categories?.[categoryKey];
             const description = categoryConfig?.items?.[label] || '';
             if (referenceHelpTitle) {
-                referenceHelpTitle.textContent = label;
+                referenceHelpTitle.textContent = I18N.formatTermTitle(label);
             }
             renderReferenceHelpContent(description, {
                 categoryKey,
@@ -2177,7 +2327,7 @@
             if (!description && referenceHelpContent && !referenceHelpContent.textContent.trim()) {
                 const placeholderEl = document.createElement('p');
                 placeholderEl.className = 'reference-help-paragraph reference-help-placeholder';
-                placeholderEl.textContent = '暂无解释内容。';
+                placeholderEl.textContent = t('help.empty');
                 referenceHelpContent.appendChild(placeholderEl);
             }
             showAnimatedElement(referenceHelpPanel);
@@ -2204,7 +2354,7 @@
                 if (!(slot instanceof HTMLElement)) return;
                 const categoryClass = Object.keys(REFERENCE_SLOT_CATEGORY_MAP).find((className) => slot.classList.contains(className));
                 if (!categoryClass) return;
-                const label = String(slot.textContent || '').trim();
+                const label = slot.dataset.term || String(slot.textContent || '').trim();
                 if (!label) return;
                 await openReferenceHelpPanel({
                     categoryKey: REFERENCE_SLOT_CATEGORY_MAP[categoryClass],
@@ -2216,7 +2366,7 @@
             if (!(promptTaskLinesInput instanceof HTMLTextAreaElement)) return;
             const taskLines = parsePromptTaskLinesFromInput(promptTaskLinesInput.value);
             if (!taskLines.length) {
-                window.alert('请至少保留一条 #Task 步骤。');
+                window.alert(t('alert.needTaskLine'));
                 return;
             }
             aiTaskLinesOverride = [...taskLines];
@@ -2237,14 +2387,14 @@
             const specificQuestion = (specificQuestionInput?.value || '').trim();
             const divinationMethod =
                 String(document.getElementById('method')?.value || '').trim() ||
-                MAIN_PANEL_METHOD_OPTIONS[0].value;
+                METHOD_VALUES[0];
             let prompt = await getAiPromptTemplateText();
             ensurePromptTaskLinesOverrideLoaded();
             if (Array.isArray(aiTaskLinesOverride) && aiTaskLinesOverride.length) {
                 prompt = replacePromptTaskLines(prompt, aiTaskLinesOverride);
             }
-            prompt = prompt.replace(/<求测事项>/g, queryItem || '未填写');
-            prompt = prompt.replace(/<具体问题>/g, specificQuestion || '未填写');
+            prompt = prompt.replace(/<求测事项>/g, queryItem || t('ai.unfilled'));
+            prompt = prompt.replace(/<具体问题>/g, specificQuestion || t('ai.unfilled'));
             prompt = prompt.replace(/<起卦方式>/g, divinationMethod);
             const palaceInfoList = getCurrentPalacePromptData();
             palaceInfoList.forEach((palaceInfo) => {
@@ -2264,7 +2414,7 @@
             });
             const specifiedPalaceNames = getSpecifiedPalaceNames();
             const specifiedPalaceText = specifiedPalaceNames.length
-                ? specifiedPalaceNames.join('、')
+                ? specifiedPalaceNames.join(I18N.getListJoin())
                 : '';
             prompt = prompt.replace(
                 /【指定宫位】：.*$/m,
@@ -2272,7 +2422,7 @@
             );
             return prompt.trim();
         };
-        const AI_PALACE_NAME_TO_INDEX = {
+        const AI_PALACE_NAME_TO_INDEX = I18N.PALACE_NAME_ALIASES || {
             '大安': 0,
             '留连': 1,
             '速喜': 2,
@@ -2293,7 +2443,7 @@
                 .map((line) => normalizeAiReplyLine(line))
                 .filter(Boolean);
             lines.forEach((line) => {
-                const conclusionMatch = line.match(/^结论\s*[：:]\s*(.+)$/);
+                const conclusionMatch = line.match(/^(?:结论|Conclusion)\s*[：:]\s*(.+)$/i);
                 if (conclusionMatch) {
                     const conclusion = (conclusionMatch[1] || '').trim();
                     if (!conclusion) return;
@@ -2303,17 +2453,21 @@
                     });
                     return;
                 }
-                const palaceMatch = line.match(/^(大安|留连|速喜|赤口|小吉|空亡)\s*(?:宫)?\s*[：:]\s*(.+)$/);
+                const palaceMatch = line.match(/^(.+?)\s*(?:宫|Palace)?\s*[：:]\s*(.+)$/);
                 if (palaceMatch) {
-                    const palaceName = palaceMatch[1];
+                    const palaceName = (palaceMatch[1] || '').trim();
                     const explanation = (palaceMatch[2] || '').trim();
-                    if (!explanation) return;
-                    resultRows.push({
-                        text: explanation,
-                        noPalace: false,
-                        palaceIndex: AI_PALACE_NAME_TO_INDEX[palaceName]
-                    });
-                    return;
+                    const palaceIndex = I18N.getPalaceIndexByName(palaceName);
+                    if (palaceIndex === null || palaceIndex === undefined || !explanation) {
+                        // fall through to generic section handling
+                    } else {
+                        resultRows.push({
+                            text: explanation,
+                            noPalace: false,
+                            palaceIndex
+                        });
+                        return;
+                    }
                 }
 
                 // Keep non-standard palace lines (e.g., 用神宫/时宫/日宫) instead of dropping them.
@@ -2359,19 +2513,19 @@
         };
         const requestAiAnswer = async () => {
             if (!hasCalculatedPalaceLayout()) {
-                window.alert('当前还没有排盘盘面，请先点击“开始排盘”后再问AI。');
+                window.alert(t('alert.needBoard'));
                 return;
             }
             const queryItem = (queryItemSelect?.value || '').trim();
             const specificQuestion = (specificQuestionInput?.value || '').trim();
             if (!queryItem && !specificQuestion) {
-                window.alert('请先填写“求测事项”或“具体问题”后再问AI。');
+                window.alert(t('alert.needQuestion'));
                 return;
             }
             const prompt = await buildAiPrompt();
             if (askAiButton) {
                 askAiButton.disabled = true;
-                askAiButton.dataset.originalLabel = askAiButton.textContent || '问AI';
+                askAiButton.dataset.originalLabel = t('notes.askAi');
                 startAskAiLoadingAnimation();
             }
             try {
@@ -2386,24 +2540,24 @@
                 });
                 const data = await response.json().catch(() => ({}));
                 if (!response.ok) {
-                    const message = typeof data?.error === 'string' && data.error ? data.error : 'AI 请求失败';
+                    const message = typeof data?.error === 'string' && data.error ? data.error : t('ai.requestFailed');
                     throw new Error(message);
                 }
                 const reply = typeof data?.reply === 'string' ? data.reply.trim() : '';
                 if (!reply) {
-                    throw new Error('AI 返回为空，请稍后重试');
+                    throw new Error(t('ai.emptyReply'));
                 }
                 clearPalaceSpecifications();
                 setPalaceSpecifyMode(false);
                 appendAiReplyRowsToNotes(reply);
             } catch (error) {
                 console.error('问AI失败:', error);
-                window.alert(`问AI失败：${error?.message || '未知错误'}`);
+                window.alert(t('alert.aiFailed', { message: error?.message || t('alert.unknownError') }));
             } finally {
                 if (askAiButton) {
                     stopAskAiLoadingAnimation();
                     askAiButton.disabled = false;
-                    askAiButton.textContent = askAiButton.dataset.originalLabel || '问AI';
+                    askAiButton.textContent = askAiButton.dataset.originalLabel || t('notes.askAi');
                 }
             }
         };
@@ -2412,11 +2566,11 @@
             const restoredNoteId = typeof parsed.id === 'string' && parsed.id ? parsed.id : null;
             const methodInput = document.getElementById('method');
             if (methodInput && typeof parsed.methodValue === 'string') {
-                const allowedMethodValues = new Set(MAIN_PANEL_METHOD_OPTIONS.map((o) => o.value));
+                const allowedMethodValues = new Set(METHOD_VALUES);
                 const restoredMethodValue = parsed.methodValue.trim();
                 methodInput.value = allowedMethodValues.has(restoredMethodValue)
                     ? restoredMethodValue
-                    : MAIN_PANEL_METHOD_OPTIONS[0].value;
+                    : METHOD_VALUES[0];
                 methodInput.dispatchEvent(new Event('change', { bubbles: true }));
             }
             const restoredDate = parseDateTimeValue(parsed.dateTimeValue);
@@ -2430,11 +2584,11 @@
             }
             restorePalaceLayoutSnapshot(parsed.palaceLayout);
             if (queryItemSelect && typeof parsed.queryItem === 'string') {
-                const allowedQueryItems = new Set(MAIN_PANEL_QUERY_ITEM_OPTIONS.map((o) => o.value));
+                const allowedQueryItems = new Set(QUERY_ITEM_VALUES);
                 const restoredQueryItem = parsed.queryItem.trim();
                 queryItemSelect.value = allowedQueryItems.has(restoredQueryItem)
                     ? restoredQueryItem
-                    : MAIN_PANEL_QUERY_ITEM_OPTIONS[0].value;
+                    : QUERY_ITEM_VALUES[0];
                 queryItemSelect.dispatchEvent(new Event('change', { bubbles: true }));
             }
             if (specificQuestionInput && typeof parsed.specificQuestion === 'string') {
@@ -2484,8 +2638,8 @@
                 if (!descEl.classList.contains('notes-library-item-desc')) {
                     descEl.className = 'notes-library-item-desc';
                 }
-                const itemType = (noteItem.queryItem || '').trim() || '未填写事项';
-                const question = (noteItem.specificQuestion || '').trim() || '未填写具体问题';
+                const itemType = I18N.getQueryItemLabel((noteItem.queryItem || '').trim()) || t('library.noQueryItem');
+                const question = (noteItem.specificQuestion || '').trim() || t('library.noQuestion');
                 descEl.textContent = `${itemType} | ${question}`;
                 if (!timeEl.parentElement || timeEl.parentElement === item) {
                     const infoWrap = document.createElement('div');
@@ -2497,7 +2651,7 @@
                 deleteButton.type = 'button';
                 if (!deleteButton.classList.contains('notes-library-delete-button')) {
                     deleteButton.className = 'notes-library-delete-button action-theme-button';
-                    deleteButton.textContent = '删除';
+                    deleteButton.textContent = t('notes.delete');
                     item.appendChild(deleteButton);
                 }
                 deleteButton.addEventListener('click', (event) => {
@@ -2542,7 +2696,7 @@
         };
         const showSaveNotesFeedback = (saved) => {
             if (!saveNotesButton) return;
-            saveNotesButton.textContent = saved ? '已保存' : '保存失败';
+            saveNotesButton.textContent = saved ? t('notes.saved') : t('notes.saveFailed');
             window.setTimeout(() => {
                 refreshSaveNotesButtonLabel();
             }, 1000);
@@ -2833,7 +2987,8 @@
                 const option = document.createElement('button');
                 option.type = 'button';
                 option.className = 'notes-palace-option';
-                option.textContent = palaceName;
+                option.dataset.palaceIndex = String(palaceIndex);
+                option.textContent = tTerm(palaceName);
                 option.addEventListener('click', (event) => {
                     event.preventDefault();
                     setNoPalaceMode(false);
@@ -2857,7 +3012,7 @@
             picker.appendChild(popup);
             const textInput = document.createElement('textarea');
             textInput.className = 'notes-field-input';
-            textInput.placeholder = '请输入笔记内容';
+            textInput.placeholder = t('notes.placeholder');
             textInput.rows = 1;
             textInput.wrap = 'soft';
             const dragHandle = document.createElement('button');
@@ -2902,7 +3057,8 @@
             const noPalaceOption = document.createElement('button');
             noPalaceOption.type = 'button';
             noPalaceOption.className = 'notes-palace-option notes-palace-option-full-row';
-            noPalaceOption.textContent = '不填';
+            noPalaceOption.dataset.i18n = 'notes.noPalace';
+            noPalaceOption.textContent = t('notes.noPalace');
             noPalaceOption.addEventListener('click', (event) => {
                 event.preventDefault();
                 setNoPalaceMode(true);
@@ -3251,7 +3407,20 @@
             applyManualInputDateTime(event.target.value);
         });
         if (typeof flatpickr === 'function' && dateTimeCalendarInput) {
-            const numericMonthNames = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
+            const getFlatpickrLocaleConfig = () => {
+                const monthNames = I18N.getCalendarMonthNames();
+                const baseLocale = I18N.getLang() === 'en'
+                    ? (flatpickr.l10ns.default || {})
+                    : { ...(flatpickr.l10ns.zh || {}) };
+                return {
+                    ...baseLocale,
+                    months: {
+                        shorthand: monthNames,
+                        longhand: monthNames
+                    }
+                };
+            };
+            const numericMonthNames = I18N.getCalendarMonthNames();
             const disableOutOfCurrentMonthDays = (instance) => {
                 if (!instance || !instance.calendarContainer) return;
                 const outOfMonthDays = instance.calendarContainer.querySelectorAll(
@@ -3286,7 +3455,7 @@
                     for (let year = 1900; year <= currentYear; year += 1) {
                         yearOptions.push({
                             value: String(year),
-                            label: `${year}年`
+                            label: I18N.formatCalendarYear(year)
                         });
                     }
                     const monthOptions = numericMonthNames.map((label, idx) => ({
@@ -3338,13 +3507,7 @@
                 }
             };
             chineseDatePicker = flatpickr(dateTimeCalendarInput, {
-                locale: {
-                    ...flatpickr.l10ns.zh,
-                    months: {
-                        shorthand: numericMonthNames,
-                        longhand: numericMonthNames
-                    }
-                },
+                locale: getFlatpickrLocaleConfig(),
                 disableMobile: true,
                 enableTime: true,
                 time_24hr: true,
@@ -3464,6 +3627,119 @@
                 validateManualDateTimeInput(manualInput.value);
             });
         }
+        const refreshCalendarI18n = () => {
+            if (!chineseDatePicker) return;
+            const monthNames = I18N.getCalendarMonthNames();
+            const baseLocale = I18N.getLang() === 'en'
+                ? (typeof flatpickr === 'function' ? (flatpickr.l10ns.default || {}) : {})
+                : (typeof flatpickr === 'function' ? { ...(flatpickr.l10ns.zh || {}) } : {});
+            chineseDatePicker.set('locale', {
+                ...baseLocale,
+                months: {
+                    shorthand: monthNames,
+                    longhand: monthNames
+                }
+            });
+            if (chineseDatePicker._fpCustomMonthSelect?.updateOptions) {
+                chineseDatePicker._fpCustomMonthSelect.updateOptions(
+                    monthNames.map((label, idx) => ({ value: String(idx), label }))
+                );
+                chineseDatePicker._fpCustomMonthSelect.setValue(String(chineseDatePicker.currentMonth));
+            }
+            if (chineseDatePicker._fpCustomYearSelect?.updateOptions) {
+                const currentYear = new Date().getFullYear();
+                const yearOptions = [];
+                for (let year = 1900; year <= currentYear; year += 1) {
+                    yearOptions.push({
+                        value: String(year),
+                        label: I18N.formatCalendarYear(year)
+                    });
+                }
+                chineseDatePicker._fpCustomYearSelect.updateOptions(yearOptions);
+                chineseDatePicker._fpCustomYearSelect.setValue(String(chineseDatePicker.currentYear));
+            }
+        };
+        const refreshLocalizedPalaceSlots = () => {
+            document.querySelectorAll('.slot-palace-name').forEach((el) => {
+                const term = el.dataset.term || I18N.canonicalFromDisplay(el.textContent || '');
+                if (!term) return;
+                el.dataset.term = term;
+                el.textContent = tTerm(term);
+            });
+            for (let index = 0; index < palaces.length; index += 1) {
+                const card = document.getElementById(`palace-${index}`);
+                if (!card) continue;
+                const zhi = getSlotCanonicalTerm(card.querySelector('.slot-zhi'));
+                const liuqin = getSlotCanonicalTerm(card.querySelector('.slot-liuqin'));
+                const liushen = getSlotCanonicalTerm(card.querySelector('.slot-liushen'));
+                const wuxing = getSlotCanonicalTerm(card.querySelector('.slot-wuxing'));
+                if (zhi) setZhiLabel(index, zhi);
+                if (liuqin) setLiuQinLabel(index, liuqin);
+                if (liushen) setLiuShenLabel(index, liushen);
+                if (wuxing) setWuXingLabel(index, wuxing);
+                const daytime = card.querySelector('.slot-daytime');
+                const body = card.querySelector('.slot-body');
+                const daytimeTerms = [...(daytime?.querySelectorAll('.circled-char') || [])]
+                    .map((el) => el.dataset.term || I18N.canonicalFromDisplay(el.textContent))
+                    .filter(Boolean);
+                const bodyTerms = [...(body?.querySelectorAll('.circled-char') || [])]
+                    .map((el) => el.dataset.term || I18N.canonicalFromDisplay(el.textContent))
+                    .filter(Boolean);
+                if (daytimeTerms.length) setCircledPalaceText(index, '.slot-daytime', daytimeTerms);
+                if (bodyTerms.length) setCircledPalaceText(index, '.slot-body', bodyTerms);
+            }
+        };
+        const refreshLocalizedNotesUi = () => {
+            document.querySelectorAll('.notes-palace-option[data-palace-index]').forEach((option) => {
+                const palaceIndex = Number(option.dataset.palaceIndex);
+                if (!Number.isFinite(palaceIndex)) return;
+                option.textContent = tTerm(palaces[palaceIndex] || '');
+            });
+            document.querySelectorAll('.notes-entry-row .notes-field-input').forEach((input) => {
+                input.placeholder = t('notes.placeholder');
+            });
+            refreshSaveNotesButtonLabel();
+            renderNotesLibraryList();
+            refreshAllNotePalacePreviews();
+        };
+        const refreshLocalizedDropdowns = () => {
+            const queryHidden = document.getElementById('queryItem');
+            const methodHidden = document.getElementById('method');
+            if (queryItemCustomSelectApi?.updateOptions) {
+                queryItemCustomSelectApi.updateOptions(getQueryItemOptions());
+                if (queryHidden) queryItemCustomSelectApi.setValue(queryHidden.value);
+            }
+            if (methodCustomSelectApi?.updateOptions) {
+                methodCustomSelectApi.updateOptions(getMethodOptions());
+                if (methodHidden) methodCustomSelectApi.setValue(methodHidden.value);
+            }
+        };
+        const refreshAllI18n = () => {
+            I18N.applyStaticDom();
+            refreshLocalizedDropdowns();
+            refreshLocalizedPalaceSlots();
+            refreshLocalizedNotesUi();
+            updateClock();
+            const selectedDate = parseDateTimeValue(document.getElementById('dateTime')?.value);
+            updateSelectedDateLunarInfo(selectedDate);
+            refreshCalendarI18n();
+            referenceHelpDocCache = null;
+            referenceHelpDocPromise = null;
+            devLogDocCache = null;
+            devLogDocPromise = null;
+            aiTaskLinesOverride = null;
+            closeReferenceHelpPanel();
+            if (promptEditorPanel && !promptEditorPanel.classList.contains('is-hidden')) {
+                openPromptEditorPanel();
+            }
+            refreshDevLogPanel();
+            loadReferenceHelpDoc();
+            const currentManual = document.getElementById('dateTimeManualInput');
+            if (currentManual instanceof HTMLInputElement) {
+                validateManualDateTimeInput(currentManual.value);
+            }
+        };
+        I18N.onLangChange(refreshAllI18n);
         const previousWindowOnload = window.onload;
         window.onload = (event) => {
             if (typeof previousWindowOnload === 'function') {

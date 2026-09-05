@@ -79,10 +79,61 @@
             font-size: 1rem;
             padding-inline: 0.75rem;
         }
-        body, body * {
+        html, body, body * {
             color: var(--dark-brown) !important;
             font-family: "Huiwen-mincho", serif !important;
             letter-spacing: 0.02rem;
+        }
+        .page-root,
+        .left-column-panels,
+        .notes-panel,
+        .setting-panel,
+        .main-panel,
+        .time-panel,
+        .notes-row,
+        .datetime-section,
+        .num-section,
+        .datetime-controls,
+        .num-controls,
+        .notes-ai-row,
+        .global-dropdown {
+            min-width: 0;
+            max-width: 100%;
+        }
+        .theme-panel {
+            box-sizing: border-box;
+            max-width: 100%;
+        }
+        html[data-ui-lang="en"] body,
+        html[data-ui-lang="en"] body *:not(.page-title):not(#lunarClock):not(.selected-date-lunar-info) {
+            letter-spacing: 0;
+        }
+        html[data-ui-lang="en"] .page-title {
+            letter-spacing: 0.3rem;
+        }
+        html[data-ui-lang="en"] #lunarClock,
+        html[data-ui-lang="en"] .selected-date-lunar-info {
+            letter-spacing: 0.1rem;
+        }
+        html[data-ui-lang="en"] .action-button {
+            letter-spacing: 0.08em;
+        }
+        html[data-ui-lang="en"] #solarClock {
+            letter-spacing: 0.04rem;
+        }
+        html[data-ui-lang="en"] .palace-specify-hint {
+            white-space: normal;
+            max-width: min(92vw, 36rem);
+        }
+        html[data-ui-lang="en"] .notes-ai-row .small-action-button {
+            white-space: normal;
+            line-height: 1.15;
+            text-align: center;
+        }
+        html[data-ui-lang="en"] .slot-wuxing,
+        html[data-ui-lang="en"] .slot-liushen,
+        html[data-ui-lang="en"] .slot-liuqin {
+            font-size: 1.7rem;
         }
         /* 控制通用面板容器（背景/边框/圆角） */
         .theme-panel {
@@ -182,6 +233,7 @@
         .global-dropdown-trigger {
             position: relative;
             width: 100%;
+            min-width: 0;
             height: 3.5rem;
             padding: 0 1.35rem 0 0.75rem;
             border: var(--border-width) solid var(--dark-brown);
@@ -192,6 +244,8 @@
             text-align: left;
             cursor: pointer;
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         /* 箭头样式 */
         .global-dropdown-trigger::after {
@@ -318,13 +372,39 @@
             align-items: center;
         }
         /* 控制页面主标题文字样式 */
-        .page-title {
-            font-weight: 700;
+        .page-header-main {
             grid-column: 2;
             justify-self: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        .page-title {
+            font-weight: 700;
             font-size: 2.7rem;
             color: var(--brown);
             letter-spacing: 0.3rem;
+        }
+        .lang-switch {
+            display: inline-flex;
+            border: 1.5px solid var(--dark-brown);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+        .lang-switch-button {
+            appearance: none;
+            border: 0;
+            background: transparent;
+            padding: 0.15rem 0.85rem;
+            font-size: 1.15rem;
+            font-weight: 700;
+            cursor: pointer;
+            line-height: 1.4;
+        }
+        .lang-switch-button.is-active {
+            background: var(--bb-bg);
+            color: var(--bb-font) !important;
         }
         /* “开发日志”按钮置于标题区第一列并靠左 */
         .dev-log-open-button {
@@ -776,6 +856,7 @@
             outline: 2px solid var(--brown);
             outline-offset: -1px;
             aspect-ratio: 1/1;
+            overflow: hidden;
         }
         /* 指定宫位：选中遮罩 */
         .palace-card.is-specified::after {
@@ -941,21 +1022,16 @@
         }
         .notes-panel-header {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-columns: 1fr;
             align-items: center;
-        }
-        .notes-panel-header-side {
-            min-width: 0;
-        }
-        .notes-panel-header-side--end {
-            display: flex;
-            justify-content: center;
+            width: 100%;
         }
         .notes-panel-title {
             font-size: 2.3rem;
             font-weight: 700;
             text-align: center;
             letter-spacing: 0.08em;
+            width: 100%;
         }
 
         /* “问AI”按钮独立行 */
@@ -972,7 +1048,7 @@
             width: 100%;
             line-height: 1.8;
             font-size: var(--notes-ai-button-font-size);
-            letter-spacing: 0.5em;
+            letter-spacing: 0.15em;
         }
 
         /* “修改AI提示词”“指定宫位”按钮外观 */

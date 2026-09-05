@@ -1,0 +1,105 @@
+{
+  "version": 3.4,
+  "metadata": {
+    "name": "Jiang Xiao Liu Ren full-dimension logic library",
+    "structure": "Earth palaces - Heaven stars - Human relatives - Spirits - clean rules",
+    "description": "Sheng/ke modules are trimmed to core mappings for direct program lookup."
+  },
+  "labels": {
+    "name": "Name",
+    "number": "Numbers",
+    "element": "Wu Xing",
+    "orientation": "Outlook",
+    "tag": "Core tags",
+    "desc": "Definition",
+    "energy": "Energy phase",
+    "style": "Style",
+    "industry": "Fields",
+    "negative": "Shadow",
+    "relation": "Relation",
+    "function": "Function",
+    "objects": "Correspondences",
+    "focus": "Focus",
+    "direction": "Direction",
+    "color": "Color",
+    "imagery": "Imagery",
+    "disease": "Body / Illness",
+    "type": "Tone"
+  },
+  "data": {
+    "1_palaces": {
+      "label": "Six palaces: foundation and outcome",
+      "items": {
+        "da_an": { "name": "Da An", "nameZh": "大安", "number": [1, 5, 7], "element": "Wood", "orientation": "Auspicious", "tag": "Stability / conservatism", "desc": "Da An favors settled affairs; seek plans in the east. Slow, steady work; wait for ripeness." },
+        "liu_lian": { "name": "Liu Lian", "nameZh": "留连", "number": [2, 8, 10], "element": "Earth", "orientation": "Inauspicious", "tag": "Entanglement / delay", "desc": "Liu Lian makes matters hard to finish; timing stays unclear. Complexity and review; patch the leaks." },
+        "su_xi": { "name": "Su Xi", "nameZh": "速喜", "number": [3, 6, 9], "element": "Fire", "orientation": "Great Fortune", "tag": "Speed / joy", "desc": "Su Xi brings news to the door; seek wealth toward the south. Fast messages; good for rank and exams." },
+        "chi_kou": { "name": "Chi Kou", "nameZh": "赤口", "number": [4, 7, 10], "element": "Metal", "orientation": "Inauspicious", "tag": "Conflict / authority", "desc": "Chi Kou rules disputes; official trouble wears you down. High pressure; set a defensive boundary." },
+        "xiao_ji": { "name": "Xiao Ji", "nameZh": "小吉", "number": [1, 5, 11], "element": "Water", "orientation": "Auspicious", "tag": "Flow / opportunity", "desc": "Xiao Ji is the gentlest luck; helpers come from the north. Good for negotiation and connection." },
+        "kong_wang": { "name": "Kong Wang", "nameZh": "空亡", "number": [6, 12, 10], "element": "Earth", "orientation": "Great Misfortune", "tag": "Emptiness / reversal", "desc": "Kong Wang leaves matters unfinished; plans stall halfway. Guard against deceit; pause and reflect." }
+      }
+    },
+    "2_wuxing_stars": {
+      "label": "Five stars: energy and momentum",
+      "items": {
+        "mu_xing": { "name": "Wood Star", "nameZh": "木星", "element": "Wood", "energy": "Rising", "style": "Sprouting / expanding", "industry": "Education, culture, research", "negative": "Overthinking, little action", "desc": "Planning and first growth. The matter is germinating or still young." },
+        "huo_xing": { "name": "Fire Star", "nameZh": "火星", "element": "Fire", "energy": "Peak", "style": "Burst / broadcast", "industry": "Internet, dining, performance", "negative": "Haste and overreach", "desc": "Energy spreading outward. The matter is loud; publicity helps." },
+        "tu_xing": { "name": "Earth Star", "nameZh": "土星", "element": "Earth", "energy": "Stable", "style": "Holding / delivering", "industry": "Property, infrastructure, traditional trades", "negative": "Stuck in old ways", "desc": "Implementation and accumulation. The work is hands-on; depth wins." },
+        "jin_xing": { "name": "Metal Star", "nameZh": "金星", "element": "Metal", "energy": "Contracting", "style": "Cutting / reforming", "industry": "Finance, law, manufacturing", "negative": "Cold and hypercritical", "desc": "Results and boundaries. Time to subtract and set rules." },
+        "shui_xing": { "name": "Water Star", "nameZh": "水星", "element": "Water", "energy": "Transforming", "style": "Infiltrating / adapting", "industry": "Trade, logistics, strategy", "negative": "Hollow talk", "desc": "Strategy and adjustment. The matter keeps shifting; solve it by adapting." },
+        "tian_kong": { "name": "Sky Void", "nameZh": "天空", "element": "Void", "energy": "Reset", "style": "Empty / reflective", "industry": "Art, religion, metaphysics", "negative": "Empty talk, failure", "desc": "Variables and waste. Blind spots, or no real progress yet." }
+      }
+    },
+    "3_liu_qin": {
+      "label": "Six relatives: people and aims",
+      "items": {
+        "fu_mu": { "name": "Parents", "nameZh": "父母", "relation": "What generates me", "function": "Protect / authorize", "objects": "Documents, contracts, property, elders", "focus": "Compliance and backing", "desc": "Legitimacy and the external support system." },
+        "xiong_di": { "name": "Sibling", "nameZh": "兄弟", "relation": "What is like me", "function": "Share / compete", "objects": "Peers, rivals, expenses", "focus": "Resource split and rivalry", "desc": "Peers: helpers and those who take a cut." },
+        "zi_sun": { "name": "Child", "nameZh": "子孙", "relation": "What I generate", "function": "Resolve / produce", "objects": "Products, juniors, ideas, medicine", "focus": "Profit outlook and crisis handling", "desc": "The blessing star. It controls pressure and stands for vitality." },
+        "qi_cai": { "name": "Wealth", "nameZh": "妻财", "relation": "What I control", "function": "Return / desire", "objects": "Profit, goods, execution, women", "focus": "Input versus output and material control", "desc": "What the querent wants to command, and the final yield." },
+        "guan_gui": { "name": "Officer", "nameZh": "官鬼", "relation": "What controls me", "function": "Constraint / risk", "objects": "Office, law, illness, men", "focus": "Rank and hidden disaster", "desc": "A double edge: career height and threat together." },
+        "shen_gong": { "name": "Self", "nameZh": "身宫", "relation": "Myself", "function": "Essence / sensing", "objects": "One's own state and inner will", "focus": "Agency and bodily energy", "desc": "The final bearer of every generation and control relation." }
+      }
+    },
+    "4_liu_shen": {
+      "label": "Six spirits: gods and images",
+      "items": {
+        "qing_long": { "name": "Qinglong", "nameZh": "青龙", "element": "Wood", "type": "Great Fortune", "direction": "East", "color": "Green / cyan", "imagery": "Helpers, celebration, great trees", "disease": "Liver, gallbladder, convulsions", "desc": "Joy, noble help, and salary. The strongest booster." },
+        "zhu_que": { "name": "Zhuque", "nameZh": "朱雀", "element": "Fire", "type": "Neutral", "direction": "South", "color": "Red", "imagery": "Documents, news, arguments", "disease": "Heart, vessels, inflammation", "desc": "Speech, papers, and messages. Good for publicity; also quarrels." },
+        "gou_chen": { "name": "Gouchen", "nameZh": "勾陈", "element": "Earth", "type": "Inauspicious", "direction": "Center", "color": "Yellow / brown", "imagery": "Old matters, ties, mounds", "disease": "Spleen, stomach, stagnation", "desc": "Delay and entanglement. Hard to leave the matter behind." },
+        "teng_she": { "name": "Tengshe", "nameZh": "腾蛇", "element": "Fire", "type": "Inauspicious", "direction": "South", "color": "Pale yellow", "imagery": "False alarms, the uncanny, ropes", "disease": "Nerves, strange illness", "desc": "Fright, change, and doubt. The mind will not settle." },
+        "bai_hu": { "name": "Baihu", "nameZh": "白虎", "element": "Metal", "type": "Great Misfortune", "direction": "West", "color": "White", "imagery": "Pressure, blood, blades", "disease": "Lungs, trauma", "desc": "Pressure, loss, and clash. Sudden calamity." },
+        "xuan_wu": { "name": "Xuanwu", "nameZh": "玄武", "element": "Water", "type": "Inauspicious", "direction": "North", "color": "Black / blue", "imagery": "Shadows, secrets, thieves", "disease": "Kidneys, depression", "desc": "Hidden moves, theft, and loss. People working behind you." }
+      }
+    },
+    "5_zhi": {
+      "label": "Earthly branches: hours and wu xing",
+      "items": {}
+    }
+  },
+  "rules": {
+    "wuxing_interaction": {
+      "sheng": { "木": "火", "火": "土", "土": "金", "金": "水", "水": "木" },
+      "ke": { "木": "土", "土": "水", "水": "火", "火": "金", "金": "木" }
+    },
+    "liuqin_interaction": {
+      "sheng": { "父母": "兄弟", "兄弟": "子孙", "子孙": "妻财", "妻财": "官鬼", "官鬼": "父母" },
+      "ke": { "父母": "子孙", "子孙": "官鬼", "官鬼": "兄弟", "兄弟": "妻财", "妻财": "父母" }
+    },
+    "zhi_combination": {
+      "liuhe": [
+        { "branches": ["子", "丑"], "text": "子丑 (combine into Earth)" },
+        { "branches": ["寅", "亥"], "text": "寅亥 (combine into Wood)" },
+        { "branches": ["卯", "戌"], "text": "卯戌 (combine into Fire)" },
+        { "branches": ["辰", "酉"], "text": "辰酉 (combine into Metal)" },
+        { "branches": ["巳", "申"], "text": "巳申 (combine into Water)" },
+        { "branches": ["午", "未"], "text": "午未 (combine into Earth)" }
+      ],
+      "sanhe": [
+        { "branches": ["申", "子", "辰"], "text": "申子辰 (Water trine)" },
+        { "branches": ["亥", "卯", "未"], "text": "亥卯未 (Wood trine)" },
+        { "branches": ["寅", "午", "戌"], "text": "寅午戌 (Fire trine)" },
+        { "branches": ["巳", "酉", "丑"], "text": "巳酉丑 (Metal trine)" }
+      ]
+    }
+  }
+}

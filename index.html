@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>江氏小六壬排盘器</title>
+    <meta name="description" content="江氏小六壬排盘器：日时起卦、数字起卦、术语解释、AI 解卦与本地笔记。">
+    <link rel="alternate" hreflang="zh-CN" href="https://xiaoliuren.cc/">
+    <link rel="alternate" hreflang="en" href="https://xiaoliuren.cc/?lang=en">
+    <link rel="alternate" hreflang="x-default" href="https://xiaoliuren.cc/">
     <!-- 第三方依赖 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js"></script>
@@ -20,33 +24,39 @@
 
     <!-- 页头 -->
     <div class="page-header">
-        <button type="button" id="openDevLogButton" class="dev-log-open-button small-action-button">开发日志</button>
-        <h1 class="page-title">江氏小六壬排盘器</h1>
-        <button type="button" id="openNotesLibraryButton" class="notes-library-open-button small-action-button">我的笔记</button>
+        <button type="button" id="openDevLogButton" class="dev-log-open-button small-action-button" data-i18n="header.devLog">开发日志</button>
+        <div class="page-header-main">
+            <h1 class="page-title" data-i18n="app.title">江氏小六壬排盘器</h1>
+            <div class="lang-switch" role="group" data-i18n-aria="header.lang">
+                <button type="button" class="lang-switch-button" data-lang="zh">中文</button>
+                <button type="button" class="lang-switch-button" data-lang="en">EN</button>
+            </div>
+        </div>
+        <button type="button" id="openNotesLibraryButton" class="notes-library-open-button small-action-button" data-i18n="header.notes">我的笔记</button>
     </div>
 
     <!-- 主内容区：时钟 / 起卦设置 / 排盘盘面 -->
     <div class="left-column-panels">
         <div id="timePanel" class="theme-panel time-panel">
             <div id="solarClock">0000年0月0日 00:00:00</div>
-            <div id="lunarClock">获取农历中...</div>
+            <div id="lunarClock" data-i18n="clock.lunarLoading">获取农历中...</div>
         </div>
 
         <div id="settingPanel" class="theme-panel setting-panel">
             <div id="method-section" class="notes-row">
-                <span class="notes-field-label">起卦方法</span>
+                <span class="notes-field-label" data-i18n="settings.method">起卦方法</span>
                 <div class="global-dropdown dropdown-method">
                     <input type="hidden" id="method" value="日时起卦">
                 </div>
             </div>
             <div id="query-item-section" class="notes-row">
-                <span class="notes-field-label">求测事项</span>
+                <span class="notes-field-label" data-i18n="settings.queryItem">求测事项</span>
                 <div class="global-dropdown dropdown-query-item">
                     <input type="hidden" id="queryItem" value="吉凶">
                 </div>
             </div>
             <div id="datetime-section" class="datetime-section">
-                <label class="notes-field-label">选择时间</label>
+                    <label class="notes-field-label" data-i18n="settings.datetime">选择时间</label>
                 <div class="datetime-controls">
                     <div id="dateTimePickerWrap" class="datetime-picker-wrap">
                         <input
@@ -69,12 +79,12 @@
                         <input type="hidden" id="dateTime">
                         <input type="text" id="dateTimeCalendarInput" class="hidden" tabindex="-1" aria-hidden="true">
                     </div>
-                    <button type="button" id="dateTimeNowButton" class="datetime-now-button small-action-button">当前时间</button>
+                    <button type="button" id="dateTimeNowButton" class="datetime-now-button small-action-button" data-i18n="settings.now">当前时间</button>
                 </div>
                 <div id="selectedDateLunarInfo" class="selected-date-lunar-info"></div>
             </div>
             <div id="num-section" class="num-section is-hidden">
-                <label class="notes-field-label" for="numInput">选择数字</label>
+                <label class="notes-field-label" for="numInput" data-i18n="settings.number">选择数字</label>
                 <div class="num-controls">
                     <div class="datetime-picker-wrap">
                         <input
@@ -82,23 +92,24 @@
                             id="numInput"
                             class="datetime-manual-input num-input"
                             placeholder="请输入任意数字"
+                            data-i18n-placeholder="settings.numberPlaceholder"
                             min="1"
                             step="1"
                             inputmode="numeric"
                         >
                         <span class="num-picker-trailing" aria-hidden="true"></span>
                     </div>
-                    <button type="button" id="numRandomButton" class="small-action-button num-button">随机数字</button>
+                    <button type="button" id="numRandomButton" class="small-action-button num-button" data-i18n="settings.randomNumber">随机数字</button>
                 </div>
             </div>
             <div id="specific-question-section" class="notes-row">
-                <span class="notes-field-label">具体问题</span>
-                <textarea id="specificQuestion" class="specific-question notes-field-input" placeholder="(选填)"></textarea>
+                <span class="notes-field-label" data-i18n="settings.question">具体问题</span>
+                <textarea id="specificQuestion" class="specific-question notes-field-input" placeholder="(选填)" data-i18n-placeholder="settings.questionPlaceholder"></textarea>
             </div>
         </div>
 
         <div id="mainPanel" class="theme-panel main-panel">
-            <button onclick="startCalculation()" class="action-button action-theme-button">开始排盘</button>
+            <button onclick="startCalculation()" class="action-button action-theme-button" data-i18n="action.cast">开始排盘</button>
             <div id="palaceGrid" class="hex-grid"></div>
         </div>
     </div>
@@ -106,21 +117,19 @@
     <!-- 断卦笔记面板 -->
     <div id="notesPanelContainer" class="theme-panel notes-panel">
         <div class="notes-panel-header">
-            <div class="notes-panel-header-side"></div>
-            <div class="notes-panel-title">断卦笔记</div>
-            <div class="notes-panel-header-side notes-panel-header-side--end"></div>
+            <div class="notes-panel-title" data-i18n="notes.title">断卦笔记</div>
         </div>
         <div class="notes-ai-row">
-            <button type="button" id="changePrompt" class="small-action-button change-prompt-button">修改AI提示词</button>
-            <button type="button" id="specifyPalaceButton" class="small-action-button specify-palace-button">指定解读宫位</button>
-            <button type="button" id="askAiButton" class="notes-ai-button action-theme-button">问AI</button>
+            <button type="button" id="changePrompt" class="small-action-button change-prompt-button" data-i18n="notes.editPrompt">修改AI提示词</button>
+            <button type="button" id="specifyPalaceButton" class="small-action-button specify-palace-button" data-i18n="notes.specifyPalace">指定解读宫位</button>
+            <button type="button" id="askAiButton" class="notes-ai-button action-theme-button" data-i18n="notes.askAi">问AI</button>
         </div>
         <div id="notesEntriesContainer" class="notes-entries" style="margin-bottom: 2rem;"></div>
         <div class="notes-add-row">
             <button type="button" id="addNoteRowButton" class="notes-add-circle-button"><span class="notes-add-circle-button-label">+</span></button>
             <button type="button" id="removeNoteRowButton" class="notes-add-circle-button" aria-pressed="false"><span class="notes-add-circle-button-label">-</span></button>
-            <button type="button" id="saveNotesButton" class="notes-save-button small-action-button">保存笔记</button>
-            <button type="button" id="resetBoardButton" class="small-action-button notes-save-button">重置盘面</button>
+            <button type="button" id="saveNotesButton" class="notes-save-button small-action-button" data-i18n="notes.save">保存笔记</button>
+            <button type="button" id="resetBoardButton" class="small-action-button notes-save-button" data-i18n="notes.reset">重置盘面</button>
         </div>
     </div>
 
@@ -131,27 +140,27 @@
                 <div class="notes-library-item-time"></div>
                 <div class="notes-library-item-desc"></div>
             </div>
-            <button type="button" class="notes-library-delete-button action-theme-button">删除</button>
+            <button type="button" class="notes-library-delete-button action-theme-button" data-i18n="notes.delete">删除</button>
         </div>
     </template>
 
     <!-- 浮层：笔记库 -->
     <div id="notesLibraryPanel" class="theme-panel notes-library-panel is-hidden">
         <div class="notes-library-header">
-            <span class="notes-library-title">我的笔记</span>
-            <button type="button" id="clearNotesLibraryButton" class="small-action-button notes-library-clear-button">清空所有笔记</button>
+            <span class="notes-library-title" data-i18n="library.title">我的笔记</span>
+            <button type="button" id="clearNotesLibraryButton" class="small-action-button notes-library-clear-button" data-i18n="library.clear">清空所有笔记</button>
             <div class="notes-library-header-actions">
-                <button type="button" id="closeNotesLibraryButton" class="small-action-button notes-library-close-button">关闭</button>
+                <button type="button" id="closeNotesLibraryButton" class="small-action-button notes-library-close-button" data-i18n="library.close">关闭</button>
             </div>
         </div>
         <div id="notesLibraryList" class="notes-library-list"></div>
-        <div id="notesLibraryEmpty" class="notes-library-empty">暂无笔记</div>
+        <div id="notesLibraryEmpty" class="notes-library-empty" data-i18n="library.empty">暂无笔记</div>
     </div>
     <div id="notesLibraryBackdrop" class="notes-library-backdrop is-hidden"></div>
 
     <!-- 浮层：指定解读宫位 -->
     <div id="palaceSpecifyBackdrop" class="palace-specify-backdrop is-hidden" aria-hidden="true">
-        <div id="palaceSpecifyHint" class="palace-specify-hint" aria-live="polite">请手动指定AI解读宫位（默认为AI自动选择）</div>
+        <div id="palaceSpecifyHint" class="palace-specify-hint" aria-live="polite" data-i18n="specify.hint">请手动指定AI解读宫位（默认为AI自动选择）</div>
         <div class="palace-specify-shade palace-specify-shade-top"></div>
         <div class="palace-specify-shade palace-specify-shade-left"></div>
         <div class="palace-specify-shade palace-specify-shade-right"></div>
@@ -160,34 +169,34 @@
 
     <!-- 浮层：AI 提示词编辑 -->
     <div id="promptEditorBackdrop" class="prompt-editor-backdrop is-hidden"></div>
-    <div id="promptEditorPanel" class="theme-panel prompt-editor-panel is-hidden" role="dialog" aria-modal="true" aria-label="修改AI提示词">
-        <div class="prompt-editor-title">AI提示词</div>
+    <div id="promptEditorPanel" class="theme-panel prompt-editor-panel is-hidden" role="dialog" aria-modal="true" data-i18n-aria="prompt.aria">
+        <div class="prompt-editor-title" data-i18n="prompt.title">AI提示词</div>
         <textarea
             id="promptTaskLinesInput"
             class="notes-field-input prompt-editor-textarea"
             placeholder="1. ...&#10;2. ...&#10;3. ..."
         ></textarea>
         <div class="prompt-editor-actions">
-            <button type="button" id="resetPromptTaskLinesButton" class="small-action-button">恢复默认</button>
-            <button type="button" id="cancelPromptEditButton" class="small-action-button">取消</button>
-            <button type="button" id="savePromptTaskLinesButton" class="action-theme-button prompt-editor-save-button">保存</button>
+            <button type="button" id="resetPromptTaskLinesButton" class="small-action-button" data-i18n="prompt.reset">恢复默认</button>
+            <button type="button" id="cancelPromptEditButton" class="small-action-button" data-i18n="prompt.cancel">取消</button>
+            <button type="button" id="savePromptTaskLinesButton" class="action-theme-button prompt-editor-save-button" data-i18n="prompt.save">保存</button>
         </div>
     </div>
 
     <!-- 浮层：术语解释 -->
     <div id="referenceHelpBackdrop" class="reference-help-backdrop is-hidden"></div>
-    <div id="referenceHelpPanel" class="theme-panel reference-help-panel is-hidden" role="dialog" aria-modal="true" aria-label="术语解释">
+    <div id="referenceHelpPanel" class="theme-panel reference-help-panel is-hidden" role="dialog" aria-modal="true" data-i18n-aria="help.aria">
         <div class="reference-help-header">
-            <div id="referenceHelpTitle" class="reference-help-title">术语解释</div>
+            <div id="referenceHelpTitle" class="reference-help-title" data-i18n="help.title">术语解释</div>
         </div>
         <div id="referenceHelpContent" class="reference-help-content"></div>
     </div>
 
     <!-- 浮层：开发日志 -->
     <div id="devLogBackdrop" class="reference-help-backdrop dev-log-backdrop is-hidden"></div>
-    <div id="devLogPanel" class="theme-panel reference-help-panel dev-log-panel is-hidden" role="dialog" aria-modal="true" aria-label="开发日志">
+    <div id="devLogPanel" class="theme-panel reference-help-panel dev-log-panel is-hidden" role="dialog" aria-modal="true" data-i18n-aria="devLog.aria">
         <div class="reference-help-header">
-            <div class="reference-help-title">开发日志</div>
+            <div class="reference-help-title" data-i18n="devLog.title">开发日志</div>
         </div>
         <div id="devLogContent" class="reference-help-content dev-log-content"></div>
     </div>
@@ -195,6 +204,7 @@
     </div>
 
     <!-- 应用脚本 -->
+    <script src="assets/js/i18n.js"></script>
     <script src="assets/js/app.js"></script>
     <!-- Vercel Analytics -->
     <script>

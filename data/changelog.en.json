@@ -1,0 +1,36 @@
+{
+  "entries": [
+    {
+      "date": "2026/9/5",
+      "description": "Chinese / English toggle: UI, chart terms, glossary, and AI prompt"
+    },
+    {
+      "date": "2026/6/20",
+      "description": "Bug fixes; palace-specific AI reading; Liu He / San He hints"
+    },
+    {
+      "date": "2026/5/18",
+      "description": "Updated fonts and improved load speed"
+    },
+    {
+      "date": "2026/5/12",
+      "description": "Number casting; term glossary; layout polish; AI prompt iteration"
+    },
+    {
+      "date": "2026/5/11",
+      "description": "Code and layout cleanup; AI prompt editor"
+    },
+    {
+      "date": "2026/5/10",
+      "description": "AI reading; notes panel; save notes; portrait/landscape layout"
+    },
+    {
+      "date": "2026/5/9",
+      "description": "Static page live; date-time casting and basic charting"
+    },
+    {
+      "date": "2026/5/8",
+      "description": "Repository initialized"
+    }
+  ]
+}
